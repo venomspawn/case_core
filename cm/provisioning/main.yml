@@ -12,7 +12,6 @@
         - { var: "PGUSER", value: "user_case_core"}
         - { var: "PGDATABASE", value: "case_core"}
         - { var: "RACK_ENV", value: "development" }
-        - { var: "LC_ALL", value: "C" }
 
     - name: "Autofollow to project on logon"
       lineinfile:
