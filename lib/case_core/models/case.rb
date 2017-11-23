@@ -13,7 +13,7 @@ module CaseCore
     # @!attribute id
     #   Идентификатор карточки
     #
-    #   @return [Integer]
+    #   @return [String]
     #     идентификатор карточки
     #
     #
@@ -33,6 +33,19 @@ module CaseCore
     class Case < Sequel::Model
       # Отношения
       one_to_many :attributes, class: 'CaseCore::Models::CaseAttribute'
+
+      # Создаёт запись модели
+      #
+      # @param [Hash] values
+      #   атрибуты записи
+      #
+      # @return [CaseCore::Model::Case]
+      #   созданная запись модели
+      #
+      def self.create(values)
+        unrestrict_primary_key
+        super.tap { restrict_primary_key }
+      end
     end
   end
 end

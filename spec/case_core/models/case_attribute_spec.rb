@@ -128,11 +128,11 @@ RSpec.describe CaseCore::Models::CaseAttribute do
 
     let(:instance) { create(:case_attribute) }
 
-    context 'when name is nil' do
-      let(:params) { { name: nil } }
+    context 'when name is specified' do
+      let(:params) { { name: :name } }
 
-      it 'should raise Sequel::InvalidValue' do
-        expect { subject }.to raise_error(Sequel::InvalidValue)
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
       end
     end
 

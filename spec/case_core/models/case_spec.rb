@@ -15,7 +15,7 @@ RSpec.describe CaseCore::Models::Case do
   describe '.create' do
     subject(:result) { described_class.create(params) }
 
-    let(:params) { { type: :type, created_at: Time.now } }
+    let(:params) { { id: create(:string), type: :type, created_at: Time.now } }
 
     describe 'result' do
       subject { result }
@@ -23,8 +23,24 @@ RSpec.describe CaseCore::Models::Case do
       it { is_expected.to be_a(described_class) }
     end
 
+    context 'when case id is not specified' do
+      let(:params) { { type: :type, created_at: Time.now } }
+
+      it 'should raise Sequel::NotNullConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::NotNullConstraintViolation)
+      end
+    end
+
+    context 'when case id is nil' do
+      let(:params) { { id: nil, type: nil, created_at: Time.now } }
+
+      it 'should raise Sequel::InvalidValue' do
+        expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
     context 'when case type is not specified' do
-      let(:params) { { created_at: Time.now } }
+      let(:params) { { id: create(:string), created_at: Time.now } }
 
       it 'should raise Sequel::NotNullConstraintViolation' do
         expect { subject }.to raise_error(Sequel::NotNullConstraintViolation)
@@ -32,7 +48,7 @@ RSpec.describe CaseCore::Models::Case do
     end
 
     context 'when case type is nil' do
-      let(:params) { { type: nil, created_at: Time.now } }
+      let(:params) { { id: create(:string), type: nil, created_at: Time.now } }
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
@@ -40,7 +56,7 @@ RSpec.describe CaseCore::Models::Case do
     end
 
     context 'when time of creation is not specified' do
-      let(:params) { { type: :type } }
+      let(:params) { { id: create(:string), type: :type } }
 
       it 'should raise Sequel::NotNullConstraintViolation' do
         expect { subject }.to raise_error(Sequel::NotNullConstraintViolation)
@@ -48,7 +64,7 @@ RSpec.describe CaseCore::Models::Case do
     end
 
     context 'when time of creation is nil' do
-      let(:params) { { type: :type, created_at: nil } }
+      let(:params) { { id: create(:string), type: :type, created_at: nil } }
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
@@ -118,7 +134,7 @@ RSpec.describe CaseCore::Models::Case do
     describe 'result' do
       subject { result }
 
-      it { is_expected.to be_an(Integer) }
+      it { is_expected.to be_an(String) }
     end
   end
 

@@ -48,4 +48,8 @@ Sequel::Model.raise_on_typecast_failure = true
 Sequel::Model.plugin :string_stripper
 
 # Загружаем модели
-Dir["#{$lib}/models/**/*.rb"].each(&method(:require))
+begin
+  Dir["#{$lib}/models/**/*.rb"].each(&method(:require))
+rescue
+  nil
+end

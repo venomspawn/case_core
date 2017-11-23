@@ -8,7 +8,10 @@
 Sequel.migration do
   change do
     create_table(:case_attributes) do
-      foreign_key :case_id, :cases, on_update: :cascade, on_delete: :cascade
+      foreign_key :case_id, :cases,
+                  type:      :text,
+                  on_update: :cascade,
+                  on_delete: :cascade
 
       column :name,  :text, index: true, null: false
       column :value, :text, index: true

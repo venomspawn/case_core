@@ -8,8 +8,7 @@
 Sequel.migration do
   change do
     create_table(:cases) do
-      primary_key :id
-
+      column :id,         :text,      primary_key: true
       column :type,       :text,      index: true, null: false
       column :created_at, :timestamp, index: true, null: false
     end

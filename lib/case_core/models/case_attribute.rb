@@ -30,7 +30,18 @@ module CaseCore
       # Отношения
       many_to_one :case
 
-      unrestrict_primary_key
+      # Создаёт запись модели
+      #
+      # @param [Hash] values
+      #   атрибуты записи
+      #
+      # @return [CaseCore::Model::CaseAttribute]
+      #   созданная запись модели
+      #
+      def self.create(values)
+        unrestrict_primary_key
+        super.tap { restrict_primary_key }
+      end
     end
   end
 end
