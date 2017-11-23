@@ -1,0 +1,7 @@
+--plugin yard-sinatra
+--readme README.md
+--title 'Case Core Service Documentation'
+--charset utf-8
+--markup markdown
+--private
+- CHANGELOG.md docs/**/*.md

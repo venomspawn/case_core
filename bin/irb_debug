@@ -1,0 +1,15 @@
+#!/usr/bin/ruby -Eutf-8:utf-8
+
+# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+#
+# Скрипт, запускающий IRB
+#
+
+require_relative '../config/app_init.rb'
+require 'irb'
+require 'irb/completion'
+
+require_relative '../spec/spec_helper'
+require 'awesome_print'
+
+IRB.start
