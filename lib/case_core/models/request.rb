@@ -1,27 +1,16 @@
 # encoding: utf-8
 
 module CaseCore
-  # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-  #
-  # Пространство имён для моделей сервиса
-  #
   module Models
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Модель заявки
+    # Модель межведомственного запроса, связанного с заявкой
     #
     # @!attribute id
-    #   Идентификатор карточки
+    #   Идентификатор запроса
     #
-    #   @return [String]
-    #     идентификатор карточки
-    #
-    #
-    # @!attribute type
-    #   Тип заявки
-    #
-    #   @return [String]
-    #     тип заявки
+    #   @return [Integer]
+    #     идентификатор запроса
     #
     #
     # @!attribute created_at
@@ -30,17 +19,17 @@ module CaseCore
     #   @return [Time]
     #     дата и время создания записи
     #
-    class Case < Sequel::Model
+    class Request < Sequel::Model
       # Отношения
-      one_to_many :attributes, class: 'CaseCore::Models::CaseAttribute'
-      one_to_many :requests
+      one_to_many :attributes, class: 'CaseCore::Models::RequestAttribute'
+      many_to_one :case
 
       # Создаёт запись модели
       #
       # @param [Hash] values
       #   атрибуты записи
       #
-      # @return [CaseCore::Model::Case]
+      # @return [CaseCore::Model::Request]
       #   созданная запись модели
       #
       def self.create(values)

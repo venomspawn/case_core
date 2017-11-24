@@ -10,6 +10,7 @@ Sequel.migration do
     create_table(:case_attributes) do
       foreign_key :case_id, :cases,
                   type:      :text,
+                  null:      false,
                   on_update: :cascade,
                   on_delete: :cascade
 
