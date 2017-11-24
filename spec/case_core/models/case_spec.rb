@@ -75,7 +75,16 @@ RSpec.describe CaseCore::Models::Case do
   describe 'instance of the model' do
     subject(:instance) { create(:case) }
 
-    methods = %i(attributes attributes_dataset created_at id type update)
+    methods = %i(
+      attributes
+      attributes_dataset
+      created_at
+      id
+      requests
+      requests_dataset
+      type
+      update
+    )
     it { is_expected.to respond_to(*methods) }
   end
 
@@ -90,6 +99,10 @@ RSpec.describe CaseCore::Models::Case do
 
       it { is_expected.to be_an(Array) }
       it { is_expected.to all(be_a(CaseCore::Models::CaseAttribute)) }
+
+      it 'should be a list of attributes belonging to the case' do
+        expect(subject.map(&:case_id).uniq).to be == [instance.id]
+      end
     end
   end
 
@@ -134,7 +147,46 @@ RSpec.describe CaseCore::Models::Case do
     describe 'result' do
       subject { result }
 
-      it { is_expected.to be_an(String) }
+      it { is_expected.to be_a(String) }
+    end
+  end
+
+  describe '#requests' do
+    subject(:result) { instance.requests }
+
+    let(:instance) { create(:case) }
+    let!(:requests) { create_list(:request, 2, case: instance) }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_an(Array) }
+      it { is_expected.to all(be_a(CaseCore::Models::Request)) }
+
+      it 'should be a list of requests belonging to the case' do
+        expect(subject.map(&:case_id).uniq).to be == [instance.id]
+      end
+    end
+  end
+
+  describe '#requests_dataset' do
+    subject(:result) { instance.requests_dataset }
+
+    let(:instance) { create(:case) }
+    let!(:attributes) { create_list(:request, 2, case: instance) }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_a(Sequel::Dataset) }
+
+      it 'should be a dataset of CaseCore::Models::Request instances' do
+        expect(result.model).to be == CaseCore::Models::Request
+      end
+
+      it 'should be a dataset of records belonging to the instance' do
+        expect(result.select_map(:case_id).uniq).to be == [instance.id]
+      end
     end
   end
 

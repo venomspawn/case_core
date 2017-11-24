@@ -4,13 +4,13 @@ module CaseCore
   module Models
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Модель атрибута заявки
+    # Модель атрибута межведомственного запроса
     #
-    # @!attribute case_id
-    #   Идентификатор записи заявки
+    # @!attribute request_id
+    #   Идентификатор записи межведомственного запроса
     #
-    #   @return [String]
-    #     идентификатор записи заявки
+    #   @return [Integer]
+    #     идентификатор записи межведомственного запроса
     #
     #
     # @!attribute name
@@ -26,16 +26,16 @@ module CaseCore
     #   @return [String]
     #     значение атрибута
     #
-    class CaseAttribute < Sequel::Model
+    class RequestAttribute < Sequel::Model
       # Отношения
-      many_to_one :case
+      many_to_one :request
 
       # Создаёт запись модели
       #
       # @param [Hash] values
       #   атрибуты записи
       #
-      # @return [CaseCore::Model::CaseAttribute]
+      # @return [CaseCore::Model::RequestAttribute]
       #   созданная запись модели
       #
       def self.create(values)

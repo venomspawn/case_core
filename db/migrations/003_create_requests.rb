@@ -13,6 +13,7 @@ Sequel.migration do
       column :created_at, :timestamp, index: true, null: false
 
       foreign_key :case_id, :cases,
+                  null:      false,
                   type:      :text,
                   on_update: :cascade,
                   on_delete: :cascade

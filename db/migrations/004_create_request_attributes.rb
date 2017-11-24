@@ -10,6 +10,7 @@ Sequel.migration do
   change do
     create_table(:request_attributes) do
       foreign_key :request_id, :requests,
+                  null:      false,
                   on_update: :cascade,
                   on_delete: :cascade
 
