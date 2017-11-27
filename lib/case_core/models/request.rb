@@ -19,22 +19,50 @@ module CaseCore
     #   @return [Time]
     #     дата и время создания записи
     #
+    #
+    # @!attribute attributes
+    #   Список записей атрибутов запроса
+    #
+    #   @return [Array<CaseCore::Models::RequestAttribute>]
+    #     список записей атрибутов запроса
+    #
+    #
+    # @!attribute attributes_dataset
+    #   Запрос на получение записей атрибутов запроса
+    #
+    #   @return [Sequel::Dataset]
+    #     запрос на получение записей атрибутов запроса
+    #
+    #
+    # @!attribute case_id
+    #   Идентификатор записи заявки, в рамках которой создан запрос
+    #
+    #   @return [String]
+    #     идентификатор записи заявки, в рамках которой создан запрос
+    #
+    #
+    # @!attribute case
+    #   Запись заявки, в рамках которой создан запрос
+    #
+    #   @return [CaseCore::Models::Case]
+    #     запись заявки, в рамках которой создан запрос
+    #
     class Request < Sequel::Model
       # Отношения
       one_to_many :attributes, class: 'CaseCore::Models::RequestAttribute'
       many_to_one :case
 
-      # Создаёт запись модели
+      # Обновляет запись модели
       #
       # @param [Hash] values
-      #   атрибуты записи
+      #   новые атрибуты записи
       #
-      # @return [CaseCore::Model::Request]
-      #   созданная запись модели
+      # @return [Boolean]
+      #   удалось или нет сохранить запись
       #
-      def self.create(values)
-        unrestrict_primary_key
-        super.tap { restrict_primary_key }
+      def update(values)
+        model.restrict_primary_key unless model.restrict_primary_key?
+        super
       end
     end
   end

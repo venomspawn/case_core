@@ -135,13 +135,13 @@ RSpec.describe CaseCore::Models::RequestAttribute do
     describe 'result' do
       subject { result }
 
-      context 'when value is absent' do
+      context 'when value of the corresponding field is absent' do
         let(:instance) { create(:request_attribute, value: nil) }
 
         it { is_expected.to be_nil }
       end
 
-      context 'when value is present' do
+      context 'when value of the corresponding field is present' do
         let(:instance) { create(:request_attribute) }
 
         it { is_expected.to be_a(String) }

@@ -7,8 +7,9 @@
 
 FactoryGirl.define do
   factory :request_attribute, class: CaseCore::Models::RequestAttribute do
-    request_id { create(:request).id }
     name       { create(:string) }
     value      { create(:string) }
+
+    association :request
   end
 end

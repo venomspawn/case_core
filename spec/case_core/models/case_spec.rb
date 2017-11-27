@@ -79,6 +79,8 @@ RSpec.describe CaseCore::Models::Case do
       attributes
       attributes_dataset
       created_at
+      documents
+      documents_dataset
       id
       requests
       requests_dataset
@@ -136,6 +138,45 @@ RSpec.describe CaseCore::Models::Case do
       subject { result }
 
       it { is_expected.to be_a(Time) }
+    end
+  end
+
+  describe '#documents' do
+    subject(:result) { instance.documents }
+
+    let(:instance) { create(:case) }
+    let!(:documents) { create_list(:document, 2, case: instance) }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_an(Array) }
+      it { is_expected.to all(be_a(CaseCore::Models::Document)) }
+
+      it 'should be a list of documents belonging to the case' do
+        expect(subject.map(&:case_id).uniq).to be == [instance.id]
+      end
+    end
+  end
+
+  describe '#documents_dataset' do
+    subject(:result) { instance.documents_dataset }
+
+    let(:instance) { create(:case) }
+    let!(:documents) { create_list(:document, 2, case: instance) }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_a(Sequel::Dataset) }
+
+      it 'should be a dataset of CaseCore::Models::Document instances' do
+        expect(result.model).to be == CaseCore::Models::Document
+      end
+
+      it 'should be a dataset of records belonging to the instance' do
+        expect(result.select_map(:case_id).uniq).to be == [instance.id]
+      end
     end
   end
 
@@ -206,6 +247,14 @@ RSpec.describe CaseCore::Models::Case do
     subject(:result) { instance.update(params) }
 
     let(:instance) { create(:case) }
+
+    context 'when id is specified' do
+      let(:params) { { id: 1 } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
 
     context 'when case type is nil' do
       let(:params) { { type: nil } }
