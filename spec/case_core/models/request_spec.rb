@@ -115,7 +115,7 @@ RSpec.describe CaseCore::Models::Request do
 
       it { is_expected.to be_a(CaseCore::Models::Case) }
 
-      it 'should be a record which this record belongs to' do
+      it 'should be a record this record belongs to' do
         expect(result.id) == instance.case_id
       end
     end
@@ -161,6 +161,14 @@ RSpec.describe CaseCore::Models::Request do
     subject(:result) { instance.update(params) }
 
     let(:instance) { create(:request) }
+
+    context 'when id is specified' do
+      let(:params) { { id: 1 } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
 
     context 'when case id is nil' do
       let(:params) { { case_id: nil } }

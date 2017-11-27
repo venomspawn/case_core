@@ -8,6 +8,7 @@
 FactoryGirl.define do
   factory :request, class: CaseCore::Models::Request do
     created_at { Time.now }
-    case_id    { create(:case).id }
+
+    association :case
   end
 end

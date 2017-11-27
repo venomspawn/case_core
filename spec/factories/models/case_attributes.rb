@@ -7,8 +7,9 @@
 
 FactoryGirl.define do
   factory :case_attribute, class: CaseCore::Models::CaseAttribute do
-    case_id { create(:case).id }
     name    { create(:string) }
     value   { create(:string) }
+
+    association :case
   end
 end
