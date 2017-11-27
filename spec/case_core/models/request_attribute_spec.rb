@@ -2,7 +2,7 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестировантия модели атрибутов заявок
+# Файл тестирования модели атрибутов заявок
 # `CaseCore::Models::RequestAttribute`
 #
 

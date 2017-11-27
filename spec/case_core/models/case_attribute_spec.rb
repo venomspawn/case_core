@@ -2,7 +2,7 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестировантия модели атрибутов заявок `CaseCore::Models::CaseAttribute`
+# Файл тестирования модели атрибутов заявок `CaseCore::Models::CaseAttribute`
 #
 
 RSpec.describe CaseCore::Models::CaseAttribute do
