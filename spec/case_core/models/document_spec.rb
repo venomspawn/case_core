@@ -2,7 +2,7 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестировантия модели документа `CaseCore::Models::Document`
+# Файл тестирования модели документа `CaseCore::Models::Document`
 #
 
 RSpec.describe CaseCore::Models::Document do
