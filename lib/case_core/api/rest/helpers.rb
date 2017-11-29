@@ -1,8 +1,7 @@
 # encoding: utf-8
 
-require 'json-schema'
-
 require "#{$lib}/actions/cases"
+require "#{$lib}/actions/documents"
 require "#{$lib}/helpers/log"
 
 module CaseCore
@@ -51,6 +50,17 @@ module CaseCore
         #
         def cases
           Actions::Cases
+        end
+
+        # Возвращает объект, предоставляющий действия над документами,
+        # прикреплённых к заявкам
+        #
+        # @return [#index]
+        #   объект, предоставляющий действия над документами, прикреплённых к
+        #   заявкам
+        #
+        def documents
+          Actions::Documents
         end
       end
     end
