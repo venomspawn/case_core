@@ -8,10 +8,11 @@ module CaseCore
     #
     module Cases
       require_relative 'cases/index'
+      require_relative 'cases/show'
 
       # Возвращает список ассоциативных массивов атрибутов заявок
       #
-      # @param [Hash]
+      # @param [Hash] params
       #   ассоциативный массив параметров действия
       #
       # @return [Array<Hash>]
@@ -19,6 +20,19 @@ module CaseCore
       #
       def self.index(params)
         Index.new(params).index
+      end
+
+      # Возвращает ассоциативный массив с информацией о заявке с
+      # предоставленным идентификатором записи
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [Hash]
+      #   результирующий ассоциативный массив
+      #
+      def self.show(params)
+        Show.new(params).show
       end
     end
   end
