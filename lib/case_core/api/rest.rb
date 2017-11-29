@@ -1,7 +1,8 @@
 # encoding: utf-8
 
-require 'sinatra/base'
 require 'json'
+require 'oj'
+require 'sinatra/base'
 
 require_relative 'rest/helpers'
 

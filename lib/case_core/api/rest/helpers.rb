@@ -2,6 +2,7 @@
 
 require 'json-schema'
 
+require "#{$lib}/actions/cases"
 require "#{$lib}/helpers/log"
 
 module CaseCore
@@ -26,7 +27,7 @@ module CaseCore
 
         # Добавляет в журнал событий запись о запросе
         #
-        def log_request(params)
+        def log_request
           log_debug(binding) { <<-LOG }
             #{app_name_upcase} #{request.request_method} REQUEST WITH URL
             #{request.url} AND PARAMS #{params}"
@@ -41,6 +42,15 @@ module CaseCore
             parts.push('AND BODY', body) if body.present?
             parts.join(' ')
           end
+        end
+
+        # Возвращает объект, предоставляющий действия над заявками
+        #
+        # @return [#index, #show]
+        #   объект, предоставляющий действия над заявками
+        #
+        def cases
+          Actions::Cases
         end
       end
     end

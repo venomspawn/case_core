@@ -25,7 +25,6 @@ end
 
 group :test do
   gem 'database_cleaner'
-  gem 'json-schema-rspec'
   gem 'webmock'
 end
 

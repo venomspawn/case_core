@@ -2,22 +2,15 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл поддержки библиотеки json-schema-rspec
+# Файл поддержки проверки типов и структур объектов на соответствие JSON-схеме
 #
 
-require 'json-schema-rspec'
+RSpec::Matchers.define :match_json_schema do |schema|
+  match { |object| JSON::Validator.validate(schema, object) }
+  description { "match JSON schema #{schema}" }
+end
 
-RSpec.configure do |config|
-  config.include JSON::SchemaMatchers
-
-  # Загружаем схемы JSON
-  prefix = "#{$root}/spec/fixtures/schemas/"
-  suffix = '_schema.json'
-  # Регулярное выражение для обрезания префикса и суффикса
-  regexp = /#{prefix}(.*)#{suffix}/
-  Dir["#{prefix}**/*#{suffix}"].each do |schema_path|
-    # Обрезаем префикс и суффикс, заменяем '/' на '_'
-    schema = schema_path.gsub(regexp, '\1').tr('/', '_').to_sym
-    config.json_schemas[schema] = schema_path
-  end
+RSpec::Matchers.define :have_proper_body do |schema|
+  match { |response| JSON::Validator.validate(schema, response.body) }
+  description { "has body that matches JSON schema #{schema}" }
 end
