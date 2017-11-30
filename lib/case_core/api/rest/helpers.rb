@@ -2,6 +2,7 @@
 
 require "#{$lib}/actions/cases"
 require "#{$lib}/actions/documents"
+require "#{$lib}/actions/requests"
 require "#{$lib}/helpers/log"
 
 module CaseCore
@@ -61,6 +62,17 @@ module CaseCore
         #
         def documents
           Actions::Documents
+        end
+
+        # Возвращает объект, предоставляющий действия над межведомственными
+        # запросами, созданными в рамках заявок
+        #
+        # @return [#index]
+        #   объект, предоставляющий действия над межведомственными запросами,
+        #   созданными в рамках заявок
+        #
+        def requests
+          Actions::Requests
         end
       end
     end
