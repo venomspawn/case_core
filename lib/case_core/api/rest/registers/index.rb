@@ -6,13 +6,14 @@ module CaseCore
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
       # Пространство имён методов REST API, предоставляющих действия над
-      # записями заявок
+      # реестрами передаваемой корреспонденции
       #
-      module Cases
+      module Registers
         # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
         #
         # Модуль с методом REST API, который возвращает список всех записей
-        # заявок, выбранных с помощью фильтра, если таковой указан
+        # реестров передаваемой корреспонденции, выбранных с помощью фильтра,
+        # если таковой указан
         #
         module Index
           # Регистрация в контроллере необходимых путей
@@ -21,22 +22,22 @@ module CaseCore
           #   контроллер
           #
           def self.registered(controller)
-            # Возвращает список всех записей заявок, выбранных с помощью
-            # фильра, если таковой указан
+            # Возвращает список всех записей реестров передаваемой
+            # корреспонденции, выбранных с помощью фильтра, если таковой указан
             #
             # @param [Hash] params
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Index::ParamsSchema::PARAMS_SCHEMA}
+            #   {CaseCore::Actions::Registers::Index::ParamsSchema::PARAMS_SCHEMA}
             #
             # @return [Status]
             #   200
             #
             # @return [Hash]
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Index::ResultSchema::RESULT_SCHEMA}
+            #   {CaseCore::Actions::Registers::Index::ResultSchema::RESULT_SCHEMA}
             #
-            controller.get '/cases' do
-              content = cases.index(params)
+            controller.get '/registers' do
+              content = registers.index(params)
               status :ok
               body Oj.dump(content)
             end
