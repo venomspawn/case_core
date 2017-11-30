@@ -17,7 +17,7 @@ Sequel.migration do
       column :back_office_id,    :text,          index: true
       column :register_type,     :register_type, index: true, null: false
       column :exported,          :boolean
-      column :exported_id,       :text
+      column :exporter_id,       :text
       column :exported_at,       :timestamp
     end
   end

@@ -52,7 +52,7 @@ RSpec.describe CaseCore::Models::Register do
       cases_dataset
       exported
       exported_at
-      exported_id
+      exporter_id
       institution_rguid
       office_id
       register_type
@@ -207,8 +207,8 @@ RSpec.describe CaseCore::Models::Register do
     end
   end
 
-  describe '#exported_id' do
-    subject(:result) { instance.exported_id }
+  describe '#exporter_id' do
+    subject(:result) { instance.exporter_id }
 
     let(:instance) { create(:register) }
 
@@ -220,7 +220,7 @@ RSpec.describe CaseCore::Models::Register do
       end
 
       context 'when value of the corresponding field is absent' do
-        let(:instance) { create(:register, exported_id: nil) }
+        let(:instance) { create(:register, exporter_id: nil) }
 
         it { is_expected.to be_nil }
       end
