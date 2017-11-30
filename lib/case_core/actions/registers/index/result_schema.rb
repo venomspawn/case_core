@@ -21,22 +21,22 @@ module CaseCore
                   type: :integer
                 },
                 institution_rguid: {
-                  type: %i[string integer null]
+                  type: %i(string integer null)
                 },
                 office_id: {
-                  type: %i[string integer null]
+                  type: %i(string integer null)
                 },
                 back_office_id: {
-                  type: %i[string integer null]
+                  type: %i(string integer null)
                 },
                 register_type: {
                   type: :string
                 },
                 exported: {
-                  type: %i[boolean null]
+                  type: %i(boolean null)
                 },
                 exporter_id: {
-                  type: %i[string integer null]
+                  type: %i(string integer null)
                 },
                 exported_at: {
                   type: :any
@@ -45,7 +45,7 @@ module CaseCore
                   type: :integer
                 }
               },
-              required: %i[
+              required: %i(
                 id
                 institution_rguid
                 office_id
@@ -55,7 +55,7 @@ module CaseCore
                 exporter_id
                 exported_at
                 items_count
-              ],
+              ),
               additionalProperties: false
             }
           }

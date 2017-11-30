@@ -28,40 +28,40 @@ module CaseCore
                       type: :object,
                       properties: {
                         min: {
-                          type: %i[numeric string]
+                          type: %i(numeric string)
                         }
                       },
-                      required: %i[
+                      required: %i(
                         min
-                      ],
+                      ),
                       additionalProperties: false
                     },
                     {
                       type: :object,
                       properties: {
                         max: {
-                          type: %i[numeric string]
+                          type: %i(numeric string)
                         }
                       },
-                      required: %i[
+                      required: %i(
                         max
-                      ],
+                      ),
                       additionalProperties: false
                     },
                     {
                       type: :object,
                       properties: {
                         min: {
-                          type: %i[numeric string]
+                          type: %i(numeric string)
                         },
                         max: {
-                          type: %i[numeric string]
+                          type: %i(numeric string)
                         }
                       },
-                      required: %i[
+                      required: %i(
                         min
                         max
-                      ],
+                      ),
                       additionalProperties: false
                     },
                     {
@@ -78,55 +78,55 @@ module CaseCore
                               type: :object,
                               properties: {
                                 min: {
-                                  type: %i[numeric string]
+                                  type: %i(numeric string)
                                 }
                               },
-                              required: %i[
+                              required: %i(
                                 min
-                              ],
+                              ),
                               additionalProperties: false
                             },
                             {
                               type: :object,
                               properties: {
                                 max: {
-                                  type: %i[numeric string]
+                                  type: %i(numeric string)
                                 }
                               },
-                              required: %i[
+                              required: %i(
                                 max
-                              ],
+                              ),
                               additionalProperties: false
                             },
                             {
                               type: :object,
                               properties: {
                                 min: {
-                                  type: %i[numeric string]
+                                  type: %i(numeric string)
                                 },
                                 max: {
-                                  type: %i[numeric string]
+                                  type: %i(numeric string)
                                 }
                               },
-                              required: %i[
+                              required: %i(
                                 min
                                 max
-                              ],
+                              ),
                               additionalProperties: false
-                            },
+                            }
                           ]
                         }
                       },
-                      required: %i[
+                      required: %i(
                         exclude
-                      ],
+                      ),
                       additionalProperties: false
                     }
                   ]
                 }
               },
               fields: {
-                type: %i[string array],
+                type: %i(string array),
                 items: {
                   type: :string
                 }

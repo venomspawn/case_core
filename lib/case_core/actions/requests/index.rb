@@ -60,7 +60,7 @@ module CaseCore
 
         # Поля, извлекаемые из записей межведомственных запросов
         #
-        REQUEST_FIELDS = %i[id created_at]
+        REQUEST_FIELDS = %i(id created_at)
 
         # Возвращает ассоциативный массив, в котором идентификаторы записей
         # межведомственных запросов, созданных в рамках заявки, отображаются в
@@ -115,7 +115,7 @@ module CaseCore
         #   результирующий ассоциативный массив
         #
         def attrs_info
-          attrs_dataset.select_hash_groups(:request_id, %i[name value])
+          attrs_dataset.select_hash_groups(:request_id, %i(name value))
         end
       end
     end

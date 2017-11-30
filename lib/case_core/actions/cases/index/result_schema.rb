@@ -17,7 +17,7 @@ module CaseCore
             items: {
               type: :object,
               additionalProperties: {
-                type: %i[numeric string boolean null]
+                type: %i(numeric string boolean null)
               }
             }
           }

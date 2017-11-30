@@ -19,36 +19,36 @@ module CaseCore
                 type: :object,
                 properties: {
                   institutution_rguid: {
-                    type: %i[string integer null array],
+                    type: %i(string integer null array),
                     items: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     }
                   },
                   office_id: {
-                    type: %i[string integer null array],
+                    type: %i(string integer null array),
                     items: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     }
                   },
                   back_office_id: {
-                    type: %i[string integer null array],
+                    type: %i(string integer null array),
                     items: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     }
                   },
                   register_type: {
                     type: :string
                   },
                   exported: {
-                    type: %i[boolean null array],
+                    type: %i(boolean null array),
                     items: {
-                      type: %i[boolean null]
+                      type: %i(boolean null)
                     }
                   },
                   exporter_id: {
-                    type: %i[string integer null array],
+                    type: %i(string integer null array),
                     items: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     }
                   },
                   exported_at: {

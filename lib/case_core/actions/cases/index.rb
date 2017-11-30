@@ -152,9 +152,9 @@ module CaseCore
             dataset = dataset.where(id: ids)
           end
 
-          dataset = filter_cases.reduce(dataset) do |memo, (field, value)|
+          filter_cases.reduce(dataset) do |memo, (field, value)|
             cond = FieldCondition.condition(field, value)
-            memo = memo.where(cond)
+            memo.where(cond)
           end
         end
 
@@ -188,7 +188,7 @@ module CaseCore
 
           filter_attributes.reduce(dataset) do |memo, (name, value)|
             cond = AttrValueCondition.condition(name, value)
-            memo = memo.where(cond)
+            memo.where(cond)
           end
         end
 
@@ -230,7 +230,7 @@ module CaseCore
           cases = result_cases_dataset.select_hash(:id, case_fields)
           case_ids = cases.keys if filter.present?
           dataset = result_attrs_dataset(case_ids)
-          attrs_info = dataset.select_hash_groups(:case_id, %i[name value])
+          attrs_info = dataset.select_hash_groups(:case_id, %i(name value))
           attrs_info.each_with_object([]) do |(case_id, attrs), memo|
             case_values = cases[case_id]
             case_hash = Hash[case_fields.zip(case_values)]

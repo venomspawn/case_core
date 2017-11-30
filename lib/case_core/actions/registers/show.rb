@@ -59,7 +59,7 @@ module CaseCore
           params[:id]
         end
 
-        CASE_FIELDS = %i[id created_at]
+        CASE_FIELDS = %i(id created_at)
 
         def cases_info
           @cases_info ||=
@@ -77,7 +77,7 @@ module CaseCore
         def case_attributes_values
           @case_attributes_info ||=
             case_attributes_dataset
-            .select_hash_groups(:case_id, %i[name value])
+            .select_hash_groups(:case_id, %i(name value))
         end
 
         def fill_attributes_info(values)

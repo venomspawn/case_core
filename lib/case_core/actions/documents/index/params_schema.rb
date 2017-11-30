@@ -16,12 +16,12 @@ module CaseCore
             type: :object,
             properties: {
               id: {
-                type: %i[string numeric]
+                type: %i(string numeric)
               }
             },
-            required: %i[
+            required: %i(
               id
-            ]
+            )
           }
         end
       end

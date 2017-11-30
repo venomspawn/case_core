@@ -15,7 +15,7 @@ module CaseCore
           RESULT_SCHEMA = {
             type: :object,
             additionalProperties: {
-              type: %i[numeric string boolean null]
+              type: %i(numeric string boolean null)
             }
           }
         end

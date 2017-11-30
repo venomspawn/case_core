@@ -19,22 +19,22 @@ module CaseCore
                 type: :integer
               },
               institution_rguid: {
-                type: %i[string integer null]
+                type: %i(string integer null)
               },
               office_id: {
-                type: %i[string integer null]
+                type: %i(string integer null)
               },
               back_office_id: {
-                type: %i[string integer null]
+                type: %i(string integer null)
               },
               register_type: {
                 type: :string
               },
               exported: {
-                type: %i[boolean null]
+                type: %i(boolean null)
               },
               exporter_id: {
-                type: %i[string integer null]
+                type: %i(string integer null)
               },
               exported_at: {
                 type: :any
@@ -48,33 +48,33 @@ module CaseCore
                   type: :object,
                   properties: {
                     id: {
-                      type: %i[string integer]
+                      type: %i(string integer)
                     },
                     service_id: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     },
                     applicant_id: {
-                      type: %i[string integer null]
+                      type: %i(string integer null)
                     },
                     created_at: {
                       type: :any
                     },
                     state: {
-                      type: %i[string null]
+                      type: %i(string null)
                     }
                   },
-                  required: %i[
+                  required: %i(
                     id
                     service_id
                     applicant_id
                     created_at
                     state
-                  ],
+                  ),
                   additionalProperties: false
                 }
               }
             },
-            required: %i[
+            required: %i(
               id
               institution_rguid
               office_id
@@ -85,7 +85,7 @@ module CaseCore
               exported_at
               items_count
               items
-            ],
+            ),
             additionalProperties: false
           }
         end
