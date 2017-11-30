@@ -9,6 +9,7 @@ module CaseCore
     #
     module Registers
       require_relative 'registers/index'
+      require_relative 'registers/show'
 
       # Возвращает список ассоциативных массивов атрибутов реестров
       # передаваемой корреспонденции
@@ -22,6 +23,20 @@ module CaseCore
       #
       def self.index(params)
         Index.new(params).index
+      end
+
+      # Возвращает ассоциативный массив с информацией о реестре передаваемой
+      # корреспонденции
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [Hash]
+      #   ассоциативный массив с информацией о реестре передаваемой
+      #   корреспонденции
+      #
+      def self.show(params)
+        Show.new(params).show
       end
     end
   end

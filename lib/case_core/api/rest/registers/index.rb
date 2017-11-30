@@ -32,8 +32,8 @@ module CaseCore
             # @return [Status]
             #   200
             #
-            # @return [Hash]
-            #   ассоциативный массив, структура которого описана схемой
+            # @return [Array]
+            #   список, структура которого описана схемой
             #   {CaseCore::Actions::Registers::Index::ResultSchema::RESULT_SCHEMA}
             #
             controller.get '/registers' do
