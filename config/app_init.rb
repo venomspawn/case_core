@@ -11,8 +11,11 @@ require 'dotenv'
 # Корневая директория
 $root = File.absolute_path("#{__dir__}/..")
 
+# Окружение
+$environment = ENV['RACK_ENV'] || 'development'
+
 # Загружаем переменные окружения из .env файла
-Dotenv.load(File.absolute_path("#{$root}/.env.#{ENV['RACK_ENV']}"))
+Dotenv.load(File.absolute_path("#{$root}/.env.#{$environment}"))
 
 $logger = Logger.new(STDOUT)
 $logger.level = ENV['CC_LOG_LEVEL'] || Logger::DEBUG

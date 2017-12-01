@@ -24,9 +24,9 @@ Sequel.extension :pg_array_ops
 intermediate = ERB.new(IO.read("#{$root}/config/database.yml")).result
 database_options = YAML.safe_load(intermediate, [], [], true)
 # Осуществляем подключение
-db = Sequel.connect(database_options[ENV['RACK_ENV']])
+db = Sequel.connect(database_options[$environment])
 # Добавляем журнал событий
-db.loggers << $logger
+db.loggers << $logger unless $environment == 'production'
 # Устанавливаем, на каком уровне журнала событий происходит отображение
 # SQL-запросов
 db.sql_log_level = :debug
