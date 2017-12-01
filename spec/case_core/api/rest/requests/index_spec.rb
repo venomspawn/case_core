@@ -6,7 +6,7 @@
 # межведомственных запросах, созданных в рамках заявки
 #
 
-RSpec.describe CaseCore::API::REST::Application do
+RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /cases/:id/requests' do
     subject { get "/cases/#{id}/requests" }
 

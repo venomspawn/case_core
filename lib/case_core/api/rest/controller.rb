@@ -21,7 +21,7 @@ module CaseCore
       #
       # Класс контроллера REST API, основанный на Sinatra
       #
-      class Application < Sinatra::Base
+      class Controller < Sinatra::Base
         helpers Helpers
 
         before do

@@ -6,7 +6,7 @@
 # реестрах передаваемой корреспонденции
 #
 
-RSpec.describe CaseCore::API::REST::Application do
+RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /registers' do
     subject { get '/registers', params }
 

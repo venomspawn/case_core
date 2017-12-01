@@ -81,7 +81,7 @@ module CaseCore
         #
         # Регистрация в контроллере обработчиков ошибок
         #
-        # @param [CaseCore::API::REST::Application] controller
+        # @param [CaseCore::API::REST::Controller] controller
         #   контроллер
         #
         def self.registered(controller)
@@ -124,7 +124,7 @@ module CaseCore
         end
       end
 
-      Application.register Errors
+      Controller.register Errors
     end
   end
 end

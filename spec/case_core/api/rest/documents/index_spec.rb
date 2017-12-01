@@ -6,7 +6,7 @@
 # документах, прикреплённых к заявке
 #
 
-RSpec.describe CaseCore::API::REST::Application do
+RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /cases/:id/documents' do
     subject { get "/cases/#{id}/documents" }
 
