@@ -4,7 +4,7 @@ require 'json'
 require 'oj'
 require 'sinatra/base'
 
-require_relative 'rest/helpers'
+require_relative 'helpers'
 
 module CaseCore
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>

@@ -6,7 +6,7 @@
 #
 
 # Загружаем REST-контроллер
-require "#{$lib}/api/rest.rb"
+require "#{$lib}/api/rest/application.rb"
 Dir["#{$lib}/api/rest/**/*.rb"].each(&method(:require))
 
 $app = CaseCore::API::REST::Application
