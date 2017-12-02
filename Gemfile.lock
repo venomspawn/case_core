@@ -35,9 +35,6 @@ GEM
       concurrent-ruby (~> 1.0)
     json-schema (2.8.0)
       addressable (>= 2.4)
-    json-schema-rspec (0.0.4)
-      json-schema (~> 2.5)
-      rspec
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
@@ -81,6 +78,7 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.0)
       tilt (~> 2.0)
+    stomp (1.4.4)
     thin (1.7.2)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0, >= 1.0.4)
@@ -96,7 +94,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    yard (0.9.10)
+    yard (0.9.12)
 
 PLATFORMS
   ruby
@@ -108,7 +106,6 @@ DEPENDENCIES
   dotenv
   factory_girl
   json-schema
-  json-schema-rspec
   oj
   pg
   puma
@@ -119,6 +116,7 @@ DEPENDENCIES
   sequel
   sequel_pg
   sinatra
+  stomp
   thin
   webmock
   yard

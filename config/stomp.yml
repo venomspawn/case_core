@@ -1,0 +1,30 @@
+---
+:hosts:
+- :host: <%= ENV['CC_STOMP_HOST'] %>
+  :port: <%= ENV['CC_STOMP_PORT'] || '61613' %>
+  :ssl: false
+:reliable: true
+:initial_reconnect_delay: 0.01
+:max_reconnect_delay: 30.0
+:use_exponential_back_off: true
+:back_off_multiplier: 2
+:max_reconnect_attempts: 0
+:randomize: false
+:connect_timeout: 0
+:connect_headers:
+  accept-version: '1.2'
+  host: localhost
+:parse_timeout: 5
+:dmh: false
+:closed_check: true
+:hbser: false
+:stompconn: false
+:usecrlf: false
+:max_hbread_fails: 0
+:max_hbrlck_fails: 0
+:fast_hbs_adjust: 0.0
+:connread_timeout: 0
+:tcp_nodelay: true
+:start_timeout: 0
+:sslctx_newparm:
+:ssl_post_conn_check: true

@@ -5,7 +5,7 @@
 # Файл настройки расширений классов
 #
 
-# Загружаем расширения базовых классов из библиотеки ActiveSupport
+# Загрузка расширений базовых классов из библиотеки ActiveSupport
 require 'active_support/core_ext/hash/compact.rb'
 require 'active_support/core_ext/hash/except.rb'
 require 'active_support/core_ext/hash/slice.rb'

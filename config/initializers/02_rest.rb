@@ -5,11 +5,11 @@
 # Файл настройки REST-контроллера
 #
 
-# Загружаем REST-контроллер
+# Загрузка REST-контроллера
 require "#{$lib}/api/rest/controller.rb"
 Dir["#{$lib}/api/rest/**/*.rb"].each(&method(:require))
 
-# Устанавливаем конфигурацию REST-контроллера
+# Установка конфигурации REST-контроллера
 CaseCore::API::REST::Controller.configure do |settings|
   settings.set    :bind, ENV['CC_BIND']
   settings.set    :port, ENV['CC_PORT']
