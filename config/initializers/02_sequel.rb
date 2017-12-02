@@ -32,6 +32,8 @@ db.loggers << $logger unless $environment == 'production'
 db.sql_log_level = :debug
 # Подключение поддержки списков Postgres
 db.extension :pg_array
+# Подключение поддержки типов Postgres JSON и JSONB
+db.extension :pg_json
 # Подключение поддержки перечислимых типов Postgres. Важно, что подключение
 # расширения pg_enum идёт после подключения расширения Sequel migration.
 db.extension :pg_enum
@@ -50,8 +52,10 @@ Sequel::Model.raise_on_typecast_failure = true
 Sequel::Model.plugin :string_stripper
 
 # Загрузка моделей
-begin
-  Dir["#{$lib}/models/**/*.rb"].each(&method(:require))
-rescue
-  nil
+Dir["#{$lib}/models/**/*.rb"].each do |filename|
+  begin
+    require filename
+  rescue
+    nil
+  end
 end
