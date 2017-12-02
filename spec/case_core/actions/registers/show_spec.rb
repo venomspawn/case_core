@@ -66,7 +66,7 @@ RSpec.describe CaseCore::Actions::Registers::Show do
       it { is_expected.to match_json_schema(described_class::RESULT_SCHEMA) }
     end
 
-    context 'when case record can\'t be found by provided id' do
+    context 'when register record can\'t be found by provided id' do
       let(:id) { 100_500 }
 
       it 'should raise Sequel::NoMatchingRow' do
