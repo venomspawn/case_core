@@ -16,19 +16,19 @@ module CaseCore
           #
           def initialize
             @publishers = {}
+            @mutex = Thread::Mutex.new
           end
 
           # Возвращает объект, публикующий сообщения STOMP, сопоставленный
           # предоставленному объекту. Если объект не найден, то он создаётся.
           #
-          # @note
-          #   Реализация не использует никакую синхронизацию потоков
-          #
           # @return [CaseCore::API::STOMP::Publisher]
           #   результирующий объект, публикующий сообщения STOMP
           #
           def [](obj)
-            publishers[obj.object_id] ||= create_publisher(obj)
+            publishers[obj.object_id] || mutex.synchronize do
+              publishers[obj.object_id] ||= create_publisher(obj)
+            end
           end
 
           private
@@ -41,6 +41,14 @@ module CaseCore
           #   сопоставлены объекты, публикующие сообщения STOMP
           #
           attr_reader :publishers
+
+          # Объект, позволяющий синхронизировать создание объектов, публикующих
+          # сообщения STOMP, между различными потоками
+          #
+          # @return [Thread::Mutex]
+          #   объект, позволяющий проводить синхронизацию
+          #
+          attr_reader :mutex
 
           # Создаёт и возвращает новый объект, публикующий сообщения STOMP, а
           # также устанавливает, чтобы идентификатор аргумента был удалён из
