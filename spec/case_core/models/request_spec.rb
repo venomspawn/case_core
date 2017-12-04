@@ -25,6 +25,14 @@ RSpec.describe CaseCore::Models::Request do
       it { is_expected.to be_a(described_class) }
     end
 
+    context 'when id is specified' do
+      let(:params) { { id: nil, case_id: c4s3.id, created_at: Time.now } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
+
     context 'when case id is not specified' do
       let(:params) { { created_at: Time.now } }
 

@@ -41,6 +41,15 @@ RSpec.describe CaseCore::Models::Document do
       end
     end
 
+    context 'when id is used by another record' do
+      let(:document) { create(:document) }
+      let(:id) { document.id }
+
+      it 'should raise Sequel::UniqueConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
+      end
+    end
+
     context 'when case or case id are not specified' do
       let(:params) { { id: id } }
 

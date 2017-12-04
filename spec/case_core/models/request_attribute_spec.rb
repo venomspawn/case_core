@@ -65,6 +65,17 @@ RSpec.describe CaseCore::Models::RequestAttribute do
       end
     end
 
+    context 'when request id and name values are used by another record' do
+      let(:request_attribute) { create(:request_attribute) }
+      let(:request_id) { request_attribute.request_id }
+      let(:name) { request_attribute.name }
+      let(:params) { { request_id: request_id, name: name, value: :value } }
+
+      it 'should raise Sequel::UniqueConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
+      end
+    end
+
     context 'when value is not specified' do
       let(:params) { { request_id: request_id, name: :name } }
 
