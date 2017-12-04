@@ -2,10 +2,10 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса действия создания записи заявки
+# Файл тестирования класса действия создания документа
 #
 
-RSpec.describe CaseCore::Actions::Cases::Create do
+RSpec.describe CaseCore::Actions::Documents::Create do
   describe 'the class' do
     subject { described_class }
 
@@ -15,7 +15,9 @@ RSpec.describe CaseCore::Actions::Cases::Create do
   describe '.new' do
     subject(:result) { described_class.new(params) }
 
-    let(:params) { { type: :type } }
+    let(:params) { { case_id: case_id } }
+    let(:case_id) { c4s3.id }
+    let(:c4s3) { create(:case) }
 
     describe 'result' do
       subject { result }
@@ -32,7 +34,7 @@ RSpec.describe CaseCore::Actions::Cases::Create do
     end
 
     context 'when argument is of Hash type but is of wrong structure' do
-      let(:params) { { type: { wrong: :structure } } }
+      let(:params) { { wrong: :structure } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -43,7 +45,9 @@ RSpec.describe CaseCore::Actions::Cases::Create do
   describe 'instance' do
     subject { described_class.new(params) }
 
-    let(:params) { { type: :type } }
+    let(:params) { { case_id: case_id } }
+    let(:case_id) { c4s3.id }
+    let(:c4s3) { create(:case) }
 
     it { is_expected.to respond_to(:create) }
   end
@@ -52,24 +56,26 @@ RSpec.describe CaseCore::Actions::Cases::Create do
     subject { instance.create }
 
     let(:instance) { described_class.new(params) }
-    let(:params) { { type: :type } }
+    let(:params) { { case_id: case_id } }
+    let(:case_id) { c4s3.id }
+    let(:c4s3) { create(:case) }
 
-    it 'should create a record of `CaseCore::Models::Case` model' do
-      expect { subject }.to change { CaseCore::Models::Case.count }.by(1)
+    it 'should create record of `CaseCore::Models::Document` model' do
+      expect { subject }.to change { CaseCore::Models::Document.count }.by(1)
     end
 
     context 'when `id` attribute is not specified' do
       it 'should create value of the attribute' do
-        expect { subject }.to change { CaseCore::Models::Case.count }.by(1)
+        expect { subject }.to change { CaseCore::Models::Document.count }.by(1)
       end
     end
 
     context 'when `id` attribute is specified' do
-      let(:params) { { id: id, type: :type } }
+      let(:params) { { id: id, case_id: case_id } }
       let(:id) { 'id' }
 
       context 'when a record with the value exists' do
-        let!(:case) { create(:case, id: :id, type: :type) }
+        let!(:document) { create(:document, id: :id, case_id: case_id) }
 
         it 'should raise Sequel::UniqueConstraintViolation' do
           expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
@@ -77,30 +83,21 @@ RSpec.describe CaseCore::Actions::Cases::Create do
       end
 
       context 'when a record with the value doesn\'t exist' do
-        let(:c4s3) { CaseCore::Models::Case.last }
+        let(:document) { CaseCore::Models::Document.last }
 
         it 'should use specified value' do
           subject
-          expect(c4s3.id).to be == id
+          expect(document.id).to be == id
         end
       end
     end
 
-    context 'when there are attributes besides `id` and `type`' do
-      let(:params) { { type: :type, attr1: :value1, attr2: :value2 } }
+    context 'when case record can\'t be found by provided id' do
+      let(:case_id) { 'won\'t be found' }
 
-      it 'should create records of `CaseCore::Models::CaseAttribute` model' do
+      it 'should raise Sequel::ForeignKeyConstraintViolation' do
         expect { subject }
-          .to change { CaseCore::Models::CaseAttribute.count }
-          .by(2)
-      end
-    end
-
-    context 'when there are documents linked to the case' do
-      let(:params) { { type: :type, documents: [{ id: :id }, { id: :id2 }] } }
-
-      it 'should create records of `CaseCore::Models::Document` model' do
-        expect { subject }.to change { CaseCore::Models::Document.count }.by(2)
+          .to raise_error(Sequel::ForeignKeyConstraintViolation)
       end
     end
   end

@@ -24,64 +24,68 @@ module CaseCore
               documents: {
                 type: :array,
                 items: {
-                  id: {
-                    type: %i(string number boolean null)
+                  type: :object,
+                  properties: {
+                    id: {
+                      type: %i(string number boolean null)
+                    },
+                    title: {
+                      type: %i(string null)
+                    },
+                    direction: {
+                      oneOf: [
+                        {
+                          type: :string,
+                          enum: %w(input output)
+                        },
+                        {
+                          type: :null
+                        }
+                      ]
+                    },
+                    correct: {
+                      type: %i(boolean null)
+                    },
+                    provided_as: {
+                      oneOf: [
+                        {
+                          type: :string,
+                          enum: %w(original copy notarized_copy doc_list)
+                        },
+                        {
+                          type: :null
+                        }
+                      ]
+                    },
+                    size: {
+                      type: %i(string number null)
+                    },
+                    last_modified: {
+                      type: %i(string number null)
+                    },
+                    quantity: {
+                      type: %i(integer null)
+                    },
+                    mime_type: {
+                      type: %i(string null)
+                    },
+                    filename: {
+                      type: %i(string null)
+                    },
+                    provided: {
+                      type: %i(boolean null)
+                    },
+                    in_document_id: {
+                      type: %i(string number boolean null)
+                    },
+                    fs_id: {
+                      type: %i(string number boolean null)
+                    },
+                    created_at: {
+                      type: %i(string number boolean null)
+                    }
                   },
-                  title: {
-                    type: %i(string null)
-                  },
-                  direction: {
-                    oneOf: [
-                      {
-                        type: :string,
-                        enum: %w(input output)
-                      },
-                      {
-                        type: :null
-                      }
-                    ]
-                  },
-                  correct: {
-                    type: %i(boolean null)
-                  },
-                  provided_as: {
-                    oneOf: [
-                      {
-                        type: :string,
-                        enum: %w(original copy notarized_copy doc_list)
-                      },
-                      {
-                        type: :null
-                      }
-                    ]
-                  },
-                  size: {
-                    type: %i(string number null)
-                  },
-                  last_modified: {
-                    type: %i(string number null)
-                  },
-                  quantity: {
-                    type: %i(integer null)
-                  },
-                  mime_type: {
-                    type: %i(string null)
-                  },
-                  filename: {
-                    type: %i(string null)
-                  },
-                  provided: {
-                    type: %i(boolean null)
-                  },
-                  in_document_id: {
-                    type: %i(string number boolean null)
-                  },
-                  fs_id: {
-                    type: %i(string number boolean null)
-                  },
-                  created_at: {
-                    type: %i(string number boolean null)
-                  }
+                  additionalProperties: false
                 }
               }
             },
