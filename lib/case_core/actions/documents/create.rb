@@ -39,9 +39,7 @@ module CaseCore
         #   результирующий ассоциативный массив атрибутов записи документа
         #
         def attrs
-          params.symbolize_keys.tap do |result|
-            result[:id] ||= SecureRandom.uuid
-          end
+          params.dup.tap { |result| result[:id] ||= SecureRandom.uuid }
         end
       end
     end

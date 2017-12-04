@@ -35,16 +35,6 @@ module CaseCore
 
         private
 
-        # Создаёт и возвращает ассоциативный массив атрибутов заявки, в котором
-        # ключи приведены к типу Symbol, на основе параметров действия
-        #
-        # @return [Hash]
-        #   результирующий ассоциативный массив
-        #
-        def attrs
-          @attrs ||= params.deep_symbolize_keys
-        end
-
         # Создаёт и возвращает ассоциативный массив атрибутов записи заявки на
         # основе параметров действия
         #
@@ -52,7 +42,7 @@ module CaseCore
         #   результирующий ассоциативный массив
         #
         def case_attrs
-          attrs.slice(:id, :type).tap do |result|
+          params.slice(:id, :type).tap do |result|
             result[:id] ||= SecureRandom.uuid
             result[:created_at] = Time.now
           end
@@ -66,7 +56,7 @@ module CaseCore
         #   результирующий ассоциативный массив
         #
         def attributes_attrs
-          attrs.except(:id, :type, :created_at, :documents)
+          params.except(:id, :type, :created_at, :documents)
         end
 
         # Возвращает список атрибутов записей документов
@@ -75,7 +65,7 @@ module CaseCore
         #   результирующий список
         #
         def documents_attrs
-          attrs[:documents] || []
+          params[:documents] || []
         end
 
         # Создаёт записи атрибутов заявки

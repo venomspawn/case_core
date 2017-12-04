@@ -2,7 +2,7 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса действия создания документа
+# Файл тестирования класса действия создания записи документа
 #
 
 RSpec.describe CaseCore::Actions::Documents::Create do
@@ -15,9 +15,7 @@ RSpec.describe CaseCore::Actions::Documents::Create do
   describe '.new' do
     subject(:result) { described_class.new(params) }
 
-    let(:params) { { case_id: case_id } }
-    let(:case_id) { c4s3.id }
-    let(:c4s3) { create(:case) }
+    let(:params) { { id: :id, case_id: :case_id } }
 
     describe 'result' do
       subject { result }
@@ -45,9 +43,7 @@ RSpec.describe CaseCore::Actions::Documents::Create do
   describe 'instance' do
     subject { described_class.new(params) }
 
-    let(:params) { { case_id: case_id } }
-    let(:case_id) { c4s3.id }
-    let(:c4s3) { create(:case) }
+    let(:params) { { id: :id, case_id: :case_id } }
 
     it { is_expected.to respond_to(:create) }
   end

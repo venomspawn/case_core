@@ -10,6 +10,7 @@ module CaseCore
     module Documents
       require_relative 'documents/create'
       require_relative 'documents/index'
+      require_relative 'documents/update'
 
       # Создаёт запись документа и прикрепляет её к записи заявки
       #
@@ -32,6 +33,15 @@ module CaseCore
       #
       def self.index(params)
         Index.new(params).index
+      end
+
+      # Обновляет запись документа
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      def self.update(params)
+        Update.new(params).update
       end
     end
   end
