@@ -28,7 +28,7 @@ module CaseCore
                       type: :object,
                       properties: {
                         min: {
-                          type: %i(numeric string)
+                          type: %i(number string)
                         }
                       },
                       required: %i(
@@ -40,7 +40,7 @@ module CaseCore
                       type: :object,
                       properties: {
                         max: {
-                          type: %i(numeric string)
+                          type: %i(number string)
                         }
                       },
                       required: %i(
@@ -52,10 +52,10 @@ module CaseCore
                       type: :object,
                       properties: {
                         min: {
-                          type: %i(numeric string)
+                          type: %i(number string)
                         },
                         max: {
-                          type: %i(numeric string)
+                          type: %i(number string)
                         }
                       },
                       required: %i(
@@ -78,7 +78,7 @@ module CaseCore
                               type: :object,
                               properties: {
                                 min: {
-                                  type: %i(numeric string)
+                                  type: %i(number string)
                                 }
                               },
                               required: %i(
@@ -90,7 +90,7 @@ module CaseCore
                               type: :object,
                               properties: {
                                 max: {
-                                  type: %i(numeric string)
+                                  type: %i(number string)
                                 }
                               },
                               required: %i(
@@ -102,10 +102,10 @@ module CaseCore
                               type: :object,
                               properties: {
                                 min: {
-                                  type: %i(numeric string)
+                                  type: %i(number string)
                                 },
                                 max: {
-                                  type: %i(numeric string)
+                                  type: %i(number string)
                                 }
                               },
                               required: %i(

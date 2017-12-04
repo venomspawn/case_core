@@ -141,7 +141,7 @@ module CaseCore
           #   если тело сообщения не является корректной JSON-строкой
           #
           def body!
-            JSON.parse(message.body)
+            JSON.parse(message.body, symbolize_names: true)
           end
 
           # Возвращает ассоциативный массив заголовков сообщения STOMP

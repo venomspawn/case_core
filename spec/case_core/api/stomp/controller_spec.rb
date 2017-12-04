@@ -220,6 +220,31 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       end
     end
 
+    context 'when body is not a JSON-string' do
+      let(:body) { 'not a JSON-string' }
+
+      it 'should create record of `CaseCore::Models::ProcessingStatus`' do
+        expect { subject }
+          .to change { CaseCore::Models::ProcessingStatus.count }
+          .by(1)
+      end
+
+      it 'should set `error` status in the created record' do
+        subject
+        expect(last_status).to be == 'error'
+      end
+
+      it 'should set error class information in the created record' do
+        subject
+        expect(last_error_class).not_to be_nil
+      end
+
+      it 'should set error text in the created record' do
+        subject
+        expect(last_error_text).not_to be_nil
+      end
+    end
+
     context 'when function can\'t be found by `x_action` header value' do
       let(:action) { 'wrong' }
 
@@ -477,6 +502,31 @@ RSpec.describe CaseCore::API::STOMP::Controller do
 
     context 'when `x_action` header is absent' do
       let(:action) { nil }
+
+      it 'should create record of `CaseCore::Models::ProcessingStatus`' do
+        expect { subject }
+          .to change { CaseCore::Models::ProcessingStatus.count }
+          .by(1)
+      end
+
+      it 'should set `error` status in the created record' do
+        subject
+        expect(last_status).to be == 'error'
+      end
+
+      it 'should set error class information in the created record' do
+        subject
+        expect(last_error_class).not_to be_nil
+      end
+
+      it 'should set error text in the created record' do
+        subject
+        expect(last_error_text).not_to be_nil
+      end
+    end
+
+    context 'when body is not a JSON-string' do
+      let(:body) { 'not a JSON-string' }
 
       it 'should create record of `CaseCore::Models::ProcessingStatus`' do
         expect { subject }

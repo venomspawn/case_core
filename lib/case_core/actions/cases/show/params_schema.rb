@@ -16,7 +16,7 @@ module CaseCore
             type: :object,
             properties: {
               id: {
-                type: %i(string numeric)
+                type: %i(string number boolean)
               }
             },
             required: %i(

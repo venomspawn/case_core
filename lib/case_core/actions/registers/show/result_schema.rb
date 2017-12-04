@@ -19,13 +19,13 @@ module CaseCore
                 type: :integer
               },
               institution_rguid: {
-                type: %i(string integer null)
+                type: %i(string number boolean null)
               },
               office_id: {
-                type: %i(string integer null)
+                type: %i(string number boolean null)
               },
               back_office_id: {
-                type: %i(string integer null)
+                type: %i(string number boolean null)
               },
               register_type: {
                 type: :string
@@ -34,7 +34,7 @@ module CaseCore
                 type: %i(boolean null)
               },
               exporter_id: {
-                type: %i(string integer null)
+                type: %i(string number boolean null)
               },
               exported_at: {
                 type: :any
@@ -48,13 +48,13 @@ module CaseCore
                   type: :object,
                   properties: {
                     id: {
-                      type: %i(string integer)
+                      type: %i(string number boolean)
                     },
                     service_id: {
-                      type: %i(string integer null)
+                      type: %i(string number boolean null)
                     },
                     applicant_id: {
-                      type: %i(string integer null)
+                      type: %i(string number boolean null)
                     },
                     created_at: {
                       type: :any
