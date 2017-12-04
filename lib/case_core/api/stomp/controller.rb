@@ -1,9 +1,11 @@
 # encoding: utf-8
 
 require 'singleton'
+require 'stomp'
 
 require "#{$lib}/settings/configurable"
 
+require_relative 'controller/processor'
 require_relative 'controller/publishers'
 require_relative 'controller/subscriber'
 
@@ -23,7 +25,7 @@ module CaseCore
         extend Settings::Configurable
         include Singleton
 
-        settings_names :connection_info
+        settings_names :connection_info, :incoming_queue
 
         # Публикует сообщение STOMP в очереди с данным названием
         #
@@ -58,8 +60,19 @@ module CaseCore
         # @return [CaseCore::API::STOMP::Controller::Subscriber]
         #   объект, осуществляющий подписку на очередь
         #
+        # @raise [ArgumentError]
+        #   если методу не предоставлен блок
+        #
         def self.subscribe(queue, wait_for_messages = true, &block)
           instance.subscribe(queue, wait_for_messages, &block)
+        end
+
+        # Подписывается на основную очередь, название которой задаётся с
+        # помощью настройки `incoming_queue`, и осуществляет разбор входящих
+        # сообщений согласно API
+        #
+        def self.run!
+          instance.run!
         end
 
         # Публикует сообщение STOMP в очереди с данным названием
@@ -96,10 +109,23 @@ module CaseCore
         # @return [CaseCore::API::STOMP::Controller::Subscriber]
         #   объект, осуществляющий подписку на очередь
         #
+        # @raise [ArgumentError]
+        #   если методу не предоставлен блок
+        #
         def subscribe(queue, wait_for_messages = true, &block)
           Subscriber.new(queue).tap do |subscriber|
             subscriber.subscribe(wait_for_messages, &block)
           end
+        end
+
+        # Подписывается на основную очередь, название которой задаётся с
+        # помощью настройки `incoming_queue`, и осуществляет разбор входящих
+        # сообщений STOMP.
+        #
+        def run!
+          incoming_queue = Controller.settings.incoming_queue
+          subscribe(incoming_queue, &Processor.method(:process))
+          nil
         end
 
         private

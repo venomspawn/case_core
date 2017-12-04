@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'stomp'
-
 require_relative 'client/stomp_logger'
 
 module CaseCore
