@@ -17,7 +17,7 @@ module CaseCore
         module Index
           # Регистрация в контроллере необходимых путей
           #
-          # @param [CaseCore::API::REST::Application] controller
+          # @param [CaseCore::API::REST::Controller] controller
           #   контроллер
           #
           def self.registered(controller)
@@ -43,7 +43,7 @@ module CaseCore
           end
         end
 
-        Application.register Index
+        Controller.register Index
       end
     end
   end

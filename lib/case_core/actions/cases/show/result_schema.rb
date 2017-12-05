@@ -14,8 +14,19 @@ module CaseCore
           #
           RESULT_SCHEMA = {
             type: :object,
+            properties: {
+              id: {
+                type: %i(number string boolean)
+              },
+              type: {
+                type: %i(number string boolean)
+              },
+              created_at: {
+                type: :any
+              }
+            },
             additionalProperties: {
-              type: %i(numeric string boolean null)
+              type: %i(number string boolean null)
             }
           }
         end

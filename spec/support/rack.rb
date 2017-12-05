@@ -11,10 +11,10 @@ module Support
   module RackHelper
     include Rack::Test::Methods
 
-    # Тестируемое приложение
+    # Тестируемый REST-контроллер
     #
     def app
-      $app
+      CaseCore::API::REST::Controller
     end
   end
 end

@@ -2,6 +2,7 @@
 
 require "#{$lib}/actions/cases"
 require "#{$lib}/actions/documents"
+require "#{$lib}/actions/processing_statuses"
 require "#{$lib}/actions/registers"
 require "#{$lib}/actions/requests"
 require "#{$lib}/helpers/log"
@@ -85,6 +86,17 @@ module CaseCore
         #
         def registers
           Actions::Registers
+        end
+
+        # Возвращает объект, предоставляющий действия над записями статусов
+        # обработки сообщений STOMP
+        #
+        # @return [#show]
+        #   объект, предоставляющий действия над записями статусов обработки
+        #   сообщений STOMP
+        #
+        def processing_statuses
+          Actions::ProcessingStatuses
         end
       end
     end

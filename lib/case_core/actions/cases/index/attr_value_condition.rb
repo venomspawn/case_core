@@ -14,7 +14,7 @@ module CaseCore
         module AttrValueCondition
           # Возвращает условие для запроса Sequel к таблице атрибутов заявок
           #
-          # @param [String] name
+          # @param [#to_s] name
           #   название атрибута
           #
           # @param [Object] value
@@ -38,7 +38,7 @@ module CaseCore
           #
           def self.condition(name, value)
             value_cond = FieldCondition.condition(:value, value)
-            Sequel.&({ name: name }, value_cond)
+            Sequel.&({ name: name.to_s }, value_cond)
           end
         end
       end

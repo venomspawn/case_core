@@ -72,6 +72,17 @@ RSpec.describe CaseCore::Models::CaseAttribute do
       end
     end
 
+    context 'when case id and name values are used by another record' do
+      let(:case_attribute) { create(:case_attribute) }
+      let(:case_id) { case_attribute.case_id }
+      let(:name) { case_attribute.name }
+      let(:params) { { case_id: case_id, name: name, value: :value } }
+
+      it 'should raise Sequel::UniqueConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
+      end
+    end
+
     context 'when value is not specified' do
       let(:params) { { case_id: case_id, name: :name } }
 

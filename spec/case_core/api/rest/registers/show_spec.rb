@@ -6,7 +6,7 @@
 # передаваемой корреспонденции с заданным идентификатором записи
 #
 
-RSpec.describe CaseCore::API::REST::Application do
+RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /registers/:id' do
     subject { get "/registers/#{id}" }
 

@@ -11,7 +11,7 @@ module CaseCore
         module Show
           # Регистрация в контроллере необходимых путей
           #
-          # @param [CaseCore::API::REST::Application] controller
+          # @param [CaseCore::API::REST::Controller] controller
           #   контроллер
           #
           def self.registered(controller)
@@ -36,7 +36,7 @@ module CaseCore
           end
         end
 
-        Application.register Show
+        Controller.register Show
       end
     end
   end

@@ -5,7 +5,7 @@
 # Файл тестирования метода REST API, возвращающего информацию о заявке
 #
 
-RSpec.describe CaseCore::API::REST::Application do
+RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /cases/:id' do
     subject { get "/cases/#{id}" }
 

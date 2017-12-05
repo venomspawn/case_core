@@ -18,10 +18,10 @@ module CaseCore
               type: :object,
               properties: {
                 id: {
-                  type: :string
+                  type: %i(string number boolean)
                 },
                 case_id: {
-                  type: :string
+                  type: %i(string number boolean)
                 },
                 title: {
                   type: %i(string null)
@@ -54,10 +54,10 @@ module CaseCore
                   type: %i(boolean null)
                 },
                 in_document_id: {
-                  type: %i(string null)
+                  type: %i(string number boolean null)
                 },
                 fs_id: {
-                  type: %i(string null)
+                  type: %i(string number boolean null)
                 },
                 created_at: {
                   type: :any

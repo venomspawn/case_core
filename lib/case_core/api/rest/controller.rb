@@ -4,7 +4,7 @@ require 'json'
 require 'oj'
 require 'sinatra/base'
 
-require_relative 'rest/helpers'
+require_relative 'helpers'
 
 module CaseCore
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
@@ -21,7 +21,7 @@ module CaseCore
       #
       # Класс контроллера REST API, основанный на Sinatra
       #
-      class Application < Sinatra::Base
+      class Controller < Sinatra::Base
         helpers Helpers
 
         before do

@@ -34,7 +34,7 @@ module CaseCore
         #
         def initialize(params)
           JSON::Validator.validate!(params_schema, params)
-          @params = params
+          @params = sanitize_params(params)
         end
 
         private
@@ -45,6 +45,25 @@ module CaseCore
         #   параметры действия
         #
         attr_reader :params
+
+        # Возвращает параметры действия в исправленном виде
+        #
+        # @param [Object] params
+        #   исходные параметры действия
+        #
+        # @return [Object]
+        #   параметры действия в исправленном виде
+        #
+        def sanitize_params(params)
+          case params
+          when Hash
+            params.deep_symbolize_keys
+          when Array
+            params.map(&method(:sanitize_params))
+          else
+            params
+          end
+        end
 
         # Возвращает схему, по которой проверяется объект параметров
         #

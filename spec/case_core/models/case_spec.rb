@@ -39,6 +39,15 @@ RSpec.describe CaseCore::Models::Case do
       end
     end
 
+    context 'when case id already used by another record' do
+      let!(:c4s3) { create(:case) }
+      let(:params) { { id: c4s3.id, type: :type, created_at: Time.now } }
+
+      it 'should raise Sequel::UniqueConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
+      end
+    end
+
     context 'when case type is not specified' do
       let(:params) { { id: create(:string), created_at: Time.now } }
 
