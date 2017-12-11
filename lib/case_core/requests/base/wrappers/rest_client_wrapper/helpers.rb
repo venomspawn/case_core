@@ -137,7 +137,7 @@ module CaseCore
               log_debug(context) { <<-LOG }
                 #{method} REQUEST TO `#{url}` GOT RESPONSE
                 `#{adjusted_response_body(response)}` WITH #{response.code}
-                CODE AND #{Censorshipi::Filter.process(response.headers)}
+                CODE AND #{Censorship::Filter.process(response.headers)}
                 HEADERS
               LOG
             end
