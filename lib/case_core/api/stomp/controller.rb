@@ -6,6 +6,7 @@ require 'stomp'
 require "#{$lib}/settings/configurable"
 
 require_relative 'controller/processors/incoming'
+require_relative 'controller/processors/response'
 require_relative 'controller/publishers'
 require_relative 'controller/subscriber'
 
