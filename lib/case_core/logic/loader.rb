@@ -2,10 +2,9 @@
 
 require 'singleton'
 
-require "#{$lib}/helpers/log"
 require "#{$lib}/settings/configurable"
 
-require_relative 'loader/errors'
+require_relative 'loader/helpers'
 require_relative 'loader/module_info'
 require_relative 'loader/utils'
 
@@ -23,7 +22,7 @@ module CaseCore
     # библиотеки
     #
     class Loader
-      include Helpers::Log
+      include Helpers
       extend  Settings::Configurable
       include Singleton
 
@@ -225,8 +224,9 @@ module CaseCore
       #
       def unload_module(name)
         module_name = extract_module(name).to_s
+        module_info = modules_info.delete(name)
+        call_logic_func(module_info, :on_unload)
         Object.send(:remove_const, module_name) unless module_name.empty?
-        modules_info.delete(name)
       end
 
       # Ищет модуль среди констант пространства имён `Object` по
@@ -285,47 +285,31 @@ module CaseCore
         logic_module = find_module(name, constants_before, Object.constants)
         check_if_logic_module_is_found!(name, utils.filename, logic_module)
         version = utils.last_lib_version
-        modules_info[name] = ModuleInfo.new(version, logic_module)
+        module_info = ModuleInfo.new(version, logic_module)
+        modules_info[name] = module_info
+        call_logic_func(module_info, :on_load)
       rescue Exception => e
         log_load_module_error(name, e, binding)
       end
 
-      # Проверяет, что модуль был найден
+      # Вызывает функцию, если это возможно, у модуля бизнес-логики,
+      # информация о котором предоставлена в качестве аргумента
       #
-      # @param [String] name
-      #   название модуля в змеином_регистре
+      # @param [NilClass, CaseCore::Logic::Loader::ModuleInfo]
+      #   информация о модуле или `nil`
       #
-      # @param [String] filename
-      #   путь к файлу с модулем
+      # @param [Symbol] func_name
+      #   название функции
       #
-      # @param [NilClass, Module] logic_module
-      #   найденный модуль или `nil`, если модуль не был найден
-      #
-      # @raise [CaseCore::Logic::Loader::Errors::LogicModule::NotFound]
-      #   если модуль не был найден
-      #
-      def check_if_logic_module_is_found!(name, filename, logic_module)
-        return unless logic_module.nil?
-        raise Errors::LogicModule::NotFound.new(name, filename)
-      end
-
-      # Создаёт запись в журнале событий о том, что во время загрузки модуля с
-      # данным названием произошла ошибка
-      #
-      # @param [String] name
-      #   название модуля в змеином_регистре
-      #
-      # @param [Exception] e
-      #   объект с информацией об ошибке
-      #
-      # @param [Binding] context
-      #   контекст
-      #
-      def log_load_module_error(name, e, context)
-        log_error(context) { <<-LOG }
-          Во время загрузки модуля с названием #{name} произошла ошибка
-          `#{e.class}`: `#{e.message}`
-        LOG
+      def call_logic_func(module_info, func_name)
+        logic = module_info&.logic_module || return
+        if logic.respond_to?(func_name)
+          logic.send(func_name)
+        else
+          log_no_func(logic, func_name, binding)
+        end
+      rescue Exception => e
+        log_func_error(e, logic, func_name, binding)
       end
     end
   end

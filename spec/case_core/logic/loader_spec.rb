@@ -75,12 +75,30 @@ RSpec.describe CaseCore::Logic::Loader do
             described_class.instance.logic(name)
             FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
             FileUtils.touch(dir, mtime: Time.now + 1)
+
+            allow(old_module).to receive(:on_load)
+            allow(old_module).to receive(:on_unload)
           end
 
           let!(:old_module) { Object::TestCase }
 
           it 'should reload the module' do
             expect(subject).not_to be == old_module
+          end
+
+          it 'should call `on_unload` method of the old module' do
+            expect(old_module).to receive(:on_unload)
+            subject
+          end
+
+          it 'should call `on_load` method of the new module' do
+            expect(described_class.instance)
+              .to receive(:call_logic_func)
+              .with(instance_of(described_class::ModuleInfo), :on_unload)
+            expect(described_class.instance)
+              .to receive(:call_logic_func)
+              .with(instance_of(described_class::ModuleInfo), :on_load)
+            subject
           end
         end
 
@@ -187,6 +205,21 @@ RSpec.describe CaseCore::Logic::Loader do
 
           it 'should reload the module' do
             expect(subject).not_to be == old_module
+          end
+
+          it 'should call `on_unload` method of the old module' do
+            expect(old_module).to receive(:on_unload)
+            subject
+          end
+
+          it 'should call `on_load` method of the new module' do
+            expect(instance)
+              .to receive(:call_logic_func)
+              .with(instance_of(described_class::ModuleInfo), :on_unload)
+            expect(instance)
+              .to receive(:call_logic_func)
+              .with(instance_of(described_class::ModuleInfo), :on_load)
+            subject
           end
         end
 
