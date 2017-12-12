@@ -76,7 +76,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
   end
 
   describe '.run!' do
-    include CaseCore::API::STOMP::Controller::ProcessorSpecHelper
+    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
       client = double('stomp-client')
@@ -84,6 +84,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       allow(client).to receive(:join)
       allow(client).to receive(:close)
       allow(Stomp::Client).to receive(:new).and_return(client)
+
+      allow(CaseCore::API::STOMP::Controller.instance).to receive(:sleep)
 
       CaseCore::Actions::Tests = Module.new
       CaseCore::Actions::Tests.define_singleton_method(:test) { |param| }
@@ -96,7 +98,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     subject { described_class.run! }
 
     let(:message) { create(:stomp_message, headers: headers, body: body) }
-    let(:headers) { create_headers(message_id, entities, action) }
+    let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }
     let(:entities) { 'tests' }
     let(:action) { 'test' }
@@ -380,7 +382,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
   end
 
   describe '#run!' do
-    include CaseCore::API::STOMP::Controller::ProcessorSpecHelper
+    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
       client = double('stomp-client')
@@ -388,6 +390,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       allow(client).to receive(:join)
       allow(client).to receive(:close)
       allow(Stomp::Client).to receive(:new).and_return(client)
+
+      allow(CaseCore::API::STOMP::Controller.instance).to receive(:sleep)
 
       CaseCore::Actions::Tests = Module.new
       CaseCore::Actions::Tests.define_singleton_method(:test) { |param| }
@@ -401,7 +405,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
 
     let(:instance) { described_class.instance }
     let(:message) { create(:stomp_message, headers: headers, body: body) }
-    let(:headers) { create_headers(message_id, entities, action) }
+    let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }
     let(:entities) { 'tests' }
     let(:action) { 'test' }

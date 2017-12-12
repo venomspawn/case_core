@@ -5,7 +5,7 @@ require 'stomp'
 
 require "#{$lib}/settings/configurable"
 
-require_relative 'controller/processor'
+require_relative 'controller/processors/incoming'
 require_relative 'controller/publishers'
 require_relative 'controller/subscriber'
 
@@ -123,9 +123,8 @@ module CaseCore
         # сообщений STOMP.
         #
         def run!
-          incoming_queue = Controller.settings.incoming_queue
-          subscribe(incoming_queue, &Processor.method(:process))
-          nil
+          subscribe_on_incoming
+          sleep
         end
 
         private
@@ -139,6 +138,15 @@ module CaseCore
         #
         def publishers
           @publishers ||= Publishers.new
+        end
+
+        # Осуществляет подписку на очередь сообщений, после разбора которых
+        # осуществляется вызов действий
+        #
+        def subscribe_on_incoming
+          incoming_queue = Controller.settings.incoming_queue
+          block = Processors::Incoming.method(:process)
+          subscribe(incoming_queue, false, &block)
         end
       end
     end

@@ -8,7 +8,7 @@
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   describe 'creation of case' do
-    include CaseCore::API::STOMP::Controller::ProcessorSpecHelper
+    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
       client = double('stomp-client')
@@ -16,12 +16,14 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       allow(client).to receive(:join)
       allow(client).to receive(:close)
       allow(Stomp::Client).to receive(:new).and_return(client)
+
+      allow(CaseCore::API::STOMP::Controller.instance).to receive(:sleep)
     end
 
     subject(:run!) { described_class.run! }
 
     let(:message) { create(:stomp_message, headers: headers, body: body) }
-    let(:headers) { create_headers(message_id, entities, action) }
+    let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }
     let(:entities) { 'cases' }
     let(:action) { 'create' }
