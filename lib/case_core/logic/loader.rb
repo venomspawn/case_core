@@ -225,8 +225,9 @@ module CaseCore
       #
       def unload_module(name)
         module_name = extract_module(name).to_s
+        module_info = modules_info.delete(name)
+        call_logic_func(module_info, :on_unload)
         Object.send(:remove_const, module_name) unless module_name.empty?
-        modules_info.delete(name)
       end
 
       # Ищет модуль среди констант пространства имён `Object` по
@@ -285,7 +286,9 @@ module CaseCore
         logic_module = find_module(name, constants_before, Object.constants)
         check_if_logic_module_is_found!(name, utils.filename, logic_module)
         version = utils.last_lib_version
-        modules_info[name] = ModuleInfo.new(version, logic_module)
+        module_info = ModuleInfo.new(version, logic_module)
+        modules_info[name] = module_info
+        call_logic_func(module_info, :on_load)
       rescue Exception => e
         log_load_module_error(name, e, binding)
       end
@@ -325,6 +328,66 @@ module CaseCore
         log_error(context) { <<-LOG }
           Во время загрузки модуля с названием #{name} произошла ошибка
           `#{e.class}`: `#{e.message}`
+        LOG
+      end
+
+      # Вызывает функцию, если это возможно, у модуля бизнес-логики, информация
+      # о котором предоставлена в качестве аргумента
+      #
+      # @param [NilClass, CaseCore::Logic::Loader::ModuleInfo]
+      #   информация о модуле или `nil`
+      #
+      # @param [Symbol] func_name
+      #   название функции
+      #
+      def call_logic_func(module_info, func_name)
+        logic = module_info&.logic_module || return
+        if logic.respond_to?(func_name)
+          logic.send(func_name)
+        else
+          log_no_func(logic, func_name, binding)
+        end
+      rescue Exception => e
+        log_func_error(e, logic, func_name, binding)
+      end
+
+      # Создаёт новую запись в журнале событий о том, что у модуля
+      # бизнес-логики отсутствует функция с данным именем
+      #
+      # @param [Module] logic
+      #   модуль бизнес-логики
+      #
+      # @param [#to_s] func_name
+      #   название функции
+      #
+      # @param [Binding] context
+      #   контекст
+      #
+      def log_no_func(logic, func_name, context)
+        log_debug(context) { <<-LOG }
+          У модуля бизнес-логики `#{logic}` отсутствует функция `#{func_name}`
+        LOG
+      end
+
+      # Создаёт новую запись в журнале событий о том, что при вызове функции у
+      # модуля бизнес-логики произошла ошибка
+      #
+      # @param [Exception] e
+      #   объект с информацией об ошибке
+      #
+      # @param [Module] logic
+      #   модуль бизнес-логики
+      #
+      # @param [#to_s] func_name
+      #   название функции
+      #
+      # @param [Binding] context
+      #   контекст
+      #
+      def log_func_error(e, logic, func_name, context)
+        log_error(context) { <<-LOG }
+          При вызове функции `#{func_name}` модуля бизнес-логики `#{logic}`
+          произошла ошибка `#{e.class}`: `#{e.message}`
         LOG
       end
     end
