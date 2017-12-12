@@ -46,6 +46,15 @@ module CaseCore
         instance.logic(name)
       end
 
+      # Возвращает список загруженных модулей бизнес-логики
+      #
+      # @return [Array<Module>]
+      #   список загруженных модулей бизнес-логики
+      #
+      def self.loaded_logics
+        instance.loaded_logics
+      end
+
       # Инициализирует объект класса
       #
       def initialize
@@ -71,6 +80,15 @@ module CaseCore
         name = name.to_s
         reload_module(name) if reload?(name)
         modules_info[name]&.logic_module
+      end
+
+      # Возвращает список загруженных модулей бизнес-логики
+      #
+      # @return [Array<Module>]
+      #   список загруженных модулей бизнес-логики
+      #
+      def loaded_logics
+        modules_info.values.map(&:logic_module)
       end
 
       private

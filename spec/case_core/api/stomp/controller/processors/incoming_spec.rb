@@ -2,11 +2,12 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса `CaseCore::API::STOMP::Controller::Processor`
-# обработчиков сообщений STOMP
+# Файл тестирования класса
+# `CaseCore::API::STOMP::Controller::Processors::Incoming`
+# обработчиков сообщений STOMP, вызывающих действия
 #
 
-RSpec.describe CaseCore::API::STOMP::Controller::Processor do
+RSpec.describe CaseCore::API::STOMP::Controller::Processors::Incoming do
   describe 'the class' do
     subject { described_class }
 
@@ -30,7 +31,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processor do
   end
 
   describe '.process' do
-    include CaseCore::API::STOMP::Controller::ProcessorSpecHelper
+    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
       CaseCore::Actions::Tests = Module.new
@@ -44,7 +45,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processor do
     subject(:result) { described_class.process(message) }
 
     let(:message) { create(:stomp_message, headers: headers, body: body) }
-    let(:headers) { create_headers(message_id, entities, action) }
+    let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }
     let(:entities) { 'tests' }
     let(:action) { 'test' }
@@ -316,7 +317,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processor do
   end
 
   describe '#process' do
-    include CaseCore::API::STOMP::Controller::ProcessorSpecHelper
+    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
       CaseCore::Actions::Tests = Module.new
@@ -331,7 +332,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processor do
 
     let(:instance) { described_class.new(message) }
     let(:message) { create(:stomp_message, headers: headers, body: body) }
-    let(:headers) { create_headers(message_id, entities, action) }
+    let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }
     let(:entities) { 'tests' }
     let(:action) { 'test' }

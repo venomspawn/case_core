@@ -5,7 +5,8 @@ require 'stomp'
 
 require "#{$lib}/settings/configurable"
 
-require_relative 'controller/processor'
+require_relative 'controller/processors/incoming'
+require_relative 'controller/processors/response'
 require_relative 'controller/publishers'
 require_relative 'controller/subscriber'
 
@@ -25,7 +26,7 @@ module CaseCore
         extend Settings::Configurable
         include Singleton
 
-        settings_names :connection_info, :incoming_queue
+        settings_names :connection_info, :incoming_queue, :response_queue
 
         # Публикует сообщение STOMP в очереди с данным названием
         #
@@ -123,9 +124,9 @@ module CaseCore
         # сообщений STOMP.
         #
         def run!
-          incoming_queue = Controller.settings.incoming_queue
-          subscribe(incoming_queue, &Processor.method(:process))
-          nil
+          subscribe_on_incoming
+          subscribe_on_responses
+          sleep
         end
 
         private
@@ -139,6 +140,23 @@ module CaseCore
         #
         def publishers
           @publishers ||= Publishers.new
+        end
+
+        # Осуществляет подписку на очередь сообщений, после разбора которых
+        # осуществляется вызов действий
+        #
+        def subscribe_on_incoming
+          incoming_queue = Controller.settings.incoming_queue
+          block = Processors::Incoming.method(:process)
+          subscribe(incoming_queue, false, &block)
+        end
+
+        # Осуществляет подписку на очередь ответных сообщений
+        #
+        def subscribe_on_responses
+          response_queue = Controller.settings.response_queue
+          block = Processors::Response.method(:process)
+          subscribe(response_queue, false, &block)
         end
       end
     end
