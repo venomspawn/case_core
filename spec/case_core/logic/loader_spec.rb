@@ -10,7 +10,7 @@ RSpec.describe CaseCore::Logic::Loader do
     subject { described_class }
 
     it { is_expected.not_to respond_to(:new) }
-    it { is_expected.to respond_to(:instance, :logic) }
+    it { is_expected.to respond_to(:instance, :logic, :loaded_logics) }
   end
 
   describe '.new' do
@@ -113,10 +113,36 @@ RSpec.describe CaseCore::Logic::Loader do
     end
   end
 
+  describe '.loaded_logics' do
+    before do
+      described_class.configure do |settings|
+        settings.set :dir,              dir
+        settings.set :dir_check_period, 0
+      end
+
+      described_class.logic(name)
+    end
+
+    subject(:result) { described_class.loaded_logics }
+
+    let(:name) { 'test_case' }
+    let(:dir) { "#{$root}/spec/fixtures/logic" }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_an(Array) }
+
+      describe 'elements' do
+        it { is_expected.to all(be_a(Module)) }
+      end
+    end
+  end
+
   describe 'instance' do
     subject { described_class.instance }
 
-    it { is_expected.to respond_to(:logic) }
+    it { is_expected.to respond_to(:logic, :loaded_logics) }
   end
 
   describe '#logic' do
@@ -189,6 +215,33 @@ RSpec.describe CaseCore::Logic::Loader do
         let(:name) { 'won\'t be found' }
 
         it { is_expected.to be_nil }
+      end
+    end
+  end
+
+  describe '#loaded_logics' do
+    before do
+      described_class.configure do |settings|
+        settings.set :dir,              dir
+        settings.set :dir_check_period, 0
+      end
+
+      instance.logic(name)
+    end
+
+    subject(:result) { instance.loaded_logics }
+
+    let(:instance) { described_class.instance }
+    let(:name) { 'test_case' }
+    let(:dir) { "#{$root}/spec/fixtures/logic" }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_an(Array) }
+
+      describe 'elements' do
+        it { is_expected.to all(be_a(Module)) }
       end
     end
   end
