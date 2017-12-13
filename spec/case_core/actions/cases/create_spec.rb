@@ -103,5 +103,24 @@ RSpec.describe CaseCore::Actions::Cases::Create do
         expect { subject }.to change { CaseCore::Models::Document.count }.by(2)
       end
     end
+
+    context 'when there is a module to notify about case creation' do
+      before do
+        CaseCore::Logic::Loader.settings.dir = dir
+        allow(logic).to receive(:on_case_creation)
+      end
+
+      let(:params) { { type: type } }
+      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:type) { 'test_case' }
+      let(:logic) { CaseCore::Logic::Loader.logic(type) }
+
+      it 'should notify the module' do
+        expect(logic)
+          .to receive(:on_case_creation)
+          .with(CaseCore::Models::Case)
+        subject
+      end
+    end
   end
 end
