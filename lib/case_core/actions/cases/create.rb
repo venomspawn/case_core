@@ -8,7 +8,11 @@ require "#{$lib}/actions/base/action"
 # базовый класс
 CaseCore::Actions::Cases::Create = Class.new(CaseCore::Actions::Base::Action)
 
+require "#{$lib}/helpers/log"
+require "#{$lib}/helpers/safe_call"
+
 require_relative 'create/params_schema'
+require_relative 'mixins/logic'
 
 module CaseCore
   module Actions
@@ -20,17 +24,21 @@ module CaseCore
       # документов
       #
       class Create
+        include Helpers::Log
+        include Helpers::SafeCall
+        include Mixins::Logic
         include ParamsSchema
 
         # Создаёт новую запись заявки вместе с записями приложенных документов
         #
         def create
-          Sequel::Model.db.transaction(savepoint: :only) do
+          c4s3 = Sequel::Model.db.transaction(savepoint: :only) do
             Models::Case.create(case_attrs).tap do |c4s3|
               create_attributes(c4s3)
               create_documents(c4s3)
             end
           end
+          c4s3.tap(&method(:do_case_creation))
         end
 
         private
@@ -91,6 +99,43 @@ module CaseCore
               document.case = c4s3
             end
           end
+        end
+
+        # Находит модуль бизнес-логики по значению поля `type` записи заявки
+        # и вызывает у него метод `on_case_creation` с записью заявки в
+        # качестве аргумента
+        #
+        # @param [CaseCore::Models::Case] c4s3
+        #   запись заявки
+        #
+        def do_case_creation(c4s3)
+          obj = logic(c4s3) || return
+          _, e = safe_call(obj, :on_case_creation, c4s3)
+          log_case_creation(e, c4s3, binding) if e.nil?
+        end
+
+        # Создаёт новую запись в журнале событий о том, как прошла обработка
+        # бизнес-логикой создания заявки
+        #
+        # @param [NilClass, Exception] e
+        #   объект с информацией об ошибке или `nil`, если ошибки не произошло
+        #
+        # @param [CaseCore::Models::Case] c4s3
+        #   запись заявки
+        #
+        # @param [Binding] context
+        #   контекст
+        #
+        def log_case_creation(e, c4s3, context)
+          log_debug(context) { <<-LOG } if e.nil?
+            Модулем бизнес-логики успешно обработано создание заявки с
+            идентификатором `#{c4s3.id}` и типом `#{c4s3.type}`
+          LOG
+          log_error(context) { <<-LOG } unless e.nil?
+            Во время обработки модулем бизнес-логики создания заявки с
+            идентификатором `#{c4s3.id}` и типом `#{c4s3.type}` возникла
+            ошибка `#{e.class}`: `#{e.message}`
+          LOG
         end
       end
     end
