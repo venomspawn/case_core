@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require "#{$lib}/helpers/log"
+require "#{$lib}/helpers/safe_call"
 
 require_relative 'errors'
 
@@ -14,6 +15,7 @@ module CaseCore
       #
       module Helpers
         include CaseCore::Helpers::Log
+        include CaseCore::Helpers::SafeCall
 
         # Проверяет, что модуль был найден
         #

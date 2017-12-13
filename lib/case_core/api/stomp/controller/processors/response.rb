@@ -113,12 +113,13 @@ module CaseCore
             #   если во время вызова функции возникла ошибка
             #
             def process_handler(logic)
-              result = logic.send(HANDLER_NAME, message)
-              result.tap do
+              result, e = safe_call(logic, HANDLER_NAME, message)
+              if e.nil?
                 log_cant_process(logic, message, binding) unless result
+              else
+                log_handler_error(e, logic, HANDLER_NAME, message, binding)
               end
-            rescue Exception => e
-              log_handler_error(e, logic, HANDLER_NAME, message, binding)
+              result
             end
           end
         end
