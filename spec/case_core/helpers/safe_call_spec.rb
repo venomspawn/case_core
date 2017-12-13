@@ -14,11 +14,13 @@ RSpec.describe CaseCore::Helpers::SafeCall do
   describe 'instance' do
     subject { instance }
 
-    it { is_expected.to respond_to(:safe_call) }
+    it 'should have private method `safe_call`' do
+      expect(subject.private_methods(true).include?(:safe_call)).to be_truthy
+    end
   end
 
   describe '#safe_call' do
-    subject(:result) { instance.safe_call(obj, name, *args) }
+    subject(:result) { instance.send(:safe_call, obj, name, *args) }
 
     let(:obj) { '123' }
     let(:name) { :start_with? }
