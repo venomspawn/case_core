@@ -304,12 +304,11 @@ module CaseCore
       def call_logic_func(module_info, func_name)
         logic = module_info&.logic_module || return
         if logic.respond_to?(func_name)
-          logic.send(func_name)
+          _result, e = safe_call(logic, func_name)
+          log_func_error(e, logic, func_name, binding) unless e.nil?
         else
           log_no_func(logic, func_name, binding)
         end
-      rescue Exception => e
-        log_func_error(e, logic, func_name, binding)
       end
     end
   end

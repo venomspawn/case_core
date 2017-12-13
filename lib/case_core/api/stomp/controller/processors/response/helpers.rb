@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require "#{$lib}/helpers/log"
+require "#{$lib}/helpers/safe_call"
 
 module CaseCore
   module API
@@ -15,6 +16,7 @@ module CaseCore
             #
             module Helpers
               include CaseCore::Helpers::Log
+              include CaseCore::Helpers::SafeCall
 
               # Сообщение о том, что аргумент `message` не является объектом
               # типа `Stomp::Message`
