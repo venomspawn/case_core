@@ -118,8 +118,8 @@ module CaseCore
       #
       def scan_periodically
         loop do
-          sleep(dir_check_period)
           scan
+          sleep(dir_check_period)
         end
       end
 
