@@ -13,3 +13,5 @@ require "#{$lib}/logic/scanner"
 CaseCore::Logic::Scanner.configure do |settings|
   settings.set :dir_check_period, 10
 end
+
+CaseCore::Logic::Scanner.run!
