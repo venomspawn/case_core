@@ -5,7 +5,7 @@ debug:
 	bundle exec bin/irb_debug
 
 run:
-	bundle exec ruby app.rb
+	bundle exec foreman start
 
 test:
 	CC_LOG_LEVEL=unknown bundle exec rspec --fail-fast

@@ -24,13 +24,28 @@ namespace :case_core do
   #
   desc 'Загружает и распаковывает библиотеку с бизнес-логикой'
   task :fetch_logic, [:name, :version] do |_task, args|
-    # Загружаем начальную конфигурацию, в которой находится настройка загрузки
-    # бизнес-логики
     require_relative 'config/app_init'
 
-    # Создаём соответствующий объект и запускаем миграцию
     name = args[:name]
     version = args[:version]
     CaseCore::Logic::Fetcher.fetch(name, version)
+  end
+
+  # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+  #
+  desc 'Запускает контроллер REST API'
+  task :run_rest_controller do
+    require_relative 'config/app_init'
+
+    CaseCore::API::REST::Controller.run!
+  end
+
+  # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+  #
+  desc 'Запускает контроллер REST API'
+  task :run_stomp_controller do
+    require_relative 'config/app_init'
+
+    CaseCore::API::STOMP::Controller.run!
   end
 end
