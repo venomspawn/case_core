@@ -7,9 +7,26 @@ module CaseCore
     # Пространство имён для действий над записями заявок
     #
     module Cases
+      require_relative 'cases/call'
       require_relative 'cases/create'
       require_relative 'cases/index'
       require_relative 'cases/show'
+
+      # Вызывает метод модуля бизнес-логики с записью заявки в качестве
+      # аргумента
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @raise [Sequel::NoMatchingRow]
+      #   если запись заявки не найдена по предоставленному идентификатору
+      #
+      # @raise [RuntimeError]
+      #   если модуль бизнес-логики не найден по типу заявки
+      #
+      def self.call(params)
+        Call.new(params).call
+      end
 
       # Создаёт новую запись заявки вместе с записями приложенных документов
       #
