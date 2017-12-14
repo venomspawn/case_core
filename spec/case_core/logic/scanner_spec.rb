@@ -42,12 +42,70 @@ RSpec.describe CaseCore::Logic::Scanner do
   end
 
   describe '.run!' do
+    after { described_class.stop! }
+    before { described_class.stop! }
+
+    subject { described_class.run! }
+
+    let(:instance) { described_class.instance }
+
+    context 'when scanning is not running' do
+      it 'should start scanning' do
+        expect { subject }.to change { instance.send(:scanner) }.from(nil)
+      end
+
+      it 'should invoke `scan` method at least once' do
+        expect(instance).to receive(:scan)
+        subject
+        sleep(0.5)
+      end
+    end
+
+    context 'when scanning is running' do
+      before { described_class.run! }
+
+      it 'shouldn\'t do anything' do
+        expect { subject }.not_to change { instance.send(:scanner) }
+      end
+    end
   end
 
   describe '.stop!' do
+    subject { described_class.stop! }
+
+    let(:instance) { described_class.instance }
+
+    context 'when scanning is not running' do
+      it 'shouldn\'t do anything' do
+        expect { subject }.not_to change { instance.send(:scanner) }
+      end
+    end
+
+    context 'when scanning is running' do
+      before { described_class.run! }
+
+      it 'should stop scanning' do
+        expect { subject }.to change { instance.send(:scanner) }.to(nil)
+      end
+    end
   end
 
   describe '.running?' do
+    after { described_class.stop! }
+
+    subject(:result) { described_class.running? }
+
+    describe 'result' do
+      context 'when scanning is running' do
+        before { described_class.run! }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context 'when scanning is not running' do
+        it { is_expected.to be_falsey }
+      end
+    end
   end
 
   describe 'instance' do
@@ -62,6 +120,7 @@ RSpec.describe CaseCore::Logic::Scanner do
 
   describe '#run!' do
     after { instance.stop! }
+    before { instance.stop! }
 
     subject { instance.run! }
 
@@ -137,7 +196,11 @@ RSpec.describe CaseCore::Logic::Scanner do
     let(:dir) { "#{$root}/spec/fixtures/logic" }
 
     context 'when modification time of the directory is not changed' do
-      before { allow(File).to receive(:mtime) }
+      before do
+        FileUtils.touch(dir)
+        mtime = File.mtime(dir)
+        instance.instance_variable_set('@last_mtime', mtime)
+      end
 
       it 'shouldn\'t load anything' do
         expect { subject }
