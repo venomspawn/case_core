@@ -13,11 +13,13 @@ Sequel.migration do
                   type:      :text,
                   null:      false,
                   unique:    true,
+                  index:     true,
                   on_update: :cascade,
                   on_delete: :cascade
 
       foreign_key :register_id, :registers,
                   null:      false,
+                  index:     true,
                   on_update: :cascade,
                   on_delete: :cascade
 

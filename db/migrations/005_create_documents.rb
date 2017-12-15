@@ -16,6 +16,7 @@ Sequel.migration do
       foreign_key :case_id, :cases,
                   type:      :text,
                   null:      false,
+                  index:     true,
                   on_update: :cascade,
                   on_delete: :cascade
 
