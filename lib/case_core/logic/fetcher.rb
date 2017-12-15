@@ -174,7 +174,30 @@ module CaseCore
       #   нужно ли распаковать содержимое потока
       #
       def ban_entry?(entry)
-        !entry.file? || entry.full_name.start_with?(*BANNED_DIRS)
+        entry.full_name.start_with?(*BANNED_DIRS)
+      end
+
+      # Распаковывает содержимое потока
+      #
+      # @param [Gem::Package::TarReader::Entry]
+      #   поток в формате TAR
+      #
+      def extract_entry(entry)
+        if entry.file?
+          extract_file(entry)
+        elsif entry.directory?
+          extract_directory(entry)
+        end
+      end
+
+      # Создаёт директорию
+      #
+      # @param [Gem::Package::TarReader::Entry]
+      #   поток в формате TAR
+      #
+      def extract_drectory(entry)
+        entry_filepath = "#{gem_dir}/#{entry.full_name}"
+        FileUtils.mkdir_p(entry_filepath)
       end
 
       # Распаковывает содержимое потока в файл
@@ -182,7 +205,7 @@ module CaseCore
       # @param [Gem::Package::TarReader::Entry]
       #   поток в формате TAR
       #
-      def extract_entry(entry)
+      def extract_file(entry)
         entry_filepath = "#{gem_dir}/#{entry.full_name}"
         entry_dir = File.dirname(entry_filepath)
         FileUtils.mkdir_p(entry_dir)
