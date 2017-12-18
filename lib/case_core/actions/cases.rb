@@ -11,6 +11,7 @@ module CaseCore
       require_relative 'cases/create'
       require_relative 'cases/index'
       require_relative 'cases/show'
+      require_relative 'cases/update'
 
       # Вызывает метод модуля бизнес-логики с записью заявки в качестве
       # аргумента
@@ -60,6 +61,22 @@ module CaseCore
       #
       def self.show(params)
         Show.new(params).show
+      end
+
+      # Обновляет запись заявки с указанным идентификатором
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @raise [Sequel::ForeignKeyConstraintViolation]
+      #   если запись заявки не найдена по предоставленному идентификатору
+      #
+      # @raise [JSON::Schema::ValidationError]
+      #   если в ассоциативном массиве параметров действия присутствует поле
+      #   `type` или поле `created_at`
+      #
+      def self.update(params)
+        Update.new(params).update
       end
     end
   end
