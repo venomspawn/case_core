@@ -8,8 +8,22 @@ module CaseCore
     # созданных в рамках заявки
     #
     module Requests
+      require_relative 'requests/create'
       require_relative 'requests/index'
       require_relative 'requests/show'
+
+      # Создаёт новую запись межведомственного запроса вместе с записями его
+      # атрибутов и возвращает её
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [CaseCore::Models::Request]
+      #   созданная запись межведомственного запроса
+      #
+      def self.create(params)
+        Create.new(params).create
+      end
 
       # Возвращает список ассоциативных массивов атрибутов межведомственных
       # запросов, созданных в рамках заявки
