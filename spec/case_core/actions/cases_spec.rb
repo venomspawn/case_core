@@ -280,16 +280,17 @@ RSpec.describe CaseCore::Actions::Cases do
         .to(new_value)
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
+    context 'when request record isn\'t found' do
+      let(:id) { 'won\'t be found' }
 
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
+      it 'should raise Sequel::ForeignKeyConstraintViolation' do
+        expect { subject }
+          .to raise_error(Sequel::ForeignKeyConstraintViolation)
       end
     end
 
-    context 'when argument is of Hash type but is of wrong structure' do
-      let(:params) { { wrong: :structure } }
+    context 'when argument is not of Hash type' do
+      let(:params) { 'not of Hash type' }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)

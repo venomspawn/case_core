@@ -2,10 +2,11 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса действия обновления атрибутов заявки
+# Файл тестирования класса действия обновления атрибутов межведомственного
+# запроса
 #
 
-RSpec.describe CaseCore::Actions::Cases::Update do
+RSpec.describe CaseCore::Actions::Requests::Update do
   describe 'the class' do
     subject { described_class }
 
@@ -15,7 +16,7 @@ RSpec.describe CaseCore::Actions::Cases::Update do
   describe '.new' do
     subject(:result) { described_class.new(params) }
 
-    let(:params) { { id: 'id', attr: 'attr' } }
+    let(:params) { { id: 1, attr: 'attr' } }
 
     describe 'result' do
       subject { result }
@@ -47,8 +48,16 @@ RSpec.describe CaseCore::Actions::Cases::Update do
       end
     end
 
-    context 'when `type` attribute is present' do
-      let(:params) { { id: 'id', type: 'type' } }
+    context 'when `id` attribute is of wrong type' do
+      let(:params) { { id: 'of wrong type', attr: 'attr' } }
+
+      it 'should raise JSON::Schema::ValidationError' do
+        expect { subject }.to raise_error(JSON::Schema::ValidationError)
+      end
+    end
+
+    context 'when `case_id` attribute is present' do
+      let(:params) { { id: 'id', case_id: 'case_id' } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -67,7 +76,7 @@ RSpec.describe CaseCore::Actions::Cases::Update do
   describe 'instance' do
     subject { described_class.new(params) }
 
-    let(:params) { { id: 'id', attr: 'attr' } }
+    let(:params) { { id: 1, attr: 'attr' } }
 
     it { is_expected.to respond_to(:update) }
   end
@@ -77,23 +86,24 @@ RSpec.describe CaseCore::Actions::Cases::Update do
 
     let(:instance) { described_class.new(params) }
     let(:params) { { id: id, name => new_value } }
+    let(:request) { create(:request, case: c4s3) }
     let(:c4s3) { create(:case) }
-    let(:id) { c4s3.id }
-    let!(:attr) { create(:case_attribute, *attr_traits) }
-    let(:attr_traits) { [case: c4s3, name: name, value: value] }
+    let(:id) { request.id }
+    let!(:attr) { create(:request_attribute, *attr_traits) }
+    let(:attr_traits) { [request: request, name: name, value: value] }
     let(:name) { 'attr' }
     let(:value) { 'value' }
     let(:new_value) { 'new_value' }
 
-    it 'should update attributes of the case' do
+    it 'should update attributes of the request' do
       expect { subject }
-        .to change { CaseCore::Actions::Cases.show(id: id)[name] }
+        .to change { CaseCore::Actions::Requests.show(id: id)[name] }
         .from(value)
         .to(new_value)
     end
 
     context 'when request record isn\'t found' do
-      let(:id) { 'won\'t be found' }
+      let(:id) { 100_500 }
 
       it 'should raise Sequel::ForeignKeyConstraintViolation' do
         expect { subject }
