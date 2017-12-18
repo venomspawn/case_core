@@ -4,33 +4,37 @@ require "#{$lib}/actions/base/action"
 
 # Предварительное создание класса, чтобы не надо было указывать в дальнейшем
 # базовый класс
-CaseCore::Actions::Cases::Update = Class.new(CaseCore::Actions::Base::Action)
+CaseCore::Actions::Requests::Update =
+  Class.new(CaseCore::Actions::Base::Action)
 
 require_relative 'update/params_schema'
 
 module CaseCore
   module Actions
-    module Cases
+    module Requests
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
-      # Класс действий над записями заявок, предоставляющих метод `update`,
-      # который обновляет информацию о заявке
+      # Класс действий над записями межведомственных запросов, предоставляющих
+      # метод `update`, который обновляет атрибуты межведомственных запросов
       #
       class Update
         include ParamsSchema
 
-        # Список с названиями полей, импортируемых в таблицу атрибутов заявок
+        # Список с названиями полей, значения которых импортируются в таблицу
+        # атрибутов межведомственных запросов
         #
-        IMPORT_FIELDS = %i(case_id name value)
+        IMPORT_FIELDS = %i(request_id name value)
 
-        # Обновляет запись заявки с указанным идентификатором
+        # Обновляет атрибуты межведомственного запроса с указанным
+        # идентификатором записи
         #
         # @raise [Sequel::ForeignKeyConstraintViolation]
-        #   если запись заявки не найдена по предоставленному идентификатору
+        #   если запись межведомственного запроса не найдена по
+        #   предоставленному идентификатору
         #
         def update
           Sequel::Model.db.transaction(savepoint: :only) do
-            attributes.where(case_id: id, name: names).delete
+            attributes.where(request_id: id, name: names).delete
             attributes.import(IMPORT_FIELDS, import_values)
           end
         end
@@ -65,13 +69,14 @@ module CaseCore
           names.map { |name| [id, name, params[name.to_sym]] }
         end
 
-        # Возвращает запрос Sequel на получение всех записей атрибутов заявки
+        # Возвращает запрос Sequel на получение всех записей атрибутов
+        # межведомственных запросов
         #
         # @return [Sequel::Dataset]
         #   результирующий запрос Sequel
         #
         def attributes
-          Models::CaseAttribute.dataset.naked
+          Models::RequestAttribute.dataset.naked
         end
       end
     end

@@ -11,6 +11,7 @@ module CaseCore
       require_relative 'requests/create'
       require_relative 'requests/index'
       require_relative 'requests/show'
+      require_relative 'requests/update'
 
       # Создаёт новую запись межведомственного запроса вместе с записями его
       # атрибутов и возвращает её
@@ -53,6 +54,20 @@ module CaseCore
       #
       def self.show(params)
         Show.new(params).show
+      end
+
+      # Обновляет атрибуты межведомственного запроса с указанным
+      # идентификатором записи
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @raise [Sequel::ForeignKeyConstraintViolation]
+      #   если запись межведомственного запроса не найдена по предоставленному
+      #   идентификатору
+      #
+      def self.update(params)
+        Update.new(params).update
       end
     end
   end
