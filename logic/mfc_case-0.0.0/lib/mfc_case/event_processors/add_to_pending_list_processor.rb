@@ -30,7 +30,7 @@ module MFCCase
       #   ассоциативный массив обновлённых атрибутов заявки
       #
       def new_case_attributes
-        { status: 'pending', added_to_pending_at: Time.now }
+        { status: 'pending', added_to_pending_at: now }
       end
 
       # Список статусов, из которых возможен переход в статус `pending`
@@ -52,9 +52,8 @@ module MFCCase
       #   если статус заявки не находится в списке {SUPPORTED_STATUSES}
       #
       def check_case_status!
-        status = case_status
-        return if SUPPORTED_STATUSES.include?(status)
-        raise STATUS_IS_NOT_SUPPORTED[status, c4s3]
+        return if SUPPORTED_STATUSES.include?(case_status)
+        raise STATUS_IS_NOT_SUPPORTED[case_status, c4s3]
       end
     end
   end

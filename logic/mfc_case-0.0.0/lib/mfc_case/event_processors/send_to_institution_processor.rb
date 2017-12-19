@@ -47,8 +47,8 @@ module MFCCase
       def new_case_attributes
         {
           status:              new_status,
-          docs_sent_at:        Time.now,
-          processor_person_id: params[:operator_id]
+          docs_sent_at:        now,
+          processor_person_id: person_id
         }
       end
 
