@@ -6,7 +6,7 @@ module MFCCase
     #
     # Класс обработчиков события `reject_result!` заявки
     #
-    class RejectResultProcessor
+    class RejectResultProcessor < Base::CaseEventProcessor
       # Выполняет следующие действия:
       #
       # *   выставляет статус заявки `rejecting` в том и только в том случае,

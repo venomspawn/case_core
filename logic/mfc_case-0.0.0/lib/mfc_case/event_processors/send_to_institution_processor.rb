@@ -6,7 +6,7 @@ module MFCCase
     #
     # Класс обработчиков события `send_to_institution!` заявки
     #
-    class SendToInstitutionProcessor
+    class SendToInstitutionProcessor < Base::CaseEventProcessor
       # Выполняет следующие действия:
       #
       # *   выставляет статус заявки `processing` в том и только в том случае,

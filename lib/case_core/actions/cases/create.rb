@@ -111,7 +111,7 @@ module CaseCore
         def do_case_creation(c4s3)
           obj = logic(c4s3) || return
           _, e = safe_call(obj, :on_case_creation, c4s3)
-          log_case_creation(e, c4s3, binding) if e.nil?
+          log_case_creation(e, c4s3, binding)
         end
 
         # Создаёт новую запись в журнале событий о том, как прошла обработка

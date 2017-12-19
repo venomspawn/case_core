@@ -6,7 +6,7 @@ module MFCCase
     #
     # Класс обработчиков события создания заявки
     #
-    class CaseCreationProcessor
+    class CaseCreationProcessor < Base::CaseEventProcessor
       # Инициализирует объект класса
       #
       # @param [CaseCore::Models::Case] c4s3

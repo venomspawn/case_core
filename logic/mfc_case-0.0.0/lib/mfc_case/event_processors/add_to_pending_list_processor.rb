@@ -6,7 +6,7 @@ module MFCCase
     #
     # Класс обработчиков события `add_to_pending_list!` заявки
     #
-    class AddToPendingListProcessor
+    class AddToPendingListProcessor < Base::CaseEventProcessor
       # Выполняет следующие действия:
       #
       # *   выставляет статус заявки `pending` в том и только в том случае,

@@ -1,11 +1,7 @@
 # encoding: utf-8
 
-require_relative 'mfc_case/event_processors/add_to_pending_list_processor'
-require_relative 'mfc_case/event_processors/case_creation_processor'
-require_relative 'mfc_case/event_processors/close_processor'
-require_relative 'mfc_case/event_processors/reject_result_processor'
-require_relative 'mfc_case/event_processors/send_to_frontoffice_processor'
-require_relative 'mfc_case/event_processors/send_to_institution_processor'
+load "#{__dir__}/mfc_case/event_processors.rb"
+load "#{__dir__}/mfc_case/version.rb"
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -20,7 +16,7 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
   #
-  def on_case_creation(c4s3)
+  def self.on_case_creation(c4s3)
     EventProcessors::CaseCreationProcessor.new(c4s3).process
   end
 
@@ -47,7 +43,7 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `packaging` или `rejecting`
   #
-  def add_to_pending_list!(c4s3, params)
+  def self.add_to_pending_list!(c4s3, params)
     EventProcessors::AddToPendingListProcessor.new(c4s3, params).process
   end
 
@@ -63,7 +59,7 @@ module MFCCase
   # @return [Boolean]
   #   были ли выполнены действия без ошибок
   #
-  def add_to_pending_list(c4s3, params)
+  def self.add_to_pending_list(c4s3, params)
     add_to_pending_list!(c4s3, params)
     true
   rescue
@@ -106,7 +102,7 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `packaging` или `pending`
   #
-  def send_to_institution!(c4s3, params)
+  def self.send_to_institution!(c4s3, params)
     EventProcessors::SendToInstitutionProcessor.new(c4s3, params).process
   end
 
@@ -122,7 +118,7 @@ module MFCCase
   # @return [Boolean]
   #   были ли выполнены действия без ошибок
   #
-  def send_to_institution(c4s3, params)
+  def self.send_to_institution(c4s3, params)
     send_to_institution!(c4s3, params)
     true
   rescue
@@ -155,8 +151,8 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `processing`
   #
-  def send_to_frontoffice!(c4s3, params)
-    EventProcessors::SendToFrontOfficeProcessor.new(c4s3, params)
+  def self.send_to_frontoffice!(c4s3, params)
+    EventProcessors::SendToFrontOfficeProcessor.new(c4s3, params).process
   end
 
   # Выполняет те же действия, что и {send_to_frontoffice!} и возвращает, были
@@ -171,7 +167,7 @@ module MFCCase
   # @return [Boolean]
   #   были ли выполнены действия без ошибок
   #
-  def send_to_frontoffice(c4s3, params)
+  def self.send_to_frontoffice(c4s3, params)
     send_to_frontoffice!(c4s3, params)
     true
   rescue
@@ -213,7 +209,7 @@ module MFCCase
   #   если значение атрибута `rejecting_expected_at` отсутствует или не
   #   представляет собой строку в вышеописанном формате
   #
-  def reject_result!(c4s3, params)
+  def self.reject_result!(c4s3, params)
     EventProcessors::RejectResultProcessor.new(c4s3, params).process
   end
 
@@ -229,7 +225,7 @@ module MFCCase
   # @return [Boolean]
   #   были ли выполнены действия без ошибок
   #
-  def reject_result(c4s3, params)
+  def self.reject_result(c4s3, params)
     reject_result!(c4s3, params)
     true
   rescue
@@ -268,7 +264,7 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `processing`
   #
-  def close!(c4s3, params)
+  def self.close!(c4s3, params)
     EventProcessors::CloseProcessor.new(c4s3, params).process
   end
 
@@ -284,7 +280,7 @@ module MFCCase
   # @return [Boolean]
   #   были ли выполнены действия без ошибок
   #
-  def close(c4s3, params)
+  def self.close(c4s3, params)
     close!(c4s3, params)
     true
   rescue
