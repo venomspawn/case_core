@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require_relative 'case_event_processor/helpers'
-
 module MFCCase
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
   #
@@ -137,7 +135,7 @@ module MFCCase
         #
         def extract_case_attributes
           case_attributes_dataset.select_hash(:name, :value).tap do |result|
-            result.symbolize_keys
+            result.symbolize_keys!
             check_status!(result[:status], c4s3)
           end
         end
@@ -157,7 +155,7 @@ module MFCCase
         #   ассоциативный массив атрибутов
         #
         def update_case_attributes(attributes)
-          CaseCore::Actions::Cases.update(case_id: c4s3.id, **attributes)
+          CaseCore::Actions::Cases.update(id: c4s3.id, **attributes)
         end
       end
     end

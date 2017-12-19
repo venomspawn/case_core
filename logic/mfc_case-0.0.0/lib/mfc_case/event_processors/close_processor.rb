@@ -6,7 +6,7 @@ module MFCCase
     #
     # Класс обработчиков события `close!` заявки
     #
-    class CloseProcessor
+    class CloseProcessor < Base::CaseEventProcessor
       # Выполняет следующие действия:
       #
       # *   выставляет статус заявки `closed` в том и только в том случае, если
@@ -48,7 +48,7 @@ module MFCCase
       #   ассоциативный массив обновлённых атрибутов заявки
       #
       def new_case_attributes
-        if status == rejecting
+        if status == 'rejecting'
           {
             status:             'closed',
             closed_at:          now,
