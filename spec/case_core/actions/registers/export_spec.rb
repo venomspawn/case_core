@@ -41,7 +41,15 @@ RSpec.describe CaseCore::Actions::Registers::Export do
       end
     end
 
-    context 'when a parameter beside `id` is present' do
+    context 'when `arguments` parameter is not of Array type' do
+      let(:params) { { id: 1, arguments: 'not of Array type' } }
+
+      it 'should raise JSON::Schema::ValidationError' do
+        expect { subject }.to raise_error(JSON::Schema::ValidationError)
+      end
+    end
+
+    context 'when a parameter beside `id` and `arguments` is present' do
       let(:params) { { id: 1, a: :parameter } }
 
       it 'should raise JSON::Schema::ValidationError' do
@@ -123,11 +131,23 @@ RSpec.describe CaseCore::Actions::Registers::Export do
       let(:c4s3) { create(:case, type: type) }
       let!(:link) { create(:case_register, case: c4s3, register: register) }
 
-      it 'should call `export_register` method' do
+      it 'should call `export_register` function' do
         expect(logic)
           .to receive(:export_register)
           .with(instance_of(CaseCore::Models::Register))
         subject
+      end
+
+      context 'when arguments are provided' do
+        let(:params) { { id: id, arguments: arguments } }
+        let(:arguments) { [a: :b] }
+
+        it 'should call `export_register` function with the arguments' do
+          expect(logic)
+            .to receive(:export_register)
+            .with(instance_of(CaseCore::Models::Register), *arguments)
+          subject
+        end
       end
     end
   end

@@ -39,7 +39,7 @@ module CaseCore
         #   если невозможно найти модуль бизнес-логики по записи заявки
         #
         def export
-          logic.send(:export_register, register)
+          logic.send(:export_register, register, *arguments)
         end
 
         private
@@ -51,6 +51,15 @@ module CaseCore
         #
         def id
           params[:id]
+        end
+
+        # Возвращает значение параметра `arguments` действия
+        #
+        # @return [Array]
+        #   значение параметра `arguments` действия
+        #
+        def arguments
+          params[:arguments] || []
         end
 
         # Возвращает запись реестра передаваемой корреспонденции по

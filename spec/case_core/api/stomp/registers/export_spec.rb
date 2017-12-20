@@ -57,6 +57,23 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       expect(status).to be == 'ok'
     end
 
+    context 'when arguments are provided' do
+      let(:call_attrs) { { id: id, arguments: arguments } }
+      let(:arguments) { [a: 'b'] }
+
+      it 'should call `export_register` function with the arguments' do
+        expect(logic)
+          .to receive(:export_register)
+          .with(instance_of(CaseCore::Models::Register), *arguments)
+        subject
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
     context 'when body is not a JSON-string' do
       let(:body) { 'not a JSON-string' }
 
@@ -99,7 +116,21 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       end
     end
 
-    context 'when a parameter beside `id` is present' do
+    context 'when `arguments` parameter is not of Array type' do
+      let(:call_attrs) { { id: 1, arguments: 'not of Array type' } }
+
+      it 'should not call the method' do
+        expect(logic).not_to receive(:export_register)
+        subject
+      end
+
+      it 'should have `error` status' do
+        subject
+        expect(status).to be == 'error'
+      end
+    end
+
+    context 'when a parameter beside `id` and `arguments` is present' do
       let(:call_attrs) { { id: id, a: :parameter } }
 
       it 'should not call the method' do

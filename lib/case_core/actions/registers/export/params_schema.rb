@@ -17,6 +17,9 @@ module CaseCore
             properties: {
               id: {
                 type: :integer
+              },
+              arguments: {
+                type: :array
               }
             },
             required: %i(
