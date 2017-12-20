@@ -23,6 +23,14 @@ module MFCCase
         # @param [CaseCore::Models::Case] c4s3
         #   запись заявки
         #
+        # @param [NilClass, Array] attrs
+        #   список названий извлекаемых атрибутов или `nil`, если нужно извлечь
+        #   все атрибуты
+        #
+        # @param [NilClass, Array] allowed_statuses
+        #   список статусов заявки, которые допустимы для данного обработчика,
+        #   или `nil`, если допустим любой статус, а также его отсутствие
+        #
         # @param [NilClass, Hash] params
         #   ассоциативный массив параметров обработчика события или `nil`, если
         #   обработчик не нуждается в параметрах
@@ -32,14 +40,41 @@ module MFCCase
         #   `CaseCore::Models::Case`
         #
         # @raise [ArgumentError]
-        #   если аргумент `params` не является объектом класса `NilClass` или
-        #   класса `Hash`
+        #   если аргумент `attrs` не является ни объектом класса `NilClass`, ни
+        #   объектом класса `Array`
         #
-        def initialize(c4s3, params = nil)
+        # @raise [ArgumentError]
+        #   если аргумент `allowed_statuses` не является ни объектом класса
+        #   `NilClass`, ни объектом класса `Array`
+        #
+        # @raise [ArgumentError]
+        #   если аргумент `params` не является ни объектом класса `NilClass`,
+        #   ни объектом класса `Hash`
+        #
+        # @raise [RuntimeError]
+        #   если заявка обладает статусом, который недопустим для данного
+        #   обработчика
+        #
+        def initialize(c4s3, attrs = [], allowed_statuses = nil, params = nil)
           check_case!(c4s3)
+          check_attrs!(attrs)
+          check_allowed_statuses!(allowed_statuses)
           check_params!(params)
+
+          attrs = sanitize_attrs(attrs, allowed_statuses)
+
           @c4s3 = c4s3
+          @case_attributes = extract_case_attributes(attrs)
+
+          check_case_status!(case_attributes, allowed_statuses)
+
           @params = params || {}
+        end
+
+        # Обновляет атрибуты заявки
+        #
+        def process
+          CaseCore::Actions::Cases.update(id: c4s3.id, **new_case_attributes)
         end
 
         private
@@ -57,6 +92,71 @@ module MFCCase
         #   ассоциативный массив параметров обработчика события
         #
         attr_reader :params
+
+        # Ассоциативный массив атрибутов заявки
+        #
+        # @return [Hash]
+        #   ассоциативный массив атрибутов заявки
+        #
+        attr_reader :case_attributes
+
+        # Возвращает дополненную информацию о названиях атрибутов, созданный на
+        # основе предоставленной информации о названиях атрибутов и информации
+        # о допустимых статусах
+        #
+        # @param [NilClass, Array] attrs
+        #   список названий извлекаемых атрибутов или `nil`, если нужно извлечь
+        #   все атрибуты
+        #
+        # @param [NilClass, Array] allowed_statuses
+        #   список статусов заявки, которые допустимы для данного обработчика,
+        #   или `nil`, если допустим любой статус, а также его отсутствие
+        #
+        # @return [NilClass]
+        #   если аргумент `attrs` равен `nil`
+        #
+        # @return [Array]
+        #   если аргумент `attrs` является списком
+        #
+        def sanitize_attrs(attrs, allowed_statuses)
+          return if attrs.nil?
+          attrs += ['status'] if allowed_statuses.is_a(Array)
+          attrs.uniq
+        end
+
+        # Извлекает требуемые атрибуты заявки из соответствующих записей и
+        # возвращает ассоциативный массив атрибутов заявки
+        #
+        # @param [NilClass, Array] attrs
+        #   список названий извлекаемых атрибутов или `nil`, если нужно извлечь
+        #   все атрибуты
+        #
+        # @return [Hash{Symbol => Object}]
+        #   результирующий ассоциативный массив
+        #
+        # @raise [RuntimeError]
+        #   если значение атрибута `status` не равно ни одному из значений,
+        #   определённых константой {STATUSES}
+        #
+        def extract_case_attributes(attrs)
+          return {} if attrs.empty?
+          hash = case_attributes_dataset(attrs).select_hash(:name, :value)
+          hash.symbolize_keys
+        end
+
+        # Возвращает запрос Sequel на получение записей атрибутов заявки
+        #
+        # @param [NilClass, Array] attrs
+        #   список названий извлекаемых атрибутов или `nil`, если нужно извлечь
+        #   все атрибуты
+        #
+        # @return [Sequel::Dataset]
+        #   результирующий запрос Sequel
+        #
+        def case_attributes_dataset(attrs)
+          dataset = c4s3.attributes_dataset.naked
+          attrs.nil? ? dataset : dataset.where(name: attrs)
+        end
 
         # Возвращает идентификатор оператора из параметров `operator_id` и
         # `exporter_id`
@@ -77,85 +177,13 @@ module MFCCase
           Time.now
         end
 
-        # Сбрасывает информацию об атрибутах заявки
-        #
-        def reload
-          @case_attributes = nil
-          @case_status = nil
-        end
-
-        # Возвращает статус заявки
-        #
-        # @return [String]
-        #   статус заявки
-        #
-        # @raise [RuntimeError]
-        #   если статус заявки не равен одному из значений, определённых
-        #   константой {STATUSES}
-        #
-        def case_status
-          @case_status ||= extract_case_status
-        end
-
-        # Извлекает статус заявки из атрибута `status`, проверяет, является ли
-        # он допустимым, и возвращает его
-        #
-        # @return [String]
-        #   статус заявки
-        #
-        # @raise [RuntimeError]
-        #   если статус заявки не равен одному из значений, определённых
-        #   константой {STATUSES}
-        #
-        def extract_case_status
-          status_attribute =
-            case_attributes_dataset.where(name: 'status').select(:value).first
-          status = status_attribute[:value]
-          status.tap { check_status!(status, c4s3) }
-        end
-
-        # Возвращает ассоциативный массив атрибутов заявки
+        # Возвращает ассоциативный массив обновлённых атрибутов заявки
         #
         # @return [Hash]
-        #   ассоциативный массив атрибутов заявки
+        #   ассоциативный массив обновлённых атрибутов заявки
         #
-        def case_attributes
-          @case_attributes ||= extract_case_attributes
-        end
-
-        # Извлекает атрибуты заявки из соответствующих записей и возвращает
-        # ассоциативный массив атрибутов заявки
-        #
-        # @return [Hash{Symbol => Object}]
-        #   результирующий ассоциативный массив
-        #
-        # @raise [RuntimeError]
-        #   если значение атрибута `status` не равно ни одному из значений,
-        #   определённых константой {STATUSES}
-        #
-        def extract_case_attributes
-          case_attributes_dataset.select_hash(:name, :value).tap do |result|
-            result.symbolize_keys!
-            check_status!(result[:status], c4s3)
-          end
-        end
-
-        # Возвращает запрос Sequel на получение записей атрибутов заявки
-        #
-        # @return [Sequel::Dataset]
-        #   результирующий запрос Sequel
-        #
-        def case_attributes_dataset
-          c4s3.attributes_dataset.naked
-        end
-
-        # Обновляет атрибуты заявки
-        #
-        # @param [Hash] attributes
-        #   ассоциативный массив атрибутов
-        #
-        def update_case_attributes(attributes)
-          CaseCore::Actions::Cases.update(id: c4s3.id, **attributes)
+        def new_case_attributes
+          {}
         end
       end
     end

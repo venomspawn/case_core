@@ -8,7 +8,7 @@
 #
 
 RSpec.describe CaseCore::API::STOMP::Controller do
-  describe 'call of logic method' do
+  describe 'call of logic function with a case record as an argument' do
     include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do

@@ -211,8 +211,12 @@ RSpec.describe CaseCore::Logic::Scanner do
     context 'when modification time of the directory is changed' do
       before do
         instance.instance_variable_set('@last_mtime', nil)
+
         CaseCore::Logic::Loader.instance.send(:unload_module, 'test_case')
         CaseCore::Logic::Loader.instance.send(:unload_module, 'mixed_case')
+        CaseCore::Logic::Loader
+          .instance
+          .instance_variable_set('@modules_info', {})
       end
 
       it 'should load new modules' do

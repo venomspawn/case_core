@@ -7,7 +7,7 @@
 #
 
 RSpec.describe CaseCore::API::STOMP::Controller do
-  describe 'creation of case' do
+  describe 'creation of case record' do
     include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
 
     before do
