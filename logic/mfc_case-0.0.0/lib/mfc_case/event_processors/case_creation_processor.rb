@@ -4,7 +4,8 @@ module MFCCase
   module EventProcessors
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Класс обработчиков события создания заявки
+    # Класс обработчиков события создания заявки. Обработчик выставляет статус
+    # заявки `packaging`.
     #
     class CaseCreationProcessor < Base::CaseEventProcessor
       # Инициализирует объект класса
@@ -20,10 +21,15 @@ module MFCCase
         super
       end
 
-      # Выставляет начальный статус заявки `packaging`
+      private
+
+      # Возвращает ассоциативный массив обновлённых атрибутов заявки
       #
-      def process
-        update_case_attributes(status: 'packaging')
+      # @return [Hash]
+      #   ассоциативный массив обновлённых атрибутов заявки
+      #
+      def new_case_attributes
+        { status: 'packaging' }
       end
     end
   end

@@ -4,22 +4,20 @@ module MFCCase
   module EventProcessors
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Класс обработчиков события `send_to_frontoffice!` заявки. Обработчик
-    # выполняет следующие действия:
+    # Класс обработчиков события `close!` заявки. Обработчик выполняет
+    # следующие действия:
     #
-    # *   выставляет статус заявки `issuance` в том и только в том случае,
-    #     если статус заявки `processing`;
-    # *   выставляет значение атрибута `responded_at` равным текущему
-    #     времени;
-    # *   выставляет значение атрибута `response_processor_person_id` равным
-    #     значению дополнительного параметра `operator_id`;
-    # *   выставляет значение атрибута `result_id` равным значению
-    #     дополнительного параметра `result_id`.
+    # *   выставляет статус заявки `closed` в том и только в том случае, если
+    #     статус заявки `issuance`;
+    # *   выставляет значение атрибута `issuer_person_id` равным значению
+    #     дополнительного параметра `operator_id`;
+    # *   выставляет значение атрибута `issued_at` равным текущему времени;
+    # *   выставляет значение атрибута `closed_at` равным текущему времени.
     #
-    class SendToFrontOfficeProcessor < Base::CaseEventProcessor
-      # Список статусов, из которых возможен переход в статус `issuance`
+    class IssueProcessor < Base::CaseEventProcessor
+      # Список статусов, из которых возможен переход в статус `closed`
       #
-      ALLOWED_STATUSES = %w(processing)
+      ALLOWED_STATUSES = %w(issuance)
 
       # Список названий извлекаемых атрибутов заявки
       #
@@ -59,20 +57,11 @@ module MFCCase
       #
       def new_case_attributes
         {
-          status:                       'issuance',
-          responded_at:                 now,
-          response_processor_person_id: person_id,
-          result_id:                    result_id
+          status:           'closed',
+          closed_at:        now,
+          issuer_person_id: person_id,
+          issued_at:        now
         }
-      end
-
-      # Возвращает значение параметра `result_id`
-      #
-      # @return [Object]
-      #   значение параметра `result_id`
-      #
-      def result_id
-        params[:result_id]
       end
     end
   end

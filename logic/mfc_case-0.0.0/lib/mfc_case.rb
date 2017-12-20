@@ -17,7 +17,8 @@ module MFCCase
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
   #
   def self.on_case_creation(c4s3)
-    EventProcessors::CaseCreationProcessor.new(c4s3).process
+    processor = EventProcessors::CaseCreationProcessor.new(c4s3)
+    processor.process
   end
 
   # Выполняет следующие действия:
@@ -25,7 +26,8 @@ module MFCCase
   # *   выставляет статус заявки `pending` в том и только в том случае, если
   #     статус заявки `packaging` или `rejecting`;
   # *   выставляет значение атрибута `added_to_pending_at` равным текущему
-  #     времени
+  #     времени;
+  # *   прикрепляет запись заявки к реестру передаваемой корреспонденции
   #
   # @param [CaseCore::Models::Case] c4s3
   #   запись заявки
@@ -43,48 +45,22 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `packaging` или `rejecting`
   #
-  def self.add_to_pending_list!(c4s3, params)
-    EventProcessors::AddToPendingListProcessor.new(c4s3, params).process
-  end
-
-  # Выполняет те же действия, что и {add_to_pending_list!} и возвращает, были
-  # ли они выполнены без ошибок
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @return [Boolean]
-  #   были ли выполнены действия без ошибок
-  #
   def self.add_to_pending_list(c4s3, params)
-    add_to_pending_list!(c4s3, params)
-    true
-  rescue
-    false
+    processor = EventProcessors::AddToPendingListProcessor.new(c4s3, params)
+    processor.process
   end
 
   # Выполняет следующие действия:
   #
-  # *   выставляет статус заявки `processing` в том и только в том случае, если
-  #     одновременно выполнены следующие условия:
-  #
-  #     -   статус заявки `packaging` или `pending`;
-  #     -   значение атрибута `issue_location_type` не равно `institution`;
-  #     -   значение атрибута `added_to_rejecting_at` отсутствует или пусто;
-  #
-  # *   выставляет статус заявки `closed` в том и только в том случае, если
-  #     одновременно выполнены следующие условия:
-  #
-  #     -   статус заявки `packaging` или `pending`;
-  #     -   значение атрибута `issue_location_type` равно `institution`, или
-  #         значение атрибута `added_to_rejecting_at` присутствует;
-  #
-  # *   выставляет значение атрибута `docs_sent_at` равным текущему времени;
-  # *   выставляет значение атрибута `processor_person_id` равным значению
-  #     дополнительного параметра `operator_id`.
+  # *   выставляет статус заявки `packaging` в том и только в том случае, если
+  #     статус заявки `pending` и значение атрибута `added_to_rejecting_at`
+  #     отсутствует или пусто;
+  # *   выставляет статус заявки `rejecting` в том и только в том случае, если
+  #     статус заявки `pending` и значение атрибута `added_to_rejecting_at`
+  #     присутствует и непусто;
+  # *   выставляет значение атрибута `added_to_pending_at` равным `nil`;
+  # *   открепляет запись заявки от реестра передаваемой корреспонденции;
+  # *   если реестр передаваемой корреспонденции пуст, то удаляет его
   #
   # @param [CaseCore::Models::Case] c4s3
   #   запись заявки
@@ -100,29 +76,12 @@ module MFCCase
   #   `Hash`
   #
   # @raise [RuntimeError]
-  #   если статус заявки отличен от `packaging` или `pending`
+  #   если статус заявки отличен от `pending`
   #
-  def self.send_to_institution!(c4s3, params)
-    EventProcessors::SendToInstitutionProcessor.new(c4s3, params).process
-  end
-
-  # Выполняет те же действия, что и {send_to_institution!} и возвращает, были
-  # ли они выполнены без ошибок
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @return [Boolean]
-  #   были ли выполнены действия без ошибок
-  #
-  def self.send_to_institution(c4s3, params)
-    send_to_institution!(c4s3, params)
-    true
-  rescue
-    false
+  def self.remove_from_pending_list(c4s3, params)
+    processor =
+      EventProcessors::RemoveFromPendingListProcessor.new(c4s3, params)
+    processor.process
   end
 
   # Выполняет следующие действия:
@@ -151,27 +110,9 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `processing`
   #
-  def self.send_to_frontoffice!(c4s3, params)
-    EventProcessors::SendToFrontOfficeProcessor.new(c4s3, params).process
-  end
-
-  # Выполняет те же действия, что и {send_to_frontoffice!} и возвращает, были
-  # ли они выполнены без ошибок
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @return [Boolean]
-  #   были ли выполнены действия без ошибок
-  #
   def self.send_to_frontoffice(c4s3, params)
-    send_to_frontoffice!(c4s3, params)
-    true
-  rescue
-    false
+    processor = EventProcessors::SendToFrontOfficeProcessor.new(c4s3, params)
+    processor.process
   end
 
   # Выполняет следующие действия:
@@ -209,43 +150,18 @@ module MFCCase
   #   если значение атрибута `rejecting_expected_at` отсутствует или не
   #   представляет собой строку в вышеописанном формате
   #
-  def self.reject_result!(c4s3, params)
-    EventProcessors::RejectResultProcessor.new(c4s3, params).process
-  end
-
-  # Выполняет те же действия, что и {reject_result!} и возвращает, были ли они
-  # выполнены без ошибок
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @return [Boolean]
-  #   были ли выполнены действия без ошибок
-  #
   def self.reject_result(c4s3, params)
-    reject_result!(c4s3, params)
-    true
-  rescue
-    false
+    processor = EventProcessors::RejectResultProcessor.new(c4s3, params)
+    processor.process
   end
 
   # Выполняет следующие действия:
   #
   # *   выставляет статус заявки `closed` в том и только в том случае, если
-  #     статус заявки `rejecting` или `issuance`;
-  # *   если предыдущий статус заявки был `rejecting`, то выставляет значение
-  #     атрибута `rejector_person_id` равным значению
+  #     статус заявки `issuance`;
+  # *   выставляет значение атрибута `issuer_person_id` равным значению
   #     дополнительного параметра `operator_id`;
-  # *   если предыдущий статус заявки был `rejecting`, то выставляет значение
-  #     атрибута `rejected_at` равным текущему времени;
-  # *   если предыдущий статус заявки был `issuance`, то выставляет значение
-  #     атрибута `issuer_person_id` равным значению дополнительного параметра
-  #     `operator_id`;
-  # *   если предыдущий статус заявки был `issuance`, то выставляет значение
-  #     атрибута `issued_at` равным текущему времени;
+  # *   выставляет значение атрибута `issued_at` равным текущему времени;
   # *   выставляет значение атрибута `closed_at` равным текущему времени
   #
   # @param [CaseCore::Models::Case] c4s3
@@ -262,28 +178,66 @@ module MFCCase
   #   `Hash`
   #
   # @raise [RuntimeError]
-  #   если статус заявки отличен от `processing`
+  #   если статус заявки отличен от `issuance`
   #
-  def self.close!(c4s3, params)
-    EventProcessors::CloseProcessor.new(c4s3, params).process
+  def self.issue(c4s3, params)
+    processor = EventProcessors::IssueProcessor.new(c4s3, params)
+    processor.process
   end
 
-  # Выполняет те же действия, что и {close!} и возвращает, были ли они
-  # выполнены без ошибок
+  # Выполняет следующие действия:
   #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
+  # *   выставляет значение поля `exported` записи реестра передаваемой
+  #     корреспонденции равным `true`;
+  # *   выставляет значение поля `exported_at` записи реестра передаваемой
+  #     корреспонденции равным текущим дате и времени;
+  # *   выставляет значение поля `exporter_id` записи реестра передаваемой
+  #     корреспонденции равным значению параметру `exporter_id`;
+  # *   у каждой записи заявки, прикреплённой к записи реестра передаваемой
+  #     корреспонденции выполняет следующие действия:
+  #
+  #     +   выставляет статус заявки `processing` в том и только в том
+  #         случае, если одновременно выполнены следующие условия:
+  #
+  #         -   статус заявки `pending`;
+  #         -   значение атрибута `issue_location_type` не равно
+  #             `institution`;
+  #         -   значение атрибута `added_to_rejecting_at` отсутствует или
+  #             пусто;
+  #
+  #     +   выставляет статус заявки `closed` в том и только в том случае,
+  #         если одновременно выполнены следующие условия:
+  #
+  #         -   статус заявки `pending`;
+  #         -   значение атрибута `issue_location_type` равно `institution`,
+  #             или значение атрибута `added_to_rejecting_at` присутствует;
+  #
+  #     +   выставляет значение атрибута `docs_sent_at` равным текущему
+  #         времени;
+  #     +   выставляет значение атрибута `processor_person_id` равным
+  #         значению дополнительного параметра `operator_id`.
+  #
+  # @param [CaseCore::Models::Register] register
+  #   запись реестра передаваемой корреспонденции
   #
   # @param [NilClass, Hash] params
   #   ассоциативный массив параметров или `nil`
   #
-  # @return [Boolean]
-  #   были ли выполнены действия без ошибок
+  # @raise [ArgumentError]
+  #   если аргумент `register` не является объектом класса
+  #   `CaseCore::Models::Register`
   #
-  def self.close(c4s3, params)
-    close!(c4s3, params)
-    true
-  rescue
-    false
+  # @raise [ArgumentError]
+  #   если аргумент `params` не является ни объектом класса `NilClass`, ни
+  #   объектом класса `Hash`
+  #
+  # @raise [RuntimeError]
+  #   если среди записей заявок, прикреплённых к записи реестра передаваемой
+  #   корреспонденции, нашлась запись со значением атрибута`status`, который не
+  #   равен `pending`, или без атрибута `status`
+  #
+  def self.export_register(register, params)
+    processor = EventProcessors::ExportRegisterProcessor.new(register, params)
+    processor.process
   end
 end

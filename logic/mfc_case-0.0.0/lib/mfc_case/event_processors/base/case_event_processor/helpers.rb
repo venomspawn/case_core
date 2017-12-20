@@ -10,14 +10,6 @@ module MFCCase
         # класс
         #
         module Helpers
-          # Сообщение о том, что аргумент `c4s3` не является объектом класса
-          # `CaseCore::Models::Case`
-          #
-          BAD_CASE_TYPE = <<-MESSAGE.squish
-            Аргумент `c4s3` не является объектом класса
-            `CaseCore::Models::Case`
-          MESSAGE
-
           # Проверяет, что аргумент является объектом класса
           # `CaseCore::Models::Case`
           #
@@ -30,16 +22,38 @@ module MFCCase
           #
           def check_case!(c4s3)
             return if c4s3.is_a?(CaseCore::Models::Case)
-            raise ArgumentError, BAD_CASE_TYPE
+            raise Errors::Case::BadType
           end
 
-          # Сообщение о том, что аргумент `params` не является объектом класса
-          # `NilClass` или класса `Hash`
+          # Проверяет, что аргумент является объектом класса `NilClass` или
+          # класса `Array`
           #
-          BAD_PARAMS_TYPE = <<-MESSAGE.squish
-            Аргумент `params` не является объектом класса `NilClass` или
-            класса `Hash`
-          MESSAGE
+          # @params [Hash] attrs
+          #   аргумент
+          #
+          # @raise [ArgumentError]
+          #   если аргумент не является ни объектом класса `NilClass`, ни
+          #   объектом класса `Array`
+          #
+          def check_attrs!(attrs)
+            return if attrs.nil? || attrs.is_a?(Array)
+            raise Errors::Attrs::BadType
+          end
+
+          # Проверяет, что аргумент является объектом класса `NilClass` или
+          # класса `Array`
+          #
+          # @params [Hash] allowed_statuses
+          #   аргумент
+          #
+          # @raise [ArgumentError]
+          #   если аргумент не является ни объектом класса `NilClass`, ни
+          #   объектом класса `Array`
+          #
+          def check_allowed_statuses!(allowed_statuses)
+            return if allowed_statuses.nil? || allowed_statuses.is_a?(Array)
+            raise Errors::AllowedStatuses::BadType
+          end
 
           # Проверяет, что аргумент является объектом класса `NilClass` или
           # класса `Hash`
@@ -48,12 +62,12 @@ module MFCCase
           #   аргумент
           #
           # @raise [ArgumentError]
-          #   если аргумент не является объектом класса `NilClass` или класса
-          #   `Hash`
+          #   если аргумент не является ни объектом класса `NilClass`, ни
+          #   объектом класса `Hash`
           #
           def check_params!(params)
             return if params.nil? || params.is_a?(Hash)
-            raise ArgumentError, BAD_PARAMS_TYPE
+            raise Errors::Params::BadType
           end
 
           # Поддерживаемые статусы заявок
@@ -68,21 +82,27 @@ module MFCCase
             идентификатором `#{c4s3.id} не поддерживается
           MESSAGE
 
-          # Проверяет, что значение аргумента находится среди значений
-          # элементов списка {STATUSES}
-          #
-          # @param [Object] status
-          #   аргумент
+          # Проверяет, что значение атрибута `status` заявки допустимо
           #
           # @param [CaseCore::Models::Case] c4s3
           #   запись заявки
           #
-          # @raise [RuntimeError]
-          #   если значение аргумента не находится среди значений элементов
-          #   списка {STATUSES}
+          # @param [Hash] case_attributes
+          #   ассоциативный массив атрибутов заявки
           #
-          def check_status!(status, c4s3)
-            raise BAD_STATUS[status, c4s3] unless STATUSES.include?(status)
+          # @param [NilClass, Array] allowed_statuses
+          #   список статусов заявки, которые допустимы для данного
+          #   обработчика, или `nil`, если допустим любой статус, а также его
+          #
+          # @raise [RuntimeError]
+          #   если значение атрибута `status` не является допустимым
+          #
+          def check_case_status!(c4s3, case_attributes, allowed_statuses)
+            return if allowed_statuses.nil?
+            status = case_attributes[:status]
+            allowed_statuses.map!(&:to_s)
+            return if allowed_statuses.include?(status)
+            raise Errors::Case::BadStatus.new(c4s3, status, allowed_stauses)
           end
         end
       end
