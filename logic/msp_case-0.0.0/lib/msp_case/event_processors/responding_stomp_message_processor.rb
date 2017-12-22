@@ -37,10 +37,10 @@ module MSPCase
       # Обрабатывает ответное сообщение STOMP
       #
       def process
-        request_id = find_request_id!
-        c4s3 = find_case(request_id)
+        request = find_request!
+        c4s3 = request.case
         check_case_type!(c4s3)
-        update_request_attributes(request_id)
+        update_request_attributes(request)
         update_case_attributes(c4s3.id)
       end
 
@@ -80,41 +80,28 @@ module MSPCase
         response_data[:content][:special_data]
       end
 
-      # Возвращает идентификатор записи запроса
+      # Возвращает запись запроса
       #
-      # @return [Integer]
-      #   идентификатор записи запроса
+      # @return [CaseCore::Models::Request]
+      #   запись запроса
       #
-      # @raise [Sequel::NoMatchingRow]
+      # @raise [RuntimeError]
       #   если запись запроса не найдена
       #
-      def find_request_id!
-        attribute = request_attributes
-                    .where(name: 'msp_message_id', value: original_message_id)
-                    .select(:request_id)
-                    .naked
-                    .first!
-        attribute[:request_id]
-      end
-
-      # Возвращает запись заявки, ассоциированной с записью запроса
-      #
-      # @return [CaseCore::Models::Case]
-      #   запись заявки
-      #
-      def find_case(request_id)
-        case_id_dataset = requests.select(:case_id).where(id: request_id)
-        cases.where(id: case_id_dataset).first
+      def find_request!
+        CaseCore::Actions::Requests
+          .find(msp_message_id: original_message_id)
+          .tap { |request| check_request!(request, original_message_id) }
       end
 
       # Обновляет атрибуты запроса
       #
-      # @param [Integer] request_id
-      #   идентификатор записи запроса
+      # @param [CaseCore::Models::Request] request
+      #   запись запроса
       #
-      def update_request_attributes(request_id)
+      def update_request_attributes(request)
         CaseCore::Actions::Requests
-          .update(id: request_id, response_content: response_content)
+          .update(id: request.id, response_content: response_content)
       end
 
       # Обновляет атрибуты заявки

@@ -9,9 +9,6 @@ module CaseCore
     #
     module Requests
       require_relative 'requests/create'
-      require_relative 'requests/index'
-      require_relative 'requests/show'
-      require_relative 'requests/update'
 
       # Создаёт новую запись межведомственного запроса вместе с записями его
       # атрибутов и возвращает её
@@ -26,6 +23,27 @@ module CaseCore
         Create.new(params).create
       end
 
+      require_relative 'requests/find'
+
+      # Возвращает запись междведомственного запроса, найденную по
+      # предоставленным атрибутам, или `nil`, если найти запись невозможно
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [CaseCore::Models::Request]
+      #   найденная запись межведомственного запроса
+      #
+      # @return [NilClass]
+      #   если запись межведомственного запроса невозможно найти по
+      #   предоставленным атрибутам
+      #
+      def self.find(params)
+        Find.new(params).find
+      end
+
+      require_relative 'requests/index'
+
       # Возвращает список ассоциативных массивов атрибутов межведомственных
       # запросов, созданных в рамках заявки
       #
@@ -39,6 +57,8 @@ module CaseCore
       def self.index(params)
         Index.new(params).index
       end
+
+      require_relative 'requests/show'
 
       # Возвращает ассоциативный массив со всеми атрибутами межведомственного
       # запроса
@@ -55,6 +75,8 @@ module CaseCore
       def self.show(params)
         Show.new(params).show
       end
+
+      require_relative 'requests/update'
 
       # Обновляет атрибуты межведомственного запроса с указанным
       # идентификатором записи

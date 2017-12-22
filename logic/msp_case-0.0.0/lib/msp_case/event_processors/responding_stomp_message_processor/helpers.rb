@@ -45,6 +45,22 @@ module MSPCase
           raise Errors::Case::BadType unless c4s3.type == 'msp_case'
         end
 
+        # Проверяет, что запись запроса найдена
+        #
+        # @param [NilClass, CaseCore::Models::Request] request
+        #   запись запроса или `nil`
+        #
+        # @param [#to_s] original_message_id
+        #   идентификатор исходного сообщения STOMP
+        #
+        # @raise [RuntimeError]
+        #   если аргумент равен `nil`
+        #
+        def check_request!(request, original_message_id)
+          return unless request.nil?
+          raise Errors::Request::NotFound.new(original_message_id)
+        end
+
         # Возвращает запрос Sequel на извлечение всех записей заявок
         #
         # @return [Sequel::Dataset]

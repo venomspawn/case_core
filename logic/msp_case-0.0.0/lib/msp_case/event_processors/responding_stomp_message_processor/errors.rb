@@ -57,6 +57,32 @@ module MSPCase
             end
           end
         end
+
+        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+        #
+        # Пространство имён исключений, связанных с записями запросов
+        #
+        module Request
+          # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+          #
+          # Класс исключений, сигнализирующих о том, что запись запроса не была
+          # найдена по идентификатору исходного сообщения STOMP
+          #
+          class NotFound < RuntimeError
+            # Инциализирует объект класса
+            #
+            # @param [#to_s] original_message_id
+            #   идентификатор исходного сообщения STOMP
+            #
+            def initialize(original_message_id)
+              super(<<-MESSAGE.squish)
+                Запись межведомственного запроса не была найдена по
+                идентификатору `#{original_message_id}` исходного сообщения
+                STOMP
+              MESSAGE
+            end
+          end
+        end
       end
     end
   end
