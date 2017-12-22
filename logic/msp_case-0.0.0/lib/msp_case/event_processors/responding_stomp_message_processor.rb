@@ -160,13 +160,26 @@ module MSPCase
       #   результирующее значение
       #
       def case_issue_location_type(case_id)
-        attribute = case_attributes
-                    .select(:value)
-                    .where(case_id: case_id, name: 'issue_location_type')
-                    .naked
-                    .first
-        attribute ||= {}
-        attribute[:value]
+        attributes = extract_case_attributes(case_id)
+        attributes[:issue_location_type]
+      end
+
+      # Названия требуемых атрибутов заявки
+      #
+      CASE_ATTRS = %w(issue_location_type)
+
+      # Извлекает требуемые атрибуты заявки из соответствующих записей и
+      # возвращает ассоциативный массив атрибутов заявки
+      #
+      # @param [String] case_id
+      #   идентификатор записи заявки
+      #
+      # @return [Hash{Symbol => Object}]
+      #   результирующий ассоциативный массив
+      #
+      def extract_case_attributes(case_id)
+        CaseCore::Actions::Cases
+          .show_attributes(id: case_id, names: CASE_ATTRS)
       end
     end
   end

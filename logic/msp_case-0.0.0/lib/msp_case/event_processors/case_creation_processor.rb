@@ -72,6 +72,10 @@ module MSPCase
         case_attributes[:service_id]
       end
 
+      # Названия требуемых атрибутов заявки
+      #
+      CASE_ATTRS = %w(special_data service_id)
+
       # Извлекает требуемые атрибуты заявки из соответствующих записей и
       # возвращает ассоциативный массив атрибутов заявки
       #
@@ -79,25 +83,8 @@ module MSPCase
       #   результирующий ассоциативный массив
       #
       def extract_case_attributes
-        case_attributes_dataset.select_hash(:name, :value).symbolize_keys
-      end
-
-      # Названия требуемых атрибутов заявки
-      #
-      CASE_ATTRS = %w(special_data service_id)
-
-      # Возвращает запрос Sequel на получение записей требуемых атрибутов
-      # заявки
-      #
-      # @return [Sequel::Dataset]
-      #   результирующий запрос Sequel
-      #
-      def case_attributes_dataset
-        c4s3
-          .attributes_dataset
-          .select(:name, :value)
-          .where(name: CASE_ATTRS)
-          .naked
+        CaseCore::Actions::Cases
+          .show_attributes(id: c4s3.id, names: CASE_ATTRS)
       end
 
       # Обновляет атрибуты заявки
