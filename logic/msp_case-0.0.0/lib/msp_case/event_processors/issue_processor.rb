@@ -66,6 +66,30 @@ module MSPCase
       #
       attr_reader :params
 
+      # Возвращает ассоциативный массив атрибутов заявки
+      #
+      # @return [Hash]
+      #   ассоциативный массив атрибутов заявки
+      #
+      def case_attributes
+        @case_attributes ||= extract_case_attributes
+      end
+
+      # Названия требуемых атрибутов заявки
+      #
+      CASE_ATTRS = %w(status)
+
+      # Извлекает требуемые атрибуты заявки из соответствующих записей и
+      # возвращает ассоциативный массив атрибутов заявки
+      #
+      # @return [Hash{Symbol => Object}]
+      #   результирующий ассоциативный массив
+      #
+      def extract_case_attributes
+        CaseCore::Actions::Cases
+          .show_attributes(id: c4s3.id, names: CASE_ATTRS)
+      end
+
       # Обновляет атрибуты заявки
       #
       def update_case_attributes
@@ -81,24 +105,13 @@ module MSPCase
         { status: 'closed', closed_at: Time.now }
       end
 
-      # Возвращает запрос Sequel на получение записи атрибута заявки, у которой
-      # поле `name` совпадает со строкой `status`
-      #
-      # @return [Sequel::Dataset]
-      #   результирующий запрос Sequel
-      #
-      def case_status_dataset
-        c4s3.attributes_dataset.where(name: 'status').naked
-      end
-
       # Возвращает статус заявки
       #
       # @return [NilClass, String]
       #   статус заявки
       #
       def case_status
-        status_attribute = case_status_dataset.first
-        status_attribute[:value]
+        case_attributes[:status]
       end
 
       # Проверяет, что статус заявки `issuance`

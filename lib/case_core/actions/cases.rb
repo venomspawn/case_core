@@ -8,10 +8,6 @@ module CaseCore
     #
     module Cases
       require_relative 'cases/call'
-      require_relative 'cases/create'
-      require_relative 'cases/index'
-      require_relative 'cases/show'
-      require_relative 'cases/update'
 
       # Вызывает метод модуля бизнес-логики с записью заявки в качестве
       # аргумента
@@ -29,6 +25,8 @@ module CaseCore
         Call.new(params).call
       end
 
+      require_relative 'cases/create'
+
       # Создаёт новую запись заявки вместе с записями приложенных документов
       #
       # @param [Hash] params
@@ -37,6 +35,8 @@ module CaseCore
       def self.create(params)
         Create.new(params).create
       end
+
+      require_relative 'cases/index'
 
       # Возвращает список ассоциативных массивов атрибутов заявок
       #
@@ -50,6 +50,8 @@ module CaseCore
         Index.new(params).index
       end
 
+      require_relative 'cases/show'
+
       # Возвращает ассоциативный массив с информацией о заявке с
       # предоставленным идентификатором записи
       #
@@ -62,6 +64,23 @@ module CaseCore
       def self.show(params)
         Show.new(params).show
       end
+
+      require_relative 'cases/show_attributes'
+
+      # Возвращает ассоциативный массив с информацией об атрибутах заявки,
+      # кроме тех, что присутствуют непосредственно в записи заявки
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [Hash]
+      #   результирующий ассоциативный массив
+      #
+      def self.show_attributes(params)
+        ShowAttributes.new(params).show_attributes
+      end
+
+      require_relative 'cases/update'
 
       # Обновляет запись заявки с указанным идентификатором
       #
