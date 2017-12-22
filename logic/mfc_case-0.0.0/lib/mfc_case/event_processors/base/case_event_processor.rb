@@ -134,28 +134,8 @@ module MFCCase
         # @return [Hash{Symbol => Object}]
         #   результирующий ассоциативный массив
         #
-        # @raise [RuntimeError]
-        #   если значение атрибута `status` не равно ни одному из значений,
-        #   определённых константой {STATUSES}
-        #
         def extract_case_attributes(attrs)
-          return {} if attrs.empty?
-          hash = case_attributes_dataset(attrs).select_hash(:name, :value)
-          hash.symbolize_keys
-        end
-
-        # Возвращает запрос Sequel на получение записей атрибутов заявки
-        #
-        # @param [NilClass, Array] attrs
-        #   список названий извлекаемых атрибутов или `nil`, если нужно извлечь
-        #   все атрибуты
-        #
-        # @return [Sequel::Dataset]
-        #   результирующий запрос Sequel
-        #
-        def case_attributes_dataset(attrs)
-          dataset = c4s3.attributes_dataset.naked
-          attrs.nil? ? dataset : dataset.where(name: attrs)
+          CaseCore::Actions::Cases.show_attributes(id: c4s3.id, names: attrs)
         end
 
         # Возвращает идентификатор оператора из параметров `operator_id` и
