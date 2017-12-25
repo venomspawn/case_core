@@ -17,8 +17,11 @@ module MFCCase
       #   если аргумент `c4s3` не является объектом класса
       #   `CaseCore::Models::Case`
       #
+      # @raise [RuntimeError]
+      #   если заявка обладает выставленным статусом
+      #
       def initialize(c4s3)
-        super
+        super(c4s3, [], [])
       end
 
       private
@@ -30,6 +33,25 @@ module MFCCase
       #
       def new_case_attributes
         { status: 'packaging' }
+      end
+
+      # Проверяет, что значение атрибута `status` заявки допустимо
+      #
+      # @param [CaseCore::Models::Case] c4s3
+      #   запись заявки
+      #
+      # @param [Hash] case_attributes
+      #   ассоциативный массив атрибутов заявки
+      #
+      # @param [Array] _allowed_statuses
+      #   информация о допустимых статусах
+      #
+      # @raise [RuntimeError]
+      #   если значение атрибута `status` не является допустимым
+      #
+      def check_case_status!(c4s3, case_attributes, _allowed_statuses)
+        status = case_attributes[:status]
+        raise Errors::Case::BadStatus.new(c4s3) unless status.blank?
       end
     end
   end

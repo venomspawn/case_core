@@ -22,7 +22,21 @@ module MFCCase
           #
           def check_case!(c4s3)
             return if c4s3.is_a?(CaseCore::Models::Case)
-            raise Errors::Case::BadType
+            raise Errors::Case::InvalidClass
+          end
+
+          # Проверяет, что запись заявки обладает значением поля `type`,
+          # которое равно `mfc_case`
+          #
+          # @param [CaseCore::Models::Case] c4s3
+          #   запись заявки
+          #
+          # @raise [RuntimeError]
+          #   значение поля `type` записи заявки не равно `mfc_case`
+          #
+          def check_case_type!(c4s3)
+            return if c4s3.type == 'mfc_case'
+            raise Errors::Case::BadType.new(c4s3)
           end
 
           # Проверяет, что аргумент является объектом класса `NilClass` или
@@ -37,7 +51,7 @@ module MFCCase
           #
           def check_attrs!(attrs)
             return if attrs.nil? || attrs.is_a?(Array)
-            raise Errors::Attrs::BadType
+            raise Errors::Attrs::InvalidClass
           end
 
           # Проверяет, что аргумент является объектом класса `NilClass` или
@@ -52,7 +66,7 @@ module MFCCase
           #
           def check_allowed_statuses!(allowed_statuses)
             return if allowed_statuses.nil? || allowed_statuses.is_a?(Array)
-            raise Errors::AllowedStatuses::BadType
+            raise Errors::AllowedStatuses::InvalidClass
           end
 
           # Проверяет, что аргумент является объектом класса `NilClass` или
@@ -67,20 +81,8 @@ module MFCCase
           #
           def check_params!(params)
             return if params.nil? || params.is_a?(Hash)
-            raise Errors::Params::BadType
+            raise Errors::Params::InvalidClass
           end
-
-          # Поддерживаемые статусы заявок
-          #
-          STATUSES = %w(packaging pending processing issuance rejecting closed)
-
-          # Возвращает сообщение о том, что значение атрибута `status` записи
-          # заявки не поддерживается
-          #
-          BAD_STATUS = proc { |status, c4s3| <<-MESSAGE.squish }
-            Значение `#{status}` атрибута `status` записи заявки с
-            идентификатором `#{c4s3.id} не поддерживается
-          MESSAGE
 
           # Проверяет, что значение атрибута `status` заявки допустимо
           #
@@ -102,7 +104,7 @@ module MFCCase
             status = case_attributes[:status]
             allowed_statuses.map!(&:to_s)
             return if allowed_statuses.include?(status)
-            raise Errors::Case::BadStatus.new(c4s3, status, allowed_stauses)
+            raise Errors::Case::BadStatus.new(c4s3, status, allowed_statuses)
           end
         end
       end

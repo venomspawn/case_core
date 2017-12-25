@@ -52,11 +52,15 @@ module MFCCase
         #   ни объектом класса `Hash`
         #
         # @raise [RuntimeError]
+        #   если значение поля `type` записи заявки не равно `mfc_case`
+        #
+        # @raise [RuntimeError]
         #   если заявка обладает статусом, который недопустим для данного
         #   обработчика
         #
         def initialize(c4s3, attrs = [], allowed_statuses = nil, params = nil)
           check_case!(c4s3)
+          check_case_type!(c4s3)
           check_attrs!(attrs)
           check_allowed_statuses!(allowed_statuses)
           check_params!(params)
@@ -66,7 +70,7 @@ module MFCCase
           @c4s3 = c4s3
           @case_attributes = extract_case_attributes(attrs)
 
-          check_case_status!(case_attributes, allowed_statuses)
+          check_case_status!(c4s3, case_attributes, allowed_statuses)
 
           @params = params || {}
         end
@@ -120,7 +124,7 @@ module MFCCase
         #
         def sanitize_attrs(attrs, allowed_statuses)
           return if attrs.nil?
-          attrs += ['status'] if allowed_statuses.is_a(Array)
+          attrs += ['status'] if allowed_statuses.is_a?(Array)
           attrs.uniq
         end
 

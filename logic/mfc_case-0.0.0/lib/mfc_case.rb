@@ -16,6 +16,12 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
   #
+  # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
+  #
+  # @raise [RuntimeError]
+  #   если заявка обладает выставленным статусом
+  #
   def self.on_case_creation(c4s3)
     processor = EventProcessors::CaseCreationProcessor.new(c4s3)
     processor.process
@@ -41,6 +47,9 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `params` не является объектом класса `NilClass` или класса
   #   `Hash`
+  #
+  # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
   #
   # @raise [RuntimeError]
   #   если статус заявки отличен от `packaging` или `rejecting`
@@ -76,6 +85,9 @@ module MFCCase
   #   `Hash`
   #
   # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
+  #
+  # @raise [RuntimeError]
   #   если статус заявки отличен от `pending`
   #
   def self.remove_from_pending_list(c4s3, params)
@@ -106,6 +118,9 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `params` не является объектом класса `NilClass` или класса
   #   `Hash`
+  #
+  # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
   #
   # @raise [RuntimeError]
   #   если статус заявки отличен от `processing`
@@ -144,6 +159,9 @@ module MFCCase
   #   `Hash`
   #
   # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
+  #
+  # @raise [RuntimeError]
   #   если статус заявки отличен от `issuance`
   #
   # @raise [RuntimeError]
@@ -176,6 +194,9 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `params` не является объектом класса `NilClass` или класса
   #   `Hash`
+  #
+  # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
   #
   # @raise [RuntimeError]
   #   если статус заявки отличен от `issuance`
@@ -230,6 +251,9 @@ module MFCCase
   # @raise [ArgumentError]
   #   если аргумент `params` не является ни объектом класса `NilClass`, ни
   #   объектом класса `Hash`
+  #
+  # @raise [RuntimeError]
+  #   если значение поля `type` записи заявки не равно `mfc_case`
   #
   # @raise [RuntimeError]
   #   если среди записей заявок, прикреплённых к записи реестра передаваемой

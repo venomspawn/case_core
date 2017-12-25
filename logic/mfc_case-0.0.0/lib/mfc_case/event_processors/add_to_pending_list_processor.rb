@@ -4,7 +4,7 @@ module MFCCase
   module EventProcessors
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Класс обработчиков события `add_to_pending_list!` заявки. Обработчик
+    # Класс обработчиков события `add_to_pending_list` заявки. Обработчик
     # выполняет следующие действия:
     #
     # *   выставляет статус заявки `pending` в том и только в том случае, если
