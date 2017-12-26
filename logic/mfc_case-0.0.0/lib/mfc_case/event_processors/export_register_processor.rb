@@ -56,10 +56,15 @@ module MFCCase
       #   если аргумент `params` не является ни объектом класса `NilClass`, ни
       #   объектом класса `Hash`
       #
+      # @raise [RuntimeError]
+      #   если в реестре передаваемой корреспонденции нет заявок
+      #
       def initialize(register, params)
         check_register!(register)
         check_params!(params)
         @register = register
+        @cases_count = register.cases_dataset.count
+        check_cases_count!(register, cases_count)
         @params = params || {}
       end
 
@@ -83,6 +88,13 @@ module MFCCase
       #   запись реестра передаваемой корреспонденции
       #
       attr_reader :register
+
+      # Количество заявок в реестре передаваемой корреспонденции
+      #
+      # @return [Integer]
+      #   количество заявок в реестре передаваемой корреспонденции
+      #
+      attr_reader :cases_count
 
       # Ассоциативный массив параметров
       #
@@ -125,7 +137,7 @@ module MFCCase
       #
       def process_cases
         new_cases_attributes = process_cases_attributes
-        update_cases_attributes(new_case_attributes)
+        update_cases_attributes(new_cases_attributes)
       end
 
       # Обрабатывает записи заявок, прикреплённых к записи реестра передаваемой
@@ -160,7 +172,7 @@ module MFCCase
       #   результирующий запрос Sequel
       #
       def cases_attributes_dataset
-        CaseCore::Models::CaseAttributes
+        CaseCore::Models::CaseAttribute
           .where(case_id: cases_ids_dataset, name: CASE_ATTRS)
           .naked
       end
@@ -172,8 +184,14 @@ module MFCCase
       # @return [Hash{String => Array<(String, Object)>}]
       #   результирующий ассоциативный массив
       #
+      # @raise [RuntimeError]
+      #   если среди заявок, находящихся в реестре передаваемой
+      #   корреспонденции, найдётся заявка без атрибутов
+      #
       def cases_attributes
-        cases_attributes_dataset.select_hash_groups(:case_id, %i(name value))
+        result =
+          cases_attributes_dataset.select_hash_groups(:case_id, %i(name value))
+        result.tap { check_cases_attributes!(result, register, cases_count) }
       end
 
       # Список названий атрибутов заявок, подлежащих обновлению
@@ -229,9 +247,9 @@ module MFCCase
       #   ассоциативный массив, в котором идентификаторам заявок соответствуют
       #   структуры со значениями атрибутов, подлежащих обновлению
       #
-      def update_case_attributes(new_cases_attributes)
-        delete_case_attributes(new_cases_attributes)
-        import_case_attributes(new_cases_attributes)
+      def update_cases_attributes(new_cases_attributes)
+        delete_cases_attributes(new_cases_attributes)
+        import_cases_attributes(new_cases_attributes)
       end
 
       # Удаляет атрибуты заявок, чьи названия совпадают со значениями в списке
@@ -241,7 +259,7 @@ module MFCCase
       #   ассоциативный массив, в котором идентификаторам заявок соответствуют
       #   структуры со значениями атрибутов, подлежащих обновлению
       #
-      def delete_case_attributes(attributes)
+      def delete_cases_attributes(attributes)
         case_ids = attributes.keys
         CaseCore::Models::CaseAttribute
           .where(case_id: case_ids, name: NEW_CASE_ATTRS)
@@ -254,11 +272,11 @@ module MFCCase
       #   ассоциативный массив, в котором идентификаторам заявок соответствуют
       #   структуры со значениями атрибутов, подлежащих обновлению
       #
-      def import_case_attributes(attributes)
+      def import_cases_attributes(attributes)
         values = attributes.each_with_object([]) do |(case_id, attrs), memo|
           attrs.each_pair { |name, value| memo << [case_id, name.to_s, value] }
         end
-        CaseCore::Models::CaseAttributes.import(%i(case_id name value), values)
+        CaseCore::Models::CaseAttribute.import(%i(case_id name value), values)
       end
     end
   end

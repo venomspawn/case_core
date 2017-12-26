@@ -31,7 +31,9 @@ module CaseCore
         #
         def show
           attributes_dataset = record.attributes_dataset.naked
-          attributes_dataset.select_hash(:name, :value, hash: record.values)
+          attributes_dataset
+            .select_hash(:name, :value, hash: record.values)
+            .symbolize_keys
         end
 
         private

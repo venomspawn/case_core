@@ -411,7 +411,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
     it 'should update attributes of the case' do
       expect { subject }
-        .to change { CaseCore::Actions::Cases.show(id: id)[name] }
+        .to change { CaseCore::Actions::Cases.show(id: id)[name.to_sym] }
         .from(value)
         .to(new_value)
     end

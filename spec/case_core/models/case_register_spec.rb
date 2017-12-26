@@ -41,15 +41,6 @@ RSpec.describe CaseCore::Models::CaseRegister do
         expect { subject }.to raise_error(Sequel::NotNullConstraintViolation)
       end
     end
-
-    context 'when id of used case is already in the table' do
-      let!(:case_register) { create(:case_register) }
-      let(:params) { { case_id: case_register.case_id, register: register } }
-
-      it 'should raise Sequel::UniqueConstraintViolation' do
-        expect { subject }.to raise_error(Sequel::UniqueConstraintViolation)
-      end
-    end
   end
 
   describe 'instance of the model' do

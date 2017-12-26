@@ -56,6 +56,37 @@ module MFCCase
           return if status == 'pending'
           raise Errors::Case::BadStatus.new(case_id, status)
         end
+
+        # Проверяет, что реестр передаваемой корреспонденции не пуст
+        #
+        # @param [CaseCore::Models::Register] register
+        #   запись реестра передаваемой корреспонденции
+        #
+        # @param [Integer] cases_count
+        #   количество заявок в реестре передаваемой корреспонденции
+        #
+        def check_cases_count!(register, cases_count)
+          raise Errors::Register::Empty.new(register) if cases_count.zero?
+        end
+
+        # Проверяет, что в реестре передаваемой корреспонденции нет заявок без
+        # атрибутов
+        #
+        # @param [Hash] cases_attributes
+        #   ассоциативный массив, в котором ключами являются идентификаторы
+        #   всех записей заявок, находящихся в реестре передаваемой
+        #   корреспонденции
+        #
+        # @param [CaseCore::Models::Register] register
+        #   запись реестра передаваемой корреспонденции
+        #
+        # @param [Integer] cases_count
+        #   количество заявок в реестре передаваемой корреспонденции
+        #
+        def check_cases_attributes!(cases_attributes, register, cases_count)
+          return if cases_attributes.size == cases_count
+          raise Errors::Case::Attributeless.new(register)
+        end
       end
     end
   end

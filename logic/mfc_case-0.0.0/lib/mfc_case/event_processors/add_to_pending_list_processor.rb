@@ -4,7 +4,7 @@ module MFCCase
   module EventProcessors
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Класс обработчиков события `add_to_pending_list!` заявки. Обработчик
+    # Класс обработчиков события `add_to_pending_list` заявки. Обработчик
     # выполняет следующие действия:
     #
     # *   выставляет статус заявки `pending` в том и только в том случае, если
@@ -38,6 +38,9 @@ module MFCCase
       # @raise [ArgumentError]
       #   если аргумент `params` не является ни объектом класса `NilClass`,
       #   ни объектом класса `Hash`
+      #
+      # @raise [RuntimeError]
+      #   если значение поля `type` записи заявки не равно `mfc_case`
       #
       # @raise [RuntimeError]
       #   если заявка обладает статусом, который недопустим для данного

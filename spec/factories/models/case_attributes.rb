@@ -12,4 +12,14 @@ FactoryGirl.define do
 
     association :case
   end
+
+  factory :case_attributes, class: Array do
+    skip_create
+    initialize_with do
+      c4s3 = attributes[:case]
+      attributes.except(:case).map do |(name, value)|
+        create(:case_attribute, case: c4s3, name: name.to_s, value: value)
+      end
+    end
+  end
 end

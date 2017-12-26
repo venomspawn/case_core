@@ -21,6 +21,8 @@ module MFCCase
     #     текущему времени.
     #
     class RejectResultProcessor < Base::CaseEventProcessor
+      include Base::Mixins::Expired
+
       # Список статусов, из которых возможен переход в статус `rejecting`
       #
       ALLOWED_STATUSES = %w(issuance)
@@ -47,6 +49,9 @@ module MFCCase
       #   ни объектом класса `Hash`
       #
       # @raise [RuntimeError]
+      #   если значение поля `type` записи заявки не равно `mfc_case`
+      #
+      # @raise [RuntimeError]
       #   если заявка обладает статусом, который недопустим для данного
       #   обработчика
       #
@@ -56,10 +61,13 @@ module MFCCase
 
       # Проверяет условия и обновляет атрибуты заявки
       #
+      # @raise [ArgumentError]
+      #   если значение атрибута `rejecting_expected_at` не может быть
+      #   интерпретировано в качестве даты
+      #
       # @raise [RuntimeError]
-      #   если значение атрибута `rejecting_expected_at` отсутствует или не
-      #   представляет собой строку, в начале которой находится дата в формате
-      #   `ГГГГ-ММ-ДД`;
+      #   если текущая дата не больше значения, записанного в атрибуте
+      #   `rejecting_expected_at`;
       #
       def process
         check_conditions!
@@ -77,64 +85,11 @@ module MFCCase
         { status: 'rejecting', added_to_rejecting_at: now }
       end
 
-      # Возвращает значение атрибута `rejecting_expected_at` заявки
-      #
-      # @return [NilClass, String]
-      #   значение атрибута `rejecting_expected_at` заявки
-      #
-      def rejecting_expected_at
-        case_attributes[:rejecting_expected_at]
-      end
-
-      # Регулярное выражение для строки, в начале которой находится дата в
-      # формате `ГГГГ-ММ-ДД`
-      #
-      DATE_STR_REGEXP = /^([0-9]{4})-([0-9]{2})-([0-9]{2}).*/
-
-      # Проверяет, что значение атрибута `rejecting_expected_at` заявки
-      # является строкой, в начале которой записана дата в формате
-      # `ГГГГ-ММ-ДД`, и возвращает строку с этой датой
-      #
-      # @return [String]
-      #   результирующая строка
-      #
-      # @raise [RuntimeError]
-      #   если значение атрибута `rejecting_expected_at` отсутствует или не
-      #   представляет собой строку, в начале которой находится дата в формате
-      #   `ГГГГ-ММ-ДД`;
-      #
-      def rejecting_expected_at_date_str
-        match_data = DATE_STR_REGEXP.match(rejecting_expected_at.to_s).to_a
-        _, year, month, day = match_data
-        Time.new(year, month, day).strftime('%F')
-      rescue
-        raise Errors::Date::InvalidFormat.new(rejecting_expected_at)
-      end
-
-      # Возвращает строку с текущей датой в формате `ГГГГ-ММ-ДД`
-      #
-      # @return [String]
-      #   строка с текущей датой
-      #
-      def today_str
-        now.strftime('%F')
-      end
-
-      # Возвращает, необходимо ли возвратить результат заявки в ведомство
-      #
-      # @return [Boolean]
-      #   необходимо ли возвратить результат заявки в ведомство
-      #
-      def expired?
-        rejecting_expected_at_date_str < today_str
-      end
-
       # Проверяет условия выставления нового статуса
       #
-      # @raise [RuntimeError]
-      #   если значение атрибута `rejecting_expected_at` отсутствует или не
-      #   представляет собой строку, в начале которой находится дата в формате
-      #   `ГГГГ-ММ-ДД`;
+      # @raise [ArgumentError]
+      #   если значение атрибута `rejecting_expected_at` не может быть
+      #   интерпретировано в качестве даты
       #
       # @raise [RuntimeError]
       #   если текущая дата не больше значения, записанного в атрибуте

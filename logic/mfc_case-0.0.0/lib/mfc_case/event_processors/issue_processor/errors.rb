@@ -2,7 +2,7 @@
 
 module MFCCase
   module EventProcessors
-    class RejectResultProcessor < Base::CaseEventProcessor
+    class IssueProcessor < Base::CaseEventProcessor
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
       # Модуль, предоставляющий пространства имён исключений, используемых
@@ -18,9 +18,9 @@ module MFCCase
           # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
           #
           # Класс исключения, создаваемого в случае, когда дата возврата
-          # результата заявки ещё не наступила
+          # результата заявки уже наступила
           #
-          class NotExpired < RuntimeError
+          class Expired < RuntimeError
             # Инициализирует объект класса
             #
             # @param [CaseCore::Models::Case] c4s3
@@ -29,7 +29,7 @@ module MFCCase
             def initialize(c4s3)
               super(<<-MESSAGE.squish)
                 Дата возврата результата заявки с идентификатором `#{c4s3.id}`
-                ещё не наступила
+                уже наступила
               MESSAGE
             end
           end

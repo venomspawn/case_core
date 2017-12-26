@@ -31,6 +31,25 @@ module MFCCase
               MESSAGE
             end
           end
+
+          # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+          #
+          # Класс исключений, сигнализирующих о том, что в реестре передаваемой
+          # корреспонденции нет заявок
+          #
+          class Empty < RuntimeError
+            # Инициализирует объект класса
+            #
+            # @param [CaseCore::Models::Register] register
+            #   запись реестра передаваемой корреспонденции
+            #
+            def initialize(register)
+              super(<<-MESSAGE.squish)
+                Реестр передаваемой корреспонденции с идентификатором записи
+                `#{register.id}` пуст
+              MESSAGE
+            end
+          end
         end
 
         # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
@@ -80,6 +99,25 @@ module MFCCase
               super(<<-MESSAGE.squish)
                 Статус `#{status}` заявки с идентификатором записи
                 `#{case_id}` не равен `pending`
+              MESSAGE
+            end
+          end
+
+          # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+          #
+          # Класс исключений, сигналиризущих о том, что реестре передаваемой
+          # корреспонденции есть заявки без атрибутов
+          #
+          class Attributeless < RuntimeError
+            # Инициализирует объект класса
+            #
+            # @param [CaseCore::Models::Register] register
+            #   запись реестра передаваемой корреспонденции
+            #
+            def initialize(register)
+              super(<<-MESSAGE.squish)
+                В реестре передаваемой корреспонденции с идентификатором записи
+                `#{register.id}` есть заявка без атрибутов
               MESSAGE
             end
           end
