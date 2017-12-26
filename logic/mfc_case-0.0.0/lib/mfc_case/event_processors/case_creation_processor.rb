@@ -18,6 +18,9 @@ module MFCCase
       #   `CaseCore::Models::Case`
       #
       # @raise [RuntimeError]
+      #   если значение поля `type` записи заявки не равно `mfc_case`
+      #
+      # @raise [RuntimeError]
       #   если заявка обладает выставленным статусом
       #
       def initialize(c4s3)
@@ -47,7 +50,7 @@ module MFCCase
       #   информация о допустимых статусах
       #
       # @raise [RuntimeError]
-      #   если значение атрибута `status` не является допустимым
+      #   если заявка обладает выставленным статусом
       #
       def check_case_status!(c4s3, case_attributes, _allowed_statuses)
         status = case_attributes[:status]
