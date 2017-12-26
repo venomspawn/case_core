@@ -2,8 +2,9 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса `MFCCase::EventProcessors::RejectResultProcessor`
-# обработчиков события `reject_result` заявки на неавтоматизированную услугу
+# Файл тестирования класса
+# `MFCCase::EventProcessors::SendToFrontOfficeProcessor` обработчиков события
+# `send_to_frontoffice` заявки на неавтоматизированную услугу
 #
 
 CaseCore::Logic::Loader.instance.send(:unload_module, 'mfc_case')
@@ -13,10 +14,10 @@ CaseCore::Logic::Loader.settings.dir = "#{$root}/logic"
 CaseCore::Logic::Loader.logic('mfc_case')
 
 helpers_path = "#{$root}/spec/helpers/mfc_case/event_processors"
-load "#{helpers_path}/reject_result_processor_spec_helper.rb"
+load "#{helpers_path}/send_to_frontoffice_processor_spec_helper.rb"
 
-RSpec.describe MFCCase::EventProcessors::RejectResultProcessor do
-  include MFCCase::EventProcessors::RejectResultProcessorSpecHelper
+RSpec.describe MFCCase::EventProcessors::SendToFrontOfficeProcessor do
+  include MFCCase::EventProcessors::SendToFrontOfficeProcessorSpecHelper
 
   describe 'the class' do
     subject { described_class }
@@ -32,7 +33,7 @@ RSpec.describe MFCCase::EventProcessors::RejectResultProcessor do
     describe 'result' do
       subject { result }
 
-      let(:c4s3) { create_case(:issuance, Time.now) }
+      let(:c4s3) { create_case(:processing) }
 
       it { is_expected.to be_an_instance_of(described_class) }
     end
@@ -62,15 +63,15 @@ RSpec.describe MFCCase::EventProcessors::RejectResultProcessor do
     end
 
     context 'when case status is nil' do
-      let(:c4s3) { create_case(nil, Time.now) }
+      let(:c4s3) { create_case(nil) }
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
       end
     end
 
-    context 'when case status is not `issuance`' do
-      let(:c4s3) { create_case('closed', Time.now) }
+    context 'when case status is not `processing`' do
+      let(:c4s3) { create_case(:closed) }
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
@@ -90,7 +91,7 @@ RSpec.describe MFCCase::EventProcessors::RejectResultProcessor do
   describe 'instance' do
     subject { described_class.new(c4s3, params) }
 
-    let(:c4s3) { create_case(:issuance, Time.now) }
+    let(:c4s3) { create_case(:processing) }
     let(:params) { {} }
 
     it { is_expected.to respond_to(:process) }
@@ -100,50 +101,27 @@ RSpec.describe MFCCase::EventProcessors::RejectResultProcessor do
     subject { instance.process }
 
     let(:instance) { described_class.new(c4s3, params) }
-    let(:c4s3) { create_case(:issuance, rejecting_expected_at) }
-    let(:rejecting_expected_at) { Time.now - 24 * 60 * 60 }
-    let(:params) { {} }
+    let(:c4s3) { create_case(:processing) }
+    let(:params) { { operator_id: 'operator_id', result_id: 'result_id' } }
 
-    it 'should set case status to `rejecting`' do
-      expect { subject }.to change { case_status(c4s3) }.to('rejecting')
+    it 'should set case status to `issuance`' do
+      expect { subject }.to change { case_status(c4s3) }.to('issuance')
     end
 
-    it 'should set `added_to_rejecting_at` case attribute to now' do
+    it 'should set `responded_at` case attribute to now' do
       subject
-      expect(case_added_to_rejecting_at(c4s3)).to be_within(1).of(Time.now)
+      expect(case_responded_at(c4s3)).to be_within(1).of(Time.now)
     end
 
-    context 'when `rejecting_expected_at` attribute is absent' do
-      let(:c4s3) { create(:case, type: 'mfc_case') }
-      let!(:attrs) { create(:case_attributes, case: c4s3, status: 'issuance') }
-
-      it 'should raise ArgumentError' do
-        expect { subject }.to raise_error(ArgumentError)
-      end
+    it 'should set `response_processor_person_id` attribute by params' do
+      subject
+      expect(case_response_processor_person_id(c4s3))
+        .to be == params[:operator_id]
     end
 
-    context 'when `rejecting_expected_at` attribute is nil' do
-      let(:rejecting_expected_at) { nil }
-
-      it 'should raise ArgumentError' do
-        expect { subject }.to raise_error(ArgumentError)
-      end
-    end
-
-    context 'when `rejecting_expected_at` attribute value is invalid' do
-      let(:rejecting_expected_at) { 'invalid' }
-
-      it 'should raise ArgumentError' do
-        expect { subject }.to raise_error(ArgumentError)
-      end
-    end
-
-    context 'when now date is less than value of `rejecting_expected_at`' do
-      let(:rejecting_expected_at) { Time.now + 24 * 60 * 60 }
-
-      it 'should raise RuntimeError' do
-        expect { subject }.to raise_error(RuntimeError)
-      end
+    it 'should set `result_id` attribute by params' do
+      subject
+      expect(case_result_id(c4s3)).to be == params[:result_id]
     end
   end
 end

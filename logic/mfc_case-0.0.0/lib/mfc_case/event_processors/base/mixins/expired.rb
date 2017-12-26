@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'date'
+
 module MFCCase
   module EventProcessors
     module Base
@@ -26,38 +28,17 @@ module MFCCase
             case_attributes[:rejecting_expected_at]
           end
 
-          # Регулярное выражение для строки, в начале которой находится дата в
-          # формате `ГГГГ-ММ-ДД`
+          # Возвращает дату, хранящуюся в атрибуте `rejecting_expected_at`
           #
-          DATE_STR_REGEXP = /^([0-9]{4})-([0-9]{2})-([0-9]{2}).*/
-
-          # Проверяет, что значение атрибута `rejecting_expected_at` заявки
-          # является строкой, в начале которой записана дата в формате
-          # `ГГГГ-ММ-ДД`, и возвращает строку с этой датой
+          # @return [Date]
+          #   результирующая дата
           #
-          # @return [String]
-          #   результирующая строка
+          # @raise [ArgumentError]
+          #   если значение атрибута `rejecting_expected_at` не может быть
+          #   интерпретировано в качестве даты
           #
-          # @raise [RuntimeError]
-          #   если значение атрибута `rejecting_expected_at` отсутствует или не
-          #   представляет собой строку, в начале которой находится дата в
-          #   формате `ГГГГ-ММ-ДД`;
-          #
-          def rejecting_expected_at_date_str
-            match_data = DATE_STR_REGEXP.match(rejecting_expected_at.to_s).to_a
-            _, year, month, day = match_data
-            Time.new(year, month, day).strftime('%F')
-          rescue
-            raise Errors::Date::InvalidFormat.new(rejecting_expected_at)
-          end
-
-          # Возвращает строку с текущей датой в формате `ГГГГ-ММ-ДД`
-          #
-          # @return [String]
-          #   строка с текущей датой
-          #
-          def today_str
-            now.strftime('%F')
+          def rejecting_expected_at_date
+            Date.parse(rejecting_expected_at.to_s, false)
           end
 
           # Возвращает, необходимо ли возвратить результат заявки в ведомство
@@ -65,8 +46,12 @@ module MFCCase
           # @return [Boolean]
           #   необходимо ли возвратить результат заявки в ведомство
           #
+          # @raise [ArgumentError]
+          #   если значение атрибута `rejecting_expected_at` не может быть
+          #   интерпретировано в качестве даты
+          #
           def expired?
-            rejecting_expected_at_date_str < today_str
+            rejecting_expected_at_date < Date.today
           end
         end
       end

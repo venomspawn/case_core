@@ -54,7 +54,7 @@ RSpec.describe MFCCase::EventProcessors::IssueProcessor do
     end
 
     context 'when case status is absent' do
-      let(:c4s3) { create(:case) }
+      let(:c4s3) { create(:case, type: :mfc_case) }
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
@@ -125,27 +125,27 @@ RSpec.describe MFCCase::EventProcessors::IssueProcessor do
     end
 
     context 'when `rejecting_expected_at` attribute is absent' do
-      let(:c4s3) { create(:case) }
+      let(:c4s3) { create(:case, type: 'mfc_case') }
       let!(:attrs) { create(:case_attributes, case: c4s3, status: 'issuance') }
 
-      it 'should raise RuntimeError' do
-        expect { subject }.to raise_error(RuntimeError)
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
 
     context 'when `rejecting_expected_at` attribute is nil' do
       let(:rejecting_expected_at) { nil }
 
-      it 'should raise RuntimeError' do
-        expect { subject }.to raise_error(RuntimeError)
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
 
     context 'when `rejecting_expected_at` attribute value is invalid' do
       let(:rejecting_expected_at) { 'invalid' }
 
-      it 'should raise RuntimeError' do
-        expect { subject }.to raise_error(RuntimeError)
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
 

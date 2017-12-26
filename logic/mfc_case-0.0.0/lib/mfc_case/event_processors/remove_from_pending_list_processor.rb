@@ -80,8 +80,8 @@ module MFCCase
         added_to_rejecting_at.present? ? 'rejecting' : 'packaging'
       end
 
-      # Возвращает запрос Sequel на получение идентификатора записи реестра
-      # передаваемой корреспонденции, к которой прикреплена заявка
+      # Возвращает запрос Sequel на получение последнего идентификатора записи
+      # реестра передаваемой корреспонденции, к которой прикреплена заявка
       #
       # @return [Sequel::Dataset]
       #   результирующий запрос Sequel
@@ -90,10 +90,12 @@ module MFCCase
         CaseCore::Models::CaseRegister
           .select(:register_id)
           .where(case_id: c4s3.id)
+          .order_by(:register_id.desc)
+          .limit(1)
       end
 
-      # Возвращает количество заявок в реестре передаваемой корреспонденции, к
-      # которой прикреплена заявка
+      # Возвращает количество заявок в последнем реестре передаваемой
+      # корреспонденции, к которой прикреплена заявка
       #
       # @return [Integer]
       #   результирующее количество
@@ -109,7 +111,9 @@ module MFCCase
       #
       def remove_from_register
         if count_of_cases_in_register > 1
-          CaseCore::Models::CaseRegister.where(case_id: c4s3.id).delete
+          CaseCore::Models::CaseRegister
+            .where(case_id: c4s3.id, register_id: register_id_dataset)
+            .delete
         else
           CaseCore::Models::Register.where(id: register_id_dataset).delete
         end

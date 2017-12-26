@@ -55,7 +55,7 @@ RSpec.describe MFCCase::EventProcessors::AddToPendingListProcessor do
     end
 
     context 'when case status is absent' do
-      let(:c4s3) { create(:case) }
+      let(:c4s3) { create(:case, type: :mfc_case) }
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
