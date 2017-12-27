@@ -126,6 +126,9 @@ module CaseCore
         def run!
           subscribe_on_incoming
           subscribe_on_responses
+
+          %w(INT TERM).each { |signal| trap(signal) { Thread.exit } }
+
           sleep
         end
 
