@@ -34,19 +34,23 @@ module MSPCase
       #   класса `Hash`
       #
       # @raise [RuntimeError]
+      #   значение поля `type` записи заявки не равно `msp_case`
+      #
+      # @raise [RuntimeError]
       #   если статус заявки отличен от `issuance`
       #
       def initialize(c4s3, params)
         check_case!(c4s3)
+        check_case_type!(c4s3)
         check_params!(params)
         @c4s3 = c4s3
+        check_case_status!(c4s3, case_attributes)
         @params = params || {}
       end
 
       # Выполняет обработку
       #
       def process
-        check_conditions!
         update_case_attributes
       end
 
@@ -66,26 +70,16 @@ module MSPCase
       #
       attr_reader :params
 
+      # Названия требуемых атрибутов заявки
+      #
+      CASE_ATTRS = %w(status)
+
       # Возвращает ассоциативный массив атрибутов заявки
       #
       # @return [Hash]
       #   ассоциативный массив атрибутов заявки
       #
       def case_attributes
-        @case_attributes ||= extract_case_attributes
-      end
-
-      # Названия требуемых атрибутов заявки
-      #
-      CASE_ATTRS = %w(status)
-
-      # Извлекает требуемые атрибуты заявки из соответствующих записей и
-      # возвращает ассоциативный массив атрибутов заявки
-      #
-      # @return [Hash{Symbol => Object}]
-      #   результирующий ассоциативный массив
-      #
-      def extract_case_attributes
         CaseCore::Actions::Cases
           .show_attributes(id: c4s3.id, names: CASE_ATTRS)
       end
@@ -103,25 +97,6 @@ module MSPCase
       #
       def new_case_attributes
         { status: 'closed', closed_at: Time.now }
-      end
-
-      # Возвращает статус заявки
-      #
-      # @return [NilClass, String]
-      #   статус заявки
-      #
-      def case_status
-        case_attributes[:status]
-      end
-
-      # Проверяет, что статус заявки `issuance`
-      #
-      # @raise [RuntimeError]
-      #   если статус заявки отличен от `issuance`
-      #
-      def check_conditions!
-        return if case_status == 'issuance'
-        raise Errors::Case::BadStatus.new(c4s3, case_status)
       end
     end
   end

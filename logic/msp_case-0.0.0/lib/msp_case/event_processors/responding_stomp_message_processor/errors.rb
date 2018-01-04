@@ -20,7 +20,7 @@ module MSPCase
           # ассоциированной с записью запроса, имеет значение поля `type`,
           # которое не равно `msp_case`
           #
-          class BadType < ArgumentError
+          class BadType < RuntimeError
             # Инциализирует объект класса
             #
             # @param [CaseCore::Models::Case] c4s3
@@ -30,6 +30,28 @@ module MSPCase
               super(<<-MESSAGE.squish)
                 Заявка с идентификатором записи `#{c4s3.id}` имеет неверное
                 значение поля `type`
+              MESSAGE
+            end
+          end
+
+          # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+          #
+          # Класс исключений, сигнализирующих о том, что значение атрибута
+          # `status` заявки не является допустимым
+          #
+          class BadStatus < RuntimeError
+            # Инициализирует объект класса
+            #
+            # @param [CaseCore::Models::Case] c4s3
+            #   запись заявки
+            #
+            # @param [#to_s] status
+            #   статус заявки
+            #
+            def initialize(c4s3, status)
+              super(<<-MESSAGE.squish)
+                Статус `#{status}` заявки с идентификатором записи `#{c4s3.id}`
+                не равен `processing`
               MESSAGE
             end
           end

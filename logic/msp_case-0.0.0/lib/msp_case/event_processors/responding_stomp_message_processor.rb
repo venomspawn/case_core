@@ -36,12 +36,23 @@ module MSPCase
 
       # Обрабатывает ответное сообщение STOMP
       #
+      # @raise [RuntimeError]
+      #   если запись запроса не найдена
+      #
+      # @raise [RuntimeError]
+      #   если поле `type` записи заявки не равно `msp_case`
+      #
+      # @raise [RuntimeError]
+      #   если статус заявки отличен от `processing`
+      #
       def process
         request = find_request!
         c4s3 = request.case
         check_case_type!(c4s3)
+        case_attributes = extract_case_attributes(c4s3.id)
+        check_case_status!(c4s3, case_attributes)
         update_request_attributes(request)
-        update_case_attributes(c4s3.id)
+        update_case_attributes(c4s3.id, case_attributes)
       end
 
       private
@@ -94,6 +105,24 @@ module MSPCase
           .tap { |request| check_request!(request, original_message_id) }
       end
 
+      # Названия требуемых атрибутов заявки
+      #
+      CASE_ATTRS = %w(status issue_location_type)
+
+      # Извлекает требуемые атрибуты заявки из соответствующих записей и
+      # возвращает ассоциативный массив атрибутов заявки
+      #
+      # @param [String] case_id
+      #   идентификатор записи заявки
+      #
+      # @return [Hash{Symbol => Object}]
+      #   результирующий ассоциативный массив
+      #
+      def extract_case_attributes(case_id)
+        CaseCore::Actions::Cases
+          .show_attributes(id: case_id, names: CASE_ATTRS)
+      end
+
       # Обновляет атрибуты запроса
       #
       # @param [CaseCore::Models::Request] request
@@ -109,8 +138,11 @@ module MSPCase
       # @param [String] case_id
       #   идентификатор записи заявки
       #
-      def update_case_attributes(case_id)
-        attributes = new_case_attributes(case_id)
+      # @param [Hash{Symbol => Object}] case_attributes
+      #   ассоциативный массив атрибутов заявки
+      #
+      def update_case_attributes(case_id, case_attributes)
+        attributes = new_case_attributes(case_id, case_attributes)
         return if attributes.empty?
         CaseCore::Actions::Cases.update(id: case_id, **attributes)
       end
@@ -120,15 +152,18 @@ module MSPCase
       # @param [String] case_id
       #   идентификатор записи заявки
       #
+      # @param [Hash{Symbol => Object}] case_attributes
+      #   ассоциативный массив атрибутов заявки
+      #
       # @return [Hash]
       #   ассоциативный массив новых атрибутов заявки
       #
-      def new_case_attributes(case_id)
+      def new_case_attributes(case_id, case_attributes)
         attributes = case response_format
                      when 'EXCEPTION'
                        { status: 'error' }
                      when 'REJECTION', 'RESPONSE'
-                       case case_issue_location_type(case_id)
+                       case case_attributes[:issue_location_type]
                        when 'mfc'
                          { status: 'issuance' }
                        when 'email'
@@ -136,37 +171,6 @@ module MSPCase
                        end
                      end
         attributes || {}
-      end
-
-      # Возвращает значение атрибута `issue_location_type` заявки
-      #
-      # @param [String] case_id
-      #   идентификатор записи заявки
-      #
-      # @return [NilClass, String]
-      #   результирующее значение
-      #
-      def case_issue_location_type(case_id)
-        attributes = extract_case_attributes(case_id)
-        attributes[:issue_location_type]
-      end
-
-      # Названия требуемых атрибутов заявки
-      #
-      CASE_ATTRS = %w(issue_location_type)
-
-      # Извлекает требуемые атрибуты заявки из соответствующих записей и
-      # возвращает ассоциативный массив атрибутов заявки
-      #
-      # @param [String] case_id
-      #   идентификатор записи заявки
-      #
-      # @return [Hash{Symbol => Object}]
-      #   результирующий ассоциативный массив
-      #
-      def extract_case_attributes(case_id)
-        CaseCore::Actions::Cases
-          .show_attributes(id: case_id, names: CASE_ATTRS)
       end
     end
   end

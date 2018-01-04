@@ -16,6 +16,12 @@ module MSPCase
   # @raise [ArgumentError]
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
   #
+  # @raise [RuntimeError]
+  #   значение поля `type` записи заявки не равно `msp_case`
+  #
+  # @raise [RuntimeError]
+  #   если заявка обладает выставленным статусом
+  #
   def self.on_case_creation(c4s3)
     processor = EventProcessors::CaseCreationProcessor.new(c4s3)
     processor.process
@@ -55,6 +61,9 @@ module MSPCase
   # @raise [ArgumentError]
   #   если аргумент `params` не является объектом класса `NilClass` или класса
   #   `Hash`
+  #
+  # @raise [RuntimeError]
+  #   значение поля `type` записи заявки не равно `msp_case`
   #
   # @raise [RuntimeError]
   #   если статус заявки отличен от `issuance`
