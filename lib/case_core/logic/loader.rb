@@ -6,7 +6,7 @@ require "#{$lib}/settings/configurable"
 
 require_relative 'loader/helpers'
 require_relative 'loader/module_info'
-require_relative 'loader/utils'
+require_relative 'loader/scanner'
 
 module CaseCore
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
@@ -59,7 +59,7 @@ module CaseCore
       def initialize
         @mutex = Thread::Mutex.new
         @modules_info = {}
-        @dir_last_check = Time.now
+        @scanner = Scanner.new
       end
 
       # Возвращает последнюю версию модуля бизнес-логики, загружая его при
@@ -110,14 +110,12 @@ module CaseCore
       #
       attr_reader :modules_info
 
-      # Время последней проверки директории, в которой ищутся библиотеки с
-      # бизнес-логикой
+      # Объект, сканирующий директорию с библиотеками бизнес-логики
       #
-      # @return [Time]
-      #   время последней проверки директории, в которой ищутся библиотеки с
-      #   бизнес-логикой
+      # @return [CaseCore::Logic::Loader::Scanner]
+      #   объект, сканирующий директорию с библиотеками бизнес-логики
       #
-      attr_reader :dir_last_check
+      attr_reader :scanner
 
       # Возвращает путь к директории, в которой ищутся библиотеки с
       # бизнес-логикой, если этот путь был предварительно настроен в классе,
@@ -133,30 +131,6 @@ module CaseCore
         Loader.settings.dir
       end
 
-      # Возвращает период в секундах между проверками на время изменения
-      # директории, в которой ищутся библиотеки с бизнес-логикой
-      #
-      # @return [Numeric]
-      #   период в секундах
-      #
-      def dir_check_period
-        Loader.settings.dir_check_period
-      end
-
-      # Возвращает, допускается ли перезагрузка модуля с бизнес-логикой в
-      # случае, если изменилось её содержимое
-      #
-      # @return [Boolean]
-      #   допускается ли перезагрузка модуля с бизнес-логикой в случае, если
-      #   изменилось её содержимое
-      #
-      def allow_to_reload?
-        now = Time.now
-        return false if dir_last_check > now
-        @dir_last_check = now + dir_check_period
-        true
-      end
-
       # Возвращает, нужно ли перезагрузить модуль бизнес-логики
       #
       # @param [String] name
@@ -166,10 +140,8 @@ module CaseCore
       #   нужно ли перезагрузить модуль бизнес-логики
       #
       def reload?(name)
-        return true  unless modules_info.key?(name)
-        return false unless allow_to_reload?
-        utils = create_utils(name)
-        utils.reload?
+        !modules_info.key?(name) ||
+          modules_info[name].version != scanner.libs[name]
       end
 
       # Возвращает модуль, сопоставленный предоставленному названию в
@@ -189,18 +161,6 @@ module CaseCore
         modules_info[name]&.logic_module
       end
 
-      # Создаёт вспомогательный объект, помогающий осуществлять проверки
-      #
-      # @param [String] name
-      #   название модуля в змеином_регистре
-      #
-      # @return [CaseCore::Logic::Loader::Utils]
-      #   вспомогательный объект, помогающий осуществлять проверки
-      #
-      def create_utils(name)
-        Utils.new(dir, name, modules_info[name])
-      end
-
       # Выгружает модуль бизнес-логики из памяти и загружает его из внешнего
       # файла, если это необходимо
       #
@@ -209,10 +169,9 @@ module CaseCore
       #
       def reload_module(name)
         mutex.synchronize do
-          utils = create_utils(name)
-          next if modules_info.key?(name) && !utils.reload?
+          next unless reload?(name)
           unload_module(name)
-          load_module(name, utils)
+          load_module(name)
         end
       end
 
@@ -263,15 +222,42 @@ module CaseCore
         Object.const_get(module_name) unless module_name.nil?
       end
 
+      # Возвращает полный путь к файлу с модулем для библиотеки бизнес-логики с
+      # предоставленным названием
+      #
+      # @param [String] name
+      #   название библиотеки бизнес-логики
+      #
+      # @return [String]
+      #   результирующий путь
+      #
+      def module_filename(name)
+        version = last_module_version(name)
+        "#{dir}/#{name}-#{version}/lib/#{name}.rb"
+      end
+
+      # Возвращает последнюю версию библиотеки бизнес-логики с предоставленным
+      # названием
+      #
+      # @param [String] name
+      #   название библиотеки бизнес-логики
+      #
+      # @return [String]
+      #   последняя версия библиотеки бизнес-логики
+      #
+      # @return [NilClass]
+      #   если информация о библиотеки бизнес-логики с предоставленным
+      #   названием отсутствует
+      #
+      def last_module_version(name)
+        scanner.libs[name]
+      end
+
       # Загружает модуль из внешнего файла и возвращает его. Если во время
       # загрузки произошла ошибка, возвращает `nil`.
       #
       # @param [String] name
       #   название модуля в змеином_регистре
-      #
-      # @param [CaseCore::Loader::Utils] utils
-      #   вспомогательный объект, помогающий извлечь информацию о версии
-      #   библиотеки с модулем и о пути к файлу с модулем
       #
       # @return [Module]
       #   загруженный модуль
@@ -279,12 +265,13 @@ module CaseCore
       # @return [NilClass]
       #   если во время загрузки произошла ошибка
       #
-      def load_module(name, utils)
+      def load_module(name)
         constants_before = Object.constants
-        load utils.filename
+        filename = module_filename(name)
+        load filename
         logic_module = find_module(name, constants_before, Object.constants)
-        check_if_logic_module_is_found!(name, utils.filename, logic_module)
-        version = utils.last_lib_version
+        check_if_logic_module_is_found!(name, filename, logic_module)
+        version = last_module_version(name)
         module_info = ModuleInfo.new(version, logic_module)
         modules_info[name] = module_info
         call_logic_func(module_info, :on_load)
