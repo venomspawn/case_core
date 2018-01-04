@@ -103,7 +103,9 @@ RSpec.describe MFCCase::EventProcessors::RemoveFromPendingListProcessor do
     let(:instance) { described_class.new(c4s3, params) }
     let(:c4s3) { create_case(:pending, added_to_rejecting_at) }
     let(:added_to_rejecting_at) { nil }
-    let(:params) { { operator_id: '123' } }
+    let(:params) { { operator_id: '123', register_id: register.id } }
+    let(:register) { create(:register) }
+    let!(:link) { put_cases_into_register(register, c4s3) }
 
     context 'when `added_to_rejecting_at` case attribute is present' do
       let(:added_to_rejecting_at) { Time.now }
@@ -124,40 +126,44 @@ RSpec.describe MFCCase::EventProcessors::RemoveFromPendingListProcessor do
       expect(case_added_to_pending_at(c4s3)).to be_nil
     end
 
-    context 'when the case in a register' do
-      let(:register2) { create(:register) }
-      let!(:link2) { put_cases_into_register(register2, c4s3) }
-      let(:register) { create(:register) }
-      let!(:link) { put_cases_into_register(register, c4s3) }
+    it 'should remove the case from the register' do
+      expect { subject }
+        .to change { case_registers.with_pk([c4s3.id, register.id]) }
+        .to(nil)
+    end
 
-      it 'should remove the case from the register' do
+    context 'when the case is not in a register' do
+      let!(:link) {}
+
+      it 'should raise RuntimeError' do
+        expect { subject }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when the register contains only the case' do
+      it 'should delete the register' do
         expect { subject }
-          .to change { case_registers.with_pk([c4s3.id, register.id]) }
+          .to change { registers.with_pk(register.id) }
           .to(nil)
       end
+    end
 
-      context 'when another older register contains the case' do
-        it 'shouldn\'t remove the case from this older register' do
-          expect { subject }
-            .not_to change { case_registers.with_pk([c4s3.id, register2.id]) }
-        end
+    context 'when the register contains other cases' do
+      let(:another_case) { create(:case) }
+      let!(:another_link) { put_cases_into_register(register, another_case) }
+
+      it 'shouldn\'t delete the register' do
+        expect { subject }.not_to change { registers.with_pk(register.id) }
       end
+    end
 
-      context 'when the register contains only the case' do
-        it 'should delete the register' do
-          expect { subject }
-            .to change { registers.with_pk(register.id) }
-            .to(nil)
-        end
-      end
+    context 'when another register contains the case' do
+      let(:register2) { create(:register) }
+      let!(:link2) { put_cases_into_register(register2, c4s3) }
 
-      context 'when the register contains other cases' do
-        let(:another_case) { create(:case) }
-        let!(:another_link) { put_cases_into_register(register, another_case) }
-
-        it 'shouldn\'t delete the register' do
-          expect { subject }.not_to change { registers.with_pk(register.id) }
-        end
+      it 'shouldn\'t remove the case from this older register' do
+        expect { subject }
+          .not_to change { case_registers.with_pk([c4s3.id, register2.id]) }
       end
     end
   end

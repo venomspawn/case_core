@@ -90,6 +90,10 @@ module MFCCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `pending`
   #
+  # @raise [RuntimeError]
+  #   если запись заявки не прикреплена к записи реестра передаваемой
+  #   корреспонденции
+  #
   def self.remove_from_pending_list(c4s3, params)
     processor =
       EventProcessors::RemoveFromPendingListProcessor.new(c4s3, params)
