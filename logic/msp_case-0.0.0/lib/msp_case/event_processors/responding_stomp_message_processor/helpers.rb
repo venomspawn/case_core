@@ -42,7 +42,24 @@ module MSPCase
         #   если поле `type` записи заявки не равно `msp_case`
         #
         def check_case_type!(c4s3)
-          raise Errors::Case::BadType unless c4s3.type == 'msp_case'
+          raise Errors::Case::BadType.new(c4s3) unless c4s3.type == 'msp_case'
+        end
+
+        # Проверяет, что статус заявки `processing`
+        #
+        # @param [CaseCore::Models::Case] c4s3
+        #   запись заявки
+        #
+        # @param [Hash] case_attributes
+        #   ассоциативный массив атрибутов заявки
+        #
+        # @raise [RuntimeError]
+        #   если статус заявки отличен от `processing`
+        #
+        def check_case_status!(c4s3, case_attributes)
+          status = case_attributes[:status]
+          return if status == 'processing'
+          raise Errors::Case::BadStatus.new(c4s3, status)
         end
 
         # Проверяет, что запись запроса найдена

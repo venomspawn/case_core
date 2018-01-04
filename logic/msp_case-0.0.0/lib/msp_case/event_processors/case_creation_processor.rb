@@ -24,9 +24,17 @@ module MSPCase
       #   если аргумент `c4s3` не является объектом класса
       #   `CaseCore::Models::Case`
       #
+      # @raise [RuntimeError]
+      #   значение поля `type` записи заявки не равно `msp_case`
+      #
+      # @raise [RuntimeError]
+      #   если заявка обладает выставленным статусом
+      #
       def initialize(c4s3)
         check_case!(c4s3)
+        check_case_type!(c4s3)
         @c4s3 = c4s3
+        check_case_status!(c4s3, case_attributes)
       end
 
       # Выполняет обработку
@@ -74,7 +82,7 @@ module MSPCase
 
       # Названия требуемых атрибутов заявки
       #
-      CASE_ATTRS = %w(special_data service_id)
+      CASE_ATTRS = %w(status special_data service_id)
 
       # Извлекает требуемые атрибуты заявки из соответствующих записей и
       # возвращает ассоциативный массив атрибутов заявки
