@@ -57,6 +57,10 @@ module MFCCase
       # Обновляет атрибуты заявки и открепляет её от реестра передаваемой
       # корреспонденции
       #
+      # @raise [RuntimeError]
+      #   если запись заявки не прикреплена к записи реестра передаваемой
+      #   корреспонденции
+      #
       def process
         super
         remove_from_register
@@ -83,42 +87,42 @@ module MFCCase
         added_to_rejecting_at.present? ? 'rejecting' : 'packaging'
       end
 
-      # Возвращает запрос Sequel на получение последнего идентификатора записи
-      # реестра передаваемой корреспонденции, к которой прикреплена заявка
+      # Возвращает значение параметра `register_id` в ассоциативном массиве
+      # параметров
       #
-      # @return [Sequel::Dataset]
-      #   результирующий запрос Sequel
+      # @return [Object]
+      #   значение параметра `register_id` в ассоциативном массиве параметров
       #
-      def register_id_dataset
-        CaseCore::Models::CaseRegister
-          .select(:register_id)
-          .where(case_id: c4s3.id)
-          .order_by(:register_id.desc)
-          .limit(1)
+      def register_id
+        params[:register_id]
       end
 
       # Возвращает количество заявок в последнем реестре передаваемой
-      # корреспонденции, к которой прикреплена заявка
+      # корреспонденции, к которому прикреплена заявка
       #
       # @return [Integer]
       #   результирующее количество
       #
       def count_of_cases_in_register
-        CaseCore::Models::CaseRegister
-          .where(register_id: register_id_dataset)
-          .count
+        CaseCore::Models::CaseRegister.where(register_id: register_id).count
       end
 
       # Открепляет запись заявки от записи реестра передаваемой
       # корреспонденции, удаляя его, если он пуст
       #
+      # @raise [RuntimeError]
+      #   если запись заявки не прикреплена к записи реестра передаваемой
+      #   корреспонденции
+      #
       def remove_from_register
-        if count_of_cases_in_register > 1
-          CaseCore::Models::CaseRegister
-            .where(case_id: c4s3.id, register_id: register_id_dataset)
-            .delete
+        case count_of_cases_in_register
+        when 0
+          raise Errors::Case::NotInRegister.new(c4s3, register_id)
+        when 1
+          CaseCore::Models::Register.where(id: register_id).delete
         else
-          CaseCore::Models::Register.where(id: register_id_dataset).delete
+          conditions = { case_id: c4s3.id, register_id: register_id }
+          CaseCore::Models::CaseRegister.where(conditions).delete
         end
       end
     end
