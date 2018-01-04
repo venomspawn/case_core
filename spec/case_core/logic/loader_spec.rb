@@ -42,10 +42,8 @@ RSpec.describe CaseCore::Logic::Loader do
 
   describe '.logic' do
     before do
-      described_class.configure do |settings|
-        settings.set :dir,              dir
-        settings.set :dir_check_period, 0
-      end
+      described_class.settings.dir = dir
+      described_class.settings.dir_check_period = 10
     end
 
     subject(:result) { described_class.logic(name) }
@@ -69,29 +67,52 @@ RSpec.describe CaseCore::Logic::Loader do
         end
 
         context 'when module is of older version' do
-          before do
+          it 'should reload the module' do
             described_class.instance.send(:unload_module, name)
             FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
-            described_class.instance.logic(name)
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            logic = described_class.instance.logic(name)
+
             FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
             FileUtils.touch(dir, mtime: Time.now + 1)
+            described_class.instance.send(:scanner).libs[name] = version
 
-            allow(old_module).to receive(:on_load)
-            allow(old_module).to receive(:on_unload)
-          end
-
-          let!(:old_module) { Object::TestCase }
-
-          it 'should reload the module' do
-            expect(subject).not_to be == old_module
+            expect(subject).not_to be == logic
           end
 
           it 'should call `on_unload` method of the old module' do
-            expect(old_module).to receive(:on_unload)
+            described_class.instance.send(:unload_module, name)
+            FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            logic = described_class.instance.logic(name)
+
+            allow(logic).to receive(:on_load)
+            allow(logic).to receive(:on_unload)
+
+            FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
+            FileUtils.touch(dir, mtime: Time.now + 1)
+            described_class.instance.send(:scanner).libs[name] = version
+
+            expect(logic).to receive(:on_unload)
             subject
           end
 
           it 'should call `on_load` method of the new module' do
+            described_class.instance.send(:unload_module, name)
+            FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            described_class.instance.logic(name)
+
+            FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
+            FileUtils.touch(dir, mtime: Time.now + 1)
+            described_class.instance.send(:scanner).libs[name] = version
+
             expect(described_class.instance)
               .to receive(:call_logic_func)
               .with(instance_of(described_class::ModuleInfo), :on_unload)
@@ -167,7 +188,7 @@ RSpec.describe CaseCore::Logic::Loader do
     before do
       described_class.configure do |settings|
         settings.set :dir,              dir
-        settings.set :dir_check_period, 0
+        settings.set :dir_check_period, 10
       end
     end
 
@@ -193,30 +214,56 @@ RSpec.describe CaseCore::Logic::Loader do
         end
 
         context 'when module is of older version' do
-          before do
-            instance.send(:unload_module, name)
+          it 'should reload the module' do
+            described_class.instance.send(:unload_module, name)
             FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
-            instance.logic(name)
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            logic = described_class.instance.logic(name)
+
             FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
             FileUtils.touch(dir, mtime: Time.now + 1)
-          end
+            described_class.instance.send(:scanner).libs[name] = version
 
-          let!(:old_module) { Object::TestCase }
-
-          it 'should reload the module' do
-            expect(subject).not_to be == old_module
+            expect(subject).not_to be == logic
           end
 
           it 'should call `on_unload` method of the old module' do
-            expect(old_module).to receive(:on_unload)
+            described_class.instance.send(:unload_module, name)
+            FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            logic = described_class.instance.logic(name)
+
+            allow(logic).to receive(:on_load)
+            allow(logic).to receive(:on_unload)
+
+            FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
+            FileUtils.touch(dir, mtime: Time.now + 1)
+            described_class.instance.send(:scanner).libs[name] = version
+
+            expect(logic).to receive(:on_unload)
             subject
           end
 
           it 'should call `on_load` method of the new module' do
-            expect(instance)
+            described_class.instance.send(:unload_module, name)
+            FileUtils.mv("#{dir}/#{name}-#{version}", "#{dir}/#{name}bak")
+            described_class.instance.send(:scanner).libs.clear
+            described_class.instance.send(:scanner).send(:scan)
+
+            described_class.instance.logic(name)
+
+            FileUtils.mv("#{dir}/#{name}bak", "#{dir}/#{name}-#{version}")
+            FileUtils.touch(dir, mtime: Time.now + 1)
+            described_class.instance.send(:scanner).libs[name] = version
+
+            expect(described_class.instance)
               .to receive(:call_logic_func)
               .with(instance_of(described_class::ModuleInfo), :on_unload)
-            expect(instance)
+            expect(described_class.instance)
               .to receive(:call_logic_func)
               .with(instance_of(described_class::ModuleInfo), :on_load)
             subject

@@ -76,7 +76,10 @@ RSpec.describe CaseCore::Actions::Cases::Call do
     end
 
     context 'when method is absent' do
-      before { CaseCore::Logic::Loader.settings.dir = dir }
+      before do
+        CaseCore::Logic::Loader.settings.dir = dir
+        CaseCore::Logic::Loader.instance.send(:scanner).send(:scan)
+      end
 
       let(:dir) { "#{$root}/spec/fixtures/logic" }
 
