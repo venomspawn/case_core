@@ -7,6 +7,7 @@ require "#{$lib}/settings/configurable"
 require_relative 'loader/helpers'
 require_relative 'loader/module_info'
 require_relative 'loader/scanner'
+require_relative 'loader/settings'
 
 module CaseCore
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
@@ -22,11 +23,11 @@ module CaseCore
     # библиотеки
     #
     class Loader
+      extend  CaseCore::Settings::Configurable
       include Helpers
-      extend  Settings::Configurable
       include Singleton
 
-      settings_names :dir, :dir_check_period
+      @settings_class = Settings
 
       # Возвращает последнюю версию модуля бизнес-логики, загружая его при
       # необходимости. Если при загрузке возникли ошибки, метод возвращает
@@ -52,6 +53,29 @@ module CaseCore
       #
       def self.loaded_logics
         instance.loaded_logics
+      end
+
+      # Выгружает модуль бизнес-логики по предоставленному названию
+      #
+      # @param [#to_s] logic
+      #   название
+      #
+      # @raise [RuntimeError]
+      #   если модуль бизнес-логики не найден
+      #
+      def self.unload(logic)
+        instance.unload(logic)
+      end
+
+      # Выполняет следующие действия.
+      #
+      # 1.  Выгружает все загруженные модули бизнес-логики.
+      # 2.  Заново сканирует директорию с библиотеками бизнес-логики и
+      #     извлекает информацию о названиях и версиях библиотек.
+      # 3.  Загружает все модули бизнес-логики.
+      #
+      def self.reload_all
+        instance.reload_all
       end
 
       # Инициализирует объект класса
@@ -88,6 +112,32 @@ module CaseCore
       #
       def loaded_logics
         modules_info.values.map(&:logic_module)
+      end
+
+      # Выгружает модуль бизнес-логики по предоставленному названию
+      #
+      # @param [#to_s] logic
+      #   название
+      #
+      # @raise [RuntimeError]
+      #   если модуль бизнес-логики не найден
+      #
+      def unload(logic)
+        name = logic.to_s.underscore
+        module_name = extract_module(name).to_s
+        check_if_logic_module_is_found_by_name!(logic, module_name)
+        unload_module(name)
+      end
+
+      # Выполняет следующие действия.
+      #
+      # 1.  Выгружает все загруженные модули бизнес-логики.
+      # 2.  Заново сканирует директорию с библиотеками бизнес-логики и
+      #     извлекает информацию о названиях и версиях библиотек.
+      # 3.  Загружает все модули бизнес-логики.
+      #
+      def reload_all
+        scanner.reload_all
       end
 
       private
