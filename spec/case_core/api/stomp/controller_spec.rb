@@ -314,10 +314,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
         allow(described_class.instance).to receive(:sleep)
         allow(described_class.instance).to receive(:subscribe_on_incoming)
 
-        CaseCore::Logic::Loader.configure do |settings|
-          settings.set :dir,              dir
-          settings.set :dir_check_period, 0
-        end
+        CaseCore::Logic::Loader.settings.dir = dir
       end
 
       let(:message) { create(:stomp_message) }
@@ -695,10 +692,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
         allow(described_class.instance).to receive(:sleep)
         allow(described_class.instance).to receive(:subscribe_on_incoming)
 
-        CaseCore::Logic::Loader.configure do |settings|
-          settings.set :dir,              dir
-          settings.set :dir_check_period, 0
-        end
+        CaseCore::Logic::Loader.settings.dir = dir
       end
 
       let(:message) { create(:stomp_message) }

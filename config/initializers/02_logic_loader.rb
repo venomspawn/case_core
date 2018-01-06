@@ -10,8 +10,5 @@ require "#{$lib}/logic/loader"
 
 # Установка конфигурации загрузчика бизнес-логики
 CaseCore::Logic::Loader.configure do |settings|
-  settings.set :dir,              "#{$root}/logic"
-  settings.set :dir_check_period, 1
+  settings.set :dir, "#{$root}/logic"
 end
-
-CaseCore::Logic::Loader.instance

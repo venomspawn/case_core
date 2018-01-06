@@ -31,12 +31,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processors::Response do
   end
 
   describe '.process' do
-    before do
-      CaseCore::Logic::Loader.configure do |settings|
-        settings.set :dir,              dir
-        settings.set :dir_check_period, 0
-      end
-    end
+    before { CaseCore::Logic::Loader.settings.dir = dir }
 
     subject(:result) { described_class.process(message) }
 
@@ -110,12 +105,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processors::Response do
   end
 
   describe '#process' do
-    before do
-      CaseCore::Logic::Loader.configure do |settings|
-        settings.set :dir,              dir
-        settings.set :dir_check_period, 0
-      end
-    end
+    before { CaseCore::Logic::Loader.settings.dir = dir }
 
     subject(:result) { instance.process }
 

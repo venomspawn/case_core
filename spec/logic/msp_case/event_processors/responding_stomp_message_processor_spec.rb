@@ -9,7 +9,7 @@
 #
 
 CaseCore::Logic::Loader.instance.send(:unload_module, 'msp_case')
-Object.send(:remove_const, :MFCCase) if Object.const_defined?(:MFCCase)
+Object.send(:remove_const, :MSPCase) if Object.const_defined?(:MSPCase)
 
 CaseCore::Logic::Loader.settings.dir = "#{$root}/logic"
 CaseCore::Logic::Loader.logic('msp_case')

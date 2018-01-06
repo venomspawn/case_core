@@ -36,6 +36,23 @@ module CaseCore
           raise Errors::LogicModule::NotFound.new(name, filename)
         end
 
+        # Проверяет, что модуль был найден среди загруженных по
+        # предоставленному название
+        #
+        # @param [#to_s] name
+        #   название
+        #
+        # @param [String] module_name
+        #   название найденного модуля бизнес-логики
+        #
+        # @raise [CaseCore::Logic::Loader::Errors::LogicModule::NotFoundByName]
+        #   если модуль не был найден
+        #
+        def check_if_logic_module_is_found_by_name!(name, module_name)
+          return unless module_name.empty?
+          raise Errors::LogicModule::NotFoundByName.new(name)
+        end
+
         # Создаёт запись в журнале событий о том, что во время загрузки модуля
         # с данным названием произошла ошибка
         #
