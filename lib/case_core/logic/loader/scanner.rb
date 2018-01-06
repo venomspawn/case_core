@@ -23,9 +23,9 @@ module CaseCore
         def initialize
           @libs = {}
           @notifier = INotify::Notifier.new
+          @watcher = create_watcher
           @scanner = Thread.new { notifier.run }
           reload_libs_info
-          reload_watcher
         end
 
         # Выполняет следующие действия.
@@ -83,8 +83,8 @@ module CaseCore
         #
         def close_watcher
           watcher.close unless watcher.nil?
-        rescue
-          nil
+        ensure
+          @watcher = nil
         end
 
         # Флаги, используемые при создании объекта, наблюдающего за изменениями
@@ -193,7 +193,6 @@ module CaseCore
         #   объект с информацией об изменениях
         #
         def process(event)
-          puts "event.flags = #{event.flags}"
           flags = Set.new(event.flags)
           if flags.intersect?(REMOVE_DIR_FLAGS)
             reload_all
