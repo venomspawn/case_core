@@ -119,14 +119,15 @@ module CaseCore
       # @param [#to_s] logic
       #   название
       #
-      # @raise [RuntimeError]
-      #   если модуль бизнес-логики не найден
+      # @return [Module]
+      #   выгруженный модуль
+      #
+      # @return [NilClass]
+      #   если о модуле нет информации
       #
       def unload(logic)
         name = logic.to_s.underscore
-        module_name = extract_module(name).to_s
-        check_if_logic_module_is_found_by_name!(logic, module_name)
-        unload_module(name)
+        mutex.synchronize { unload_module(name) }
       end
 
       # Выполняет следующие действия.
@@ -235,7 +236,8 @@ module CaseCore
         module_name = extract_module(name).to_s
         module_info = modules_info.delete(name)
         call_logic_func(module_info, :on_unload)
-        Object.send(:remove_const, module_name) unless module_name.empty?
+        return if module_name.empty? || !Object.const_defined?(module_name)
+        Object.send(:remove_const, module_name)
       end
 
       # Ищет модуль среди констант пространства имён `Object` по
