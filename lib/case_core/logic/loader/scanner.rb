@@ -186,6 +186,14 @@ module CaseCore
         #
         REMOVE_SUBDIR_FLAGS = Set[:delete, :moved_from]
 
+        # Задержка перед загрузкой библиотеки, необходимая после появления
+        # директории. При копировании или распаковки директории сначала
+        # создаётся сама директория, а потом её дочерние директории и файлы.
+        # При попытке загрузить файл с модулем бизнес-логике сразу после
+        # создания директории произойдёт ошибка, так как он ещё отсутствует.
+        #
+        DELAY_DUE_CREATION = 0.1
+
         # Обрабатывает оповещение об изменениях в директории с библиотеками
         # бизнес-логики
         #
@@ -196,8 +204,10 @@ module CaseCore
           flags = Set.new(event.flags)
           if flags.intersect?(REMOVE_DIR_FLAGS)
             reload_all
-          elsif flags.intersect?(CREATE_SUBDIR_FLAGS) && flags.include?(:isdir)
-            process_subdir_creation(event)
+          elsif flags.include?(:create) && flags.include?(:isdir)
+            process_subdir_creation(event, DELAY_DUE_CREATION)
+          elsif flags.include?(:moved_to) && flags.include?(:isdir)
+            process_subdir_creation(event, 0)
           elsif flags.intersect?(REMOVE_SUBDIR_FLAGS) && flags.include?(:isdir)
             process_subdir_removal(event)
           end
@@ -210,9 +220,13 @@ module CaseCore
         # @param [INotifier::Event] event
         #   объект с информацией об изменениях
         #
-        def process_subdir_creation(event)
+        # @param [Numeric] delay
+        #   задержка перед загрузкой бизнес-логики
+        #
+        def process_subdir_creation(event, delay)
           lib_name, lib_version = extract_info(event.absolute_name) || return
           libs[lib_name] = lib_version if libs[lib_name].to_s < lib_version
+          sleep(delay)
           Loader.logic(lib_name)
         end
 
