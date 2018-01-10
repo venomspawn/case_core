@@ -252,26 +252,16 @@ module CaseCore
       # @param [String] name
       #   название модуля в змеином_регистре
       #
-      # @param [Array] before
-      #   список названий констант пространства имён `Object` _до_ загрузки
-      #   модуля из внешнего файла
-      #
-      # @param [Array] after
-      #   список названий констант пространства имён `Object` _после_ загрузки
-      #   модуля из внешнего файла
-      #
       # @return [Module]
       #   найденный модуль
       #
       # @return [NilClass]
       #   если модуль невозможно найти
       #
-      def find_module(name, before, after)
-        diff = after - before
-        diff.map!(&:to_s)
+      def find_module(name)
         regexp = /^#{name.tr('_', '')}$/i
-        module_name = diff.find { |const_name| regexp =~ const_name }
-        Object.const_get(module_name) unless module_name.nil?
+        module_name = Object.constants.find(&regexp.method(:match))
+        module_name && Object.const_get(module_name)
       end
 
       # Возвращает полный путь к файлу с модулем для библиотеки бизнес-логики с
@@ -318,10 +308,9 @@ module CaseCore
       #   если во время загрузки произошла ошибка
       #
       def load_module(name)
-        constants_before = Object.constants
         filename = module_filename(name)
         load filename
-        logic_module = find_module(name, constants_before, Object.constants)
+        logic_module = find_module(name)
         check_if_logic_module_is_found!(name, filename, logic_module)
         version = last_module_version(name)
         module_info = ModuleInfo.new(version, logic_module)
