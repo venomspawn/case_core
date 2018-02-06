@@ -20,8 +20,11 @@ module MSPCase
       #   созданная запись заявки
       #
       def create_case(status, issue_location_type)
-        attrs = { status: status, issue_location_type: issue_location_type }
-        CaseCore::Actions::Cases.create(type: 'msp_case', **attrs)
+        FactoryGirl.create(:case, type: 'msp_case').tap do |c4s3|
+          FactoryGirl.create(:case_attributes, case: c4s3, status: status)
+          args = { issue_location_type: issue_location_type }
+          FactoryGirl.create(:case_attributes, case: c4s3, **args)
+        end
       end
 
       # Возвращает ассоциативный массив атрибутов заявки с предоставленным
