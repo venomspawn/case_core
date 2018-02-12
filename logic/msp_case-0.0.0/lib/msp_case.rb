@@ -46,17 +46,23 @@ module MSPCase
   # Выполняет следующие действия:
   #
   # *   выставляет статус заявки `closed` в том и только в том случае, если
-  #     статус заявки `issuance`;
+  #     статус заявки `issuance` и значение параметра `status` равно `closed`;
   # *   выставляет значение атрибута `closed_at` равным текущим дате и времени
   #
   # @param [CaseCore::Models::Case] c4s3
   #   запись заявки
+  #
+  # @param [Object] status
+  #   выставляемый статус заявки
   #
   # @param [NilClass, Hash] params
   #   ассоциативный массив параметров или `nil`
   #
   # @raise [ArgumentError]
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
+  #
+  # @raise [ArgumentError]
+  #   если значение параметра `status` отлично от `closed`
   #
   # @raise [ArgumentError]
   #   если аргумент `params` не является объектом класса `NilClass` или класса
@@ -68,8 +74,9 @@ module MSPCase
   # @raise [RuntimeError]
   #   если статус заявки отличен от `issuance`
   #
-  def self.issue(c4s3, params)
-    processor = EventProcessors::IssueProcessor.new(c4s3, params)
+  def self.change_status_to(c4s3, status, params)
+    processor =
+      EventProcessors::ChangeStatusToProcessor.new(c4s3, status, params)
     processor.process
   end
 end

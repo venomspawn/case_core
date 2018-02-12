@@ -5,9 +5,9 @@ module MSPCase
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
     # Вспомогательный модуль, подключаемый к тестам класса
-    # `MSPCase::EventProcessors::IssueProcessor`
+    # `MSPCase::EventProcessors::ChangeStatusToProcessor`
     #
-    module IssueProcessorSpecHelper
+    module ChangeStatusToProcessorSpecHelper
       # Создаёт запись заявки с необходимыми атрибутами
       #
       # @param [Object] status
