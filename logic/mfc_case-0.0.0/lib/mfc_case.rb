@@ -27,16 +27,13 @@ module MFCCase
     processor.process
   end
 
-  # Выполняет следующие действия:
-  #
-  # *   выставляет статус заявки `pending` в том и только в том случае, если
-  #     статус заявки `packaging` или `rejecting`;
-  # *   выставляет значение атрибута `added_to_pending_at` равным текущему
-  #     времени;
-  # *   прикрепляет запись заявки к реестру передаваемой корреспонденции
+  # Выставляет статус заявки
   #
   # @param [CaseCore::Models::Case] c4s3
   #   запись заявки
+  #
+  # @param [Object] status
+  #   выставляемый статус заявки
   #
   # @param [NilClass, Hash] params
   #   ассоциативный массив параметров или `nil`
@@ -45,168 +42,43 @@ module MFCCase
   #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
   #
   # @raise [ArgumentError]
-  #   если аргумент `params` не является объектом класса `NilClass` или класса
-  #   `Hash`
+  #   если аргумент `params` не является ни объектом класса `NilClass`, ни
+  #   объектом класса `Hash`
+  #
+  # @raise [ArgumentError]
+  #   если заявка переходит из статуса `processing` в статус `issuance`, но
+  #   значение атрибута `rejecting_expected_at` не может быть интерпретировано
+  #   в качестве даты
+  #
+  # @raise [ArgumentError]
+  #   если заявка переходит из статуса `issuance` в статус `rejecting`, но
+  #   значение атрибута `rejecting_expected_at` не может быть интерпретировано
+  #   в качестве даты
   #
   # @raise [RuntimeError]
   #   если значение поля `type` записи заявки не равно `mfc_case`
   #
   # @raise [RuntimeError]
-  #   если статус заявки отличен от `packaging` или `rejecting`
-  #
-  def self.add_to_pending_list(c4s3, params)
-    processor = EventProcessors::AddToPendingListProcessor.new(c4s3, params)
-    processor.process
-  end
-
-  # Выполняет следующие действия:
-  #
-  # *   выставляет статус заявки `packaging` в том и только в том случае, если
-  #     статус заявки `pending` и значение атрибута `added_to_rejecting_at`
-  #     отсутствует или пусто;
-  # *   выставляет статус заявки `rejecting` в том и только в том случае, если
-  #     статус заявки `pending` и значение атрибута `added_to_rejecting_at`
-  #     присутствует и непусто;
-  # *   выставляет значение атрибута `added_to_pending_at` равным `nil`;
-  # *   открепляет запись заявки от реестра передаваемой корреспонденции;
-  # *   если реестр передаваемой корреспонденции пуст, то удаляет его
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `params` не является объектом класса `NilClass` или класса
-  #   `Hash`
+  #   если выставление статуса невозможно для данного статуса заявки
   #
   # @raise [RuntimeError]
-  #   если значение поля `type` записи заявки не равно `mfc_case`
+  #   если заявка переходит из статуса `pending` в статус `packaging` или
+  #   `rejecting`, но запись заявки не прикреплена к записи реестра
+  #   передаваемой корреспонденции
   #
   # @raise [RuntimeError]
-  #   если статус заявки отличен от `pending`
+  #   если заявка переходит из статуса `processing` в статус `issuance`, но
+  #   текущая дата больше значения, записанного в атрибуте
+  #   `rejecting_expected_at`;
   #
   # @raise [RuntimeError]
-  #   если запись заявки не прикреплена к записи реестра передаваемой
-  #   корреспонденции
+  #   если заявка переходит из статуса `issuance` в статус `rejecting`, но
+  #   текущая дата не больше значения, записанного в атрибуте
+  #   `rejecting_expected_at`;
   #
-  def self.remove_from_pending_list(c4s3, params)
+  def self.change_status_to(c4s3, status, params)
     processor =
-      EventProcessors::RemoveFromPendingListProcessor.new(c4s3, params)
-    processor.process
-  end
-
-  # Выполняет следующие действия:
-  #
-  # *   выставляет статус заявки `issuance` в том и только в том случае, если
-  #     статус заявки `processing`;
-  # *   выставляет значение атрибута `responded_at` равным текущему времени;
-  # *   выставляет значение атрибута `response_processor_person_id` равным
-  #     значению дополнительного параметра `operator_id`;
-  # *   выставляет значение атрибута `result_id` равным значению
-  #     дополнительного параметра `result_id`
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `params` не является объектом класса `NilClass` или класса
-  #   `Hash`
-  #
-  # @raise [RuntimeError]
-  #   если значение поля `type` записи заявки не равно `mfc_case`
-  #
-  # @raise [RuntimeError]
-  #   если статус заявки отличен от `processing`
-  #
-  def self.send_to_frontoffice(c4s3, params)
-    processor = EventProcessors::SendToFrontOfficeProcessor.new(c4s3, params)
-    processor.process
-  end
-
-  # Выполняет следующие действия:
-  #
-  # *   выставляет статус заявки `rejecting` в том и только в том случае, если
-  #     одновременно выполнены следующие условия:
-  #
-  #     -   статус заявки `issuance`;
-  #     -   значение атрибута `rejecting_expected_at` присутствует и
-  #         представляет собой строку, в начале которой находится дата в
-  #         формате `ГГГГ-ММ-ДД`;
-  #     -  текущая дата больше значения, записанного в атрибуте
-  #        `rejecting_expected_at`;
-  #
-  # *   выставляет значение атрибута `added_to_rejecting_at` равным текущему
-  #     времени
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `params` не является объектом класса `NilClass` или класса
-  #   `Hash`
-  #
-  # @raise [RuntimeError]
-  #   если значение поля `type` записи заявки не равно `mfc_case`
-  #
-  # @raise [RuntimeError]
-  #   если статус заявки отличен от `issuance`
-  #
-  # @raise [RuntimeError]
-  #   если значение атрибута `rejecting_expected_at` отсутствует или не
-  #   представляет собой строку в вышеописанном формате
-  #
-  def self.reject_result(c4s3, params)
-    processor = EventProcessors::RejectResultProcessor.new(c4s3, params)
-    processor.process
-  end
-
-  # Выполняет следующие действия:
-  #
-  # *   выставляет статус заявки `closed` в том и только в том случае, если
-  #     статус заявки `issuance`;
-  # *   выставляет значение атрибута `issuer_person_id` равным значению
-  #     дополнительного параметра `operator_id`;
-  # *   выставляет значение атрибута `issued_at` равным текущему времени;
-  # *   выставляет значение атрибута `closed_at` равным текущему времени
-  #
-  # @param [CaseCore::Models::Case] c4s3
-  #   запись заявки
-  #
-  # @param [NilClass, Hash] params
-  #   ассоциативный массив параметров или `nil`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `c4s3` не является объектом класса `CaseCore::Models::Case`
-  #
-  # @raise [ArgumentError]
-  #   если аргумент `params` не является объектом класса `NilClass` или класса
-  #   `Hash`
-  #
-  # @raise [RuntimeError]
-  #   если значение поля `type` записи заявки не равно `mfc_case`
-  #
-  # @raise [RuntimeError]
-  #   если статус заявки отличен от `issuance`
-  #
-  def self.issue(c4s3, params)
-    processor = EventProcessors::IssueProcessor.new(c4s3, params)
+      EventProcessors::ChangeStatusToProcessor.new(c4s3, status, params)
     processor.process
   end
 
