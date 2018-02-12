@@ -2,8 +2,8 @@
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
-# Файл тестирования класса `MSPCase::EventProcessors::IssueProcessor`
-# обработчиков события `issue` заявки на МСП-услугу
+# Файл тестирования класса `MSPCase::EventProcessors::ChangeStatusToProcessor`
+# обработчиков события `change_status_to` заявки на МСП-услугу
 #
 
 CaseCore::Logic::Loader.instance.send(:unload_module, 'msp_case')
@@ -13,10 +13,10 @@ CaseCore::Logic::Loader.settings.dir = "#{$root}/logic"
 CaseCore::Logic::Loader.logic('msp_case')
 
 helpers_path = "#{$root}/spec/helpers/msp_case/event_processors"
-load "#{helpers_path}/issue_processor_spec_helper.rb"
+load "#{helpers_path}/change_status_to_processor_spec_helper.rb"
 
-RSpec.describe MSPCase::EventProcessors::IssueProcessor do
-  include MSPCase::EventProcessors::IssueProcessorSpecHelper
+RSpec.describe MSPCase::EventProcessors::ChangeStatusToProcessor do
+  include MSPCase::EventProcessors::ChangeStatusToProcessorSpecHelper
 
   describe 'the class' do
     subject { described_class }
@@ -25,9 +25,10 @@ RSpec.describe MSPCase::EventProcessors::IssueProcessor do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(c4s3, params) }
+    subject(:result) { described_class.new(c4s3, status, params) }
 
     let(:params) { {} }
+    let(:status) { 'closed' }
 
     describe 'result' do
       subject { result }
@@ -53,20 +54,39 @@ RSpec.describe MSPCase::EventProcessors::IssueProcessor do
       end
     end
 
-    context 'when case status is not `issuance`' do
+    context 'when case status isn\'t `issuance`' do
       let(:c4s3) { create_case('not `issuance`') }
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
       end
     end
+
+    context 'when `params` argument isn\'t of `NilClass` nor of `Hash` type' do
+      let(:c4s3) { create_case('issuance') }
+      let(:params) { 'not of `NilClass` nor of `Hash` type' }
+
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when `status` argument isn\'t `closed`' do
+      let(:c4s3) { create_case('issuance') }
+      let(:status) { 'not `closed`' }
+
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   describe 'instance' do
-    subject { described_class.new(c4s3, params) }
+    subject { described_class.new(c4s3, status, params) }
 
     let(:c4s3) { create_case('issuance') }
     let(:params) { {} }
+    let(:status) { 'closed' }
 
     it { is_expected.to respond_to(:process) }
   end
@@ -74,9 +94,10 @@ RSpec.describe MSPCase::EventProcessors::IssueProcessor do
   describe '#process' do
     subject { instance.process }
 
-    let(:instance) { described_class.new(c4s3, params) }
+    let(:instance) { described_class.new(c4s3, status, params) }
     let(:c4s3) { create_case('issuance') }
     let(:params) { {} }
+    let(:status) { 'closed' }
 
     it 'should set case status to `closed`' do
       expect { subject }.to change { case_status(c4s3) }.to('closed')

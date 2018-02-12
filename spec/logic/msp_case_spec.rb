@@ -14,7 +14,7 @@ CaseCore::Logic::Loader.logic('msp_case')
 
 helpers_path = "#{$root}/spec/helpers/msp_case/event_processors"
 load "#{helpers_path}/case_creation_processor_spec_helper.rb"
-load "#{helpers_path}/issue_processor_spec_helper.rb"
+load "#{helpers_path}/change_status_to_processor_spec_helper.rb"
 load "#{helpers_path}/responding_stomp_message_processor_spec_helper.rb"
 
 RSpec.describe MSPCase do
@@ -24,7 +24,7 @@ RSpec.describe MSPCase do
     event_processors = %i(
       on_case_creation
       on_responding_stomp_message
-      issue
+      change_status_to
     )
 
     it { is_expected.to respond_to(*event_processors) }
@@ -244,12 +244,13 @@ RSpec.describe MSPCase do
     end
   end
 
-  describe '.issue' do
-    include MSPCase::EventProcessors::IssueProcessorSpecHelper
+  describe '.change_status_to' do
+    include MSPCase::EventProcessors::ChangeStatusToProcessorSpecHelper
 
-    subject { described_class.issue(c4s3, params) }
+    subject { described_class.change_status_to(c4s3, status, params) }
 
     let(:c4s3) { create_case('issuance') }
+    let(:status) { 'closed' }
     let(:params) { {} }
 
     it 'should set case status to `closed`' do
@@ -282,6 +283,24 @@ RSpec.describe MSPCase do
 
       it 'should raise RuntimeError' do
         expect { subject }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when `params` argument isn\'t of `NilClass` nor of `Hash` type' do
+      let(:c4s3) { create_case('issuance') }
+      let(:params) { 'not of `NilClass` nor of `Hash` type' }
+
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when `status` argument isn\'t `closed`' do
+      let(:c4s3) { create_case('issuance') }
+      let(:status) { 'not `closed`' }
+
+      it 'should raise ArgumentError' do
+        expect { subject }.to raise_error(ArgumentError)
       end
     end
   end

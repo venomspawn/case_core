@@ -2,7 +2,7 @@
 
 module MSPCase
   module EventProcessors
-    class IssueProcessor
+    class ChangeStatusToProcessor
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
       # Модуль, предоставляющий пространства имён исключений, создаваемых
@@ -69,6 +69,29 @@ module MSPCase
                 Статус `#{status}` заявки с идентификатором записи `#{c4s3.id}`
                 не равен `issuance`
               MESSAGE
+            end
+          end
+        end
+
+        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+        #
+        # Пространство имён исключений, связанных с аргументом `status`
+        # конструктора содержащего класса
+        #
+        module Status
+          # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+          #
+          # Класс ошибок, сигнализирующих о том, что значение аргумента
+          # `status` конструктора содержащего класса не поддерживается
+          #
+          class InvalidValue < ArgumentError
+            # Инициализирует объект класса
+            #
+            # @param [Object] status
+            #   значение аргумента `status`
+            #
+            def initialize(status)
+              super("Выставление статуса `#{status}` не поддерживается")
             end
           end
         end

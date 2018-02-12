@@ -2,7 +2,7 @@
 
 module MSPCase
   module EventProcessors
-    class IssueProcessor
+    class ChangeStatusToProcessor
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
       # Вспомогательный модуль, предназначенный для включения в содержащий
@@ -36,6 +36,19 @@ module MSPCase
         def check_case_type!(c4s3)
           return if c4s3.type == 'msp_case'
           raise Errors::Case::BadType.new(c4s3)
+        end
+
+        # Проверяет, что выставляемый статус заявки равен `closed`
+        #
+        # @param [Object] status
+        #   выставляемый статус заявки
+        #
+        # @raise [ArgumentError]
+        #   если значение параметра `status` отлично от `closed`
+        #
+        def check_status!(status)
+          return if status.to_s == 'closed'
+          raise Errors::Status::InvalidValue.new(status)
         end
 
         # Проверяет, что статус заявки `issuance`

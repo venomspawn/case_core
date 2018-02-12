@@ -1,20 +1,21 @@
 # encoding: utf-8
 
-Dir["#{__dir__}/issue_processor/*.rb"].each(&method(:load))
+Dir["#{__dir__}/change_status_to_processor/*.rb"].each(&method(:load))
 
 module MSPCase
   module EventProcessors
     # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
     #
-    # Класс обработчиков события `issue` заявки. Обработчик выполняет следующие
-    # действия:
+    # Класс обработчиков события `change_status_to` заявки. Обработчик
+    # выполняет следующие действия:
     #
     # *   выставляет статус заявки `closed` в том и только в том случае, если
-    #     статус заявки `issuance`;
+    #     статус заявки `issuance` и значение параметра `status` равно
+    #     `closed`;
     # *   выставляет значение атрибута `closed_at` равным текущим дате и
     #     времени.
     #
-    class IssueProcessor
+    class ChangeStatusToProcessor
       include Helpers
 
       # Инициализирует объект класса
@@ -22,12 +23,18 @@ module MSPCase
       # @param [CaseCore::Models::Case] c4s3
       #   запись заявки
       #
+      # @param [Object] status
+      #   выставляемый статус заявки
+      #
       # @param [NilClass, Hash] params
       #   ассоциативный массив параметров или `nil`
       #
       # @raise [ArgumentError]
       #   если аргумент `c4s3` не является объектом класса
       #   `CaseCore::Models::Case`
+      #
+      # @raise [ArgumentError]
+      #   если значение параметра `status` отлично от `closed`
       #
       # @raise [ArgumentError]
       #   если аргумент `params` не является объектом класса `NilClass` или
@@ -39,9 +46,10 @@ module MSPCase
       # @raise [RuntimeError]
       #   если статус заявки отличен от `issuance`
       #
-      def initialize(c4s3, params)
+      def initialize(c4s3, status, params)
         check_case!(c4s3)
         check_case_type!(c4s3)
+        check_status!(status)
         check_params!(params)
         @c4s3 = c4s3
         check_case_status!(c4s3, case_attributes)
