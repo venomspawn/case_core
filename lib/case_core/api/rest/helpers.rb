@@ -3,7 +3,6 @@
 require "#{$lib}/actions/cases"
 require "#{$lib}/actions/documents"
 require "#{$lib}/actions/processing_statuses"
-require "#{$lib}/actions/registers"
 require "#{$lib}/actions/requests"
 require "#{$lib}/helpers/log"
 
@@ -75,17 +74,6 @@ module CaseCore
         #
         def requests
           Actions::Requests
-        end
-
-        # Возвращает объект, предоставляющий действия над записями реестров
-        # передаваемой корреспонденции
-        #
-        # @return [#index, #show]
-        #   объект, предоставляющий действия над записями реестров передаваемой
-        #   корреспонденции
-        #
-        def registers
-          Actions::Registers
         end
 
         # Возвращает объект, предоставляющий действия над записями статусов
