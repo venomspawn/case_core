@@ -222,7 +222,7 @@ module CaseCore
       #   результирующий список
       #
       def order_columns
-        order.each.map { |key, dir| Sequel.send(dir, key) }
+        order.map { |key, dir| Sequel.send(dir, key) }
       end
 
       # Возвращает запрос Sequel на получение идентификаторов записей основной
