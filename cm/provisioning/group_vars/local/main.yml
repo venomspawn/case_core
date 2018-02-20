@@ -22,6 +22,7 @@ postgresql_database_extensions:
   - db: case_core
     extensions:
       - hstore
+      - pg_trgm
 
 # List of users to be created (optional)
 postgresql_users:

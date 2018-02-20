@@ -16,12 +16,22 @@ Sequel.migration do
                   on_delete: :cascade
 
       column :name,  :text, index: true, null: false
-      column :value, :text, index: true
+      column :value, :text
+
+      index :value,
+            name:  :request_attributes_short_value_index,
+            where: Sequel.function(:value_is_short, :value)
+
+      index :value,
+            name:    :request_attributes_short_value_trgm_index,
+            type:    :gin,
+            opclass: :gin_trgm_ops,
+            where:   Sequel.function(:value_is_short, :value)
 
       primary_key %i(request_id name), name: :request_attributes_pk
 
-      constraint :request_attributes_name_exclusions,
-                 Sequel.lit('name <> \'created_at\'')
+      constraint :case_attributes_name_exclusions,
+                 Sequel.expr(name: %w(id case_id created_at)).~
     end
   end
 end
