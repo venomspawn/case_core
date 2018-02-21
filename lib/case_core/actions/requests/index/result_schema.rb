@@ -19,10 +19,10 @@ module CaseCore
               properties: {
                 id: {
                   type: :integer
-                },
-                created_at: {
-                  type: :string
                 }
+              },
+              additonalProperties: {
+                type: :string
               }
             }
           }

@@ -133,7 +133,7 @@ RSpec.describe CaseCore::Search::Query do
             expect(ids.count).to be <= limit
           end
 
-          context 'when `offset` parameter isn\'t specified' do
+          context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
               expect(ids).to be == %w(1 2)
             end
@@ -148,7 +148,7 @@ RSpec.describe CaseCore::Search::Query do
             expect(ids).to match_array %w(3 4 5)
           end
 
-          context 'when `offset` parameter isn\'t specified' do
+          context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
               expect(ids).to be == %w(3 4 5)
             end

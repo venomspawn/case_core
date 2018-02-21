@@ -33,7 +33,7 @@ module CaseCore
         #   если аргумент не является объектом требуемых типа и структуры
         #
         def initialize(params)
-          JSON::Validator.validate!(params_schema, params)
+          JSON::Validator.validate!(params_schema, params, parse_data: false)
           @params = sanitize_params(params)
         end
 
