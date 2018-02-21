@@ -49,16 +49,17 @@ RSpec.describe CaseCore::Actions::Cases::Count do
   end
 
   describe '#count' do
-    include described_class::SpecHelper
-
     subject(:result) { instance.count }
 
     let(:instance) { described_class.new(params) }
-    let(:params) { {} }
-    let!(:cases) { create_cases }
 
     describe 'result' do
+      include described_class::SpecHelper
+
       subject { result }
+
+      let(:params) { {} }
+      let!(:cases) { create_cases }
 
       it { is_expected.to match_json_schema(described_class::RESULT_SCHEMA) }
 
