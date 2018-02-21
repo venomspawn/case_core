@@ -350,7 +350,7 @@ RSpec.describe CaseCore::Actions::Requests do
           let!(:request) { create(:request, case: c4s4) }
           let!(:attr) { create(:request_attribute, *args) }
           let(:args) { [request: request, name: 'state', value: 'ok'] }
-          let(:params) { { id: id, filter: filter } }
+          let(:params) { { id: id, filter: filter, order: { id: :asc } } }
           let(:filter) { { state: 'ok' } }
 
           it 'should be infos of the case only' do

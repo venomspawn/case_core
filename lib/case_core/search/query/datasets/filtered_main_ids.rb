@@ -157,6 +157,11 @@ module CaseCore
             conjunction(expressions)
           end
 
+          # Выражение для SQL-функции `value_is_short`, принимающей значения на
+          # значениях атрибутов
+          #
+          VALUE_IS_SHORT = Sequel.function(:value_is_short, :value)
+
           # Составляет SQL-выражение Sequel, выставляющее условие на значение
           # атрибута, и возвращает его
           #
@@ -170,9 +175,9 @@ module CaseCore
           #   результирующее выражение
           #
           def on_attr(name, info)
-            name_expression = on_field(attr_model.table_name, :name, name.to_s)
-            value_expression = on_field(attr_model.table_name, :value, info)
-            conjunction([name_expression, value_expression])
+            on_name = on_field(attr_model.table_name, :name, name.to_s)
+            on_value = on_field(attr_model.table_name, :value, info)
+            conjunction([on_name, on_value, VALUE_IS_SHORT])
           end
 
           # Создаёт запрос Sequel на извлечение идентификаторов записей
