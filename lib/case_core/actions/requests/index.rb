@@ -59,7 +59,8 @@ module CaseCore
         #
         def query_filters
           obj = params[:filter]
-          obj.is_a?(Array) ? obj.map(&:query_filter) : query_filter(obj)
+          return obj.map(&method(:query_filter)) if obj.is_a?(Array)
+          query_filter(obj)
         end
 
         # Возвращает ассоциативный массив с условиями на поля записей и
@@ -73,7 +74,7 @@ module CaseCore
         #
         def query_filter(obj)
           { case_id: record.id }.tap do |condition|
-            condition.merge(obj) if obj.is_a?(Hash)
+            condition.update(obj) if obj.is_a?(Hash)
           end
         end
 
