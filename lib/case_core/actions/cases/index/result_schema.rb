@@ -16,13 +16,8 @@ module CaseCore
             type: :array,
             items: {
               type: :object,
-              properties: {
-                created_at: {
-                  type: :any
-                }
-              },
               additionalProperties: {
-                type: %i(number string boolean null)
+                type: %i(string null)
               }
             }
           }

@@ -55,12 +55,23 @@ module CaseCore
         #   результирующий запрос Sequel
         #
         def dataset
-          @dataset ||= Search::Query.dataset(main_model, attr_model, params)
+          @dataset ||=
+            Search::Query.dataset(main_model, attr_model, query_params)
+        end
+
+        # Возвращает ассоциативный массив параметров создания запроса Sequel на
+        # получение записей основной таблицы
+        #
+        # @return [Hash]
+        #   результирующий ассоциативный массив параметров
+        #
+        def query_params
+          params
         end
 
         # Возвращает список названий извлекаемых полей записей основной таблицы
-        # и атрибутов, являющийся значением параметра `fields`, или `nil`, если
-        # параметр `fields` не предоставлен
+        # и атрибутов, созданный на основе значения параметра `fields`, или
+        # `nil`, если параметр `fields` не предоставлен
         #
         # @return [Array<Symbol>]
         #   список названий извлекаемых полей и атрибутов
@@ -69,7 +80,7 @@ module CaseCore
         #   если параметр `fields` не предоставлен
         #
         def fields
-          @fields ||= params[:fields]&.map(&:to_sym)
+          @fields ||= Array(params[:fields]).map(&:to_sym) if fields?
         end
 
         # Возвращает, предоставлен ли параметр `fields`
@@ -91,7 +102,34 @@ module CaseCore
         #   если параметр `fields` не предоставлен
         #
         def main_fields
-          @main_fields ||= fields & main_model.columns if fields?
+          @main_fields ||= extract_main_fields
+        end
+
+        # Формат строки с датой и временем
+        #
+        DATETIME_FORMAT = 'YYYY-MM-DD"T"HH24:MI:SS'
+
+        # Замена значений поля `created_at` на строки специального формата
+        #
+        CREATED_AT = Sequel
+                     .function(:to_char, :created_at, DATETIME_FORMAT)
+                     .as(:created_at)
+
+        # Возвращает список названий извлекаемых полей записей основной таблицы
+        #
+        # @return [Array<Symbol>]
+        #   список названий извлекаемых полей
+        #
+        # @return [NilClass]
+        #   если параметр `fields` не предоставлен
+        #
+        def extract_main_fields
+          result = main_model.columns.dup
+          result &= fields if fields?
+          result.push(:id).uniq!
+          return result unless result.include?(:created_at)
+          result.delete(:created_at)
+          result << CREATED_AT
         end
 
         # Возвращает список названий извлекаемых атрибутов или `nil`, если
@@ -114,10 +152,7 @@ module CaseCore
         #   результирующий список
         #
         def main_records
-          return @main_records unless @main_records.nil?
-          return @main_records = dataset.naked.to_a unless fields?
-          target_fields = main_fields.empty? ? %i(id) : main_fields
-          @main_records = dataset.select(*target_fields).naked.to_a
+          @main_records ||= dataset.select(*main_fields).naked.to_a
         end
 
         # Возвращает название внешнего ключа таблицы атрибутов
@@ -140,10 +175,10 @@ module CaseCore
         #   результирующий запрос
         #
         def attrs_dataset
-          dataset = attr_model.where(attr_foreign_key => dataset.select(:id))
-          return dataset unless attr_fields.present?
+          filtered = attr_model.where(attr_foreign_key => dataset.select(:id))
+          return filtered unless attr_fields.present?
           attr_names = attr_fields.map(&:to_s)
-          dataset.where(name: attr_names)
+          filtered.where(name: attr_names)
         end
 
         # Возвращает ассоциативный массив, в котором идентификаторам записей
@@ -170,7 +205,7 @@ module CaseCore
         def whole(hash)
           id = hash[:id]
           attrs_array = attrs[id] || []
-          attrs_hash = Hash[attrs_array].symbolize
+          attrs_hash = Hash[attrs_array].symbolize_keys
           hash.merge(attrs_hash)
         end
       end

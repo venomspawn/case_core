@@ -13,8 +13,7 @@ module CaseCore
           # Схема параметров действия
           #
           PARAMS_SCHEMA = {
-            type: :object,
-            properties: {
+            definitions: {
               filter: {
                 type: :object,
                 additionalProperties: {
@@ -27,30 +26,12 @@ module CaseCore
                     {
                       type: :object,
                       properties: {
-                        min: {
-                          type: %i(number string)
-                        }
-                      },
-                      required: %i(
-                        min
-                      ),
-                      additionalProperties: false
-                    },
-                    {
-                      type: :object,
-                      properties: {
-                        max: {
-                          type: %i(number string)
-                        }
-                      },
-                      required: %i(
-                        max
-                      ),
-                      additionalProperties: false
-                    },
-                    {
-                      type: :object,
-                      properties: {
+                        exclude: {
+                          '$ref': '#/definitions/filter'
+                        },
+                        like: {
+                          type: :string
+                        },
                         min: {
                           type: %i(number string)
                         },
@@ -58,72 +39,30 @@ module CaseCore
                           type: %i(number string)
                         }
                       },
-                      required: %i(
-                        min
-                        max
-                      ),
-                      additionalProperties: false
-                    },
-                    {
-                      type: :object,
-                      properties: {
-                        exclude: {
-                          oneOf: [
-                            {
-                              not: {
-                                type: :object
-                              }
-                            },
-                            {
-                              type: :object,
-                              properties: {
-                                min: {
-                                  type: %i(number string)
-                                }
-                              },
-                              required: %i(
-                                min
-                              ),
-                              additionalProperties: false
-                            },
-                            {
-                              type: :object,
-                              properties: {
-                                max: {
-                                  type: %i(number string)
-                                }
-                              },
-                              required: %i(
-                                max
-                              ),
-                              additionalProperties: false
-                            },
-                            {
-                              type: :object,
-                              properties: {
-                                min: {
-                                  type: %i(number string)
-                                },
-                                max: {
-                                  type: %i(number string)
-                                }
-                              },
-                              required: %i(
-                                min
-                                max
-                              ),
-                              additionalProperties: false
-                            }
-                          ]
-                        }
-                      },
-                      required: %i(
-                        exclude
-                      ),
-                      additionalProperties: false
+                      additionalProperties: false,
+                      minProperties: 1
                     }
                   ]
                 }
+              },
+              filters: {
+                type: :array,
+                items: {
+                  '$ref': '#/definitions/filter'
+                }
+              }
+            },
+            type: :object,
+            properties: {
+              filter: {
+                oneOf: [
+                  {
+                    '$ref': '#/definitions/filter'
+                  },
+                  {
+                    '$ref': '#/definitions/filters'
+                  }
+                ]
               },
               fields: {
                 type: %i(string array),
@@ -136,6 +75,14 @@ module CaseCore
               },
               offset: {
                 type: :integer
+              },
+              order: {
+                type: :object,
+                additionalProperties: {
+                  type: :string,
+                  enum: %w(asc desc)
+                },
+                minProperties: 1
               }
             }
           }

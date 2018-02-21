@@ -1,13 +1,6 @@
 # encoding: utf-8
 
-require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Requests::Index = Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'index/params_schema'
-require_relative 'index/result_schema'
+require "#{$lib}/actions/base/complex_index"
 
 module CaseCore
   module Actions
@@ -18,22 +11,12 @@ module CaseCore
       # метод `index`, который возвращает список ассоциативных массивов
       # атрибутов межведомственных запросов, созданных в рамках заявки
       #
-      class Index
+      class Index < Base::ComplexIndex
+        require_relative 'index/params_schema'
+        require_relative 'index/result_schema'
+
         include ParamsSchema
         include ResultSchema
-
-        # Возвращает список ассоциативных массивов атрибутов межведомственных
-        # запросов, созданных в рамках заявки
-        #
-        # @return [Array<Hash>]
-        #   список ассоциативных массивов атрибутов межведомственных запросов,
-        #   созданных в рамках заявки
-        #
-        def index
-          attrs_info.map do |(request_id, attrs)|
-            Hash[attrs].merge(request_hash(request_id))
-          end
-        end
 
         private
 
@@ -46,7 +29,7 @@ module CaseCore
         #   если запись заявки не найдена
         #
         def record
-          @record ||= CaseCore::Models::Case.with_pk!(id)
+          @record ||= Models::Case.with_pk!(id)
         end
 
         # Возвращает значение атрибута `id` ассоциативного массива параметров
@@ -58,64 +41,58 @@ module CaseCore
           params[:id]
         end
 
-        # Поля, извлекаемые из записей межведомственных запросов
+        # Возвращает ассоциативный массив параметров создания запроса Sequel на
+        # получение записей основной таблицы
         #
-        REQUEST_FIELDS = %i(id created_at)
+        # @return [Hash]
+        #   результирующий ассоциативный массив параметров
+        #
+        def query_params
+          params.dup.tap { |result| result[:filter] = query_filters }
+        end
 
-        # Возвращает ассоциативный массив, в котором идентификаторы записей
-        # межведомственных запросов, созданных в рамках заявки, отображаются в
-        # списки значений их полей, чьи имена заданы константой
-        # {REQUEST_FIELDS}
+        # Возвращает объект с условиями на поля записей и атрибуты
+        # межведомственных запросов
+        #
+        # @return [Array<Hash>, Hash]
+        #   результирующий объект
+        #
+        def query_filters
+          obj = params[:filter]
+          obj.is_a?(Array) ? obj.map(&:query_filter) : query_filter(obj)
+        end
+
+        # Возвращает ассоциативный массив с условиями на поля записей и
+        # атрибуты межведомственных запросов, построенный на основе аргумента
+        #
+        # @param [NilClass, Hash] obj
+        #   исходный объект с условиями
         #
         # @return [Hash]
         #   результирующий ассоциативный массив
         #
-        def requests
-          @requests ||=
-            record.requests_dataset.select_hash(:id, REQUEST_FIELDS)
+        def query_filter(obj)
+          { case_id: record.id }.tap do |condition|
+            condition.merge(obj) if obj.is_a?(Hash)
+          end
         end
 
-        # Возвращает ассоциативный массив атрибутов межведомственного запроса с
-        # предоставленным идентификатором записи
+        # Возвращает модель записей основной таблицы
         #
-        # @param [Integer] request_id
-        #   идентификатор записи межведомственного запроса
+        # @return [Class]
+        #   модель записей основной таблицы
         #
-        def request_hash(request_id)
-          request_values = requests[request_id]
-          Hash[REQUEST_FIELDS.zip(request_values)]
+        def main_model
+          Models::Request
         end
 
-        # Возвращает список идентификаторов записей межведомственных запросов,
-        # созданных в рамках заявки
+        # Возвращает модель записей таблицы атрибутов
         #
-        # @return [Array]
-        #   результирующий список
+        # @return [Class]
+        #   модель записей таблицы атрибутов
         #
-        def request_ids
-          requests.keys
-        end
-
-        # Возвращает запрос Sequel на извлечение записей атрибутов
-        # межведомственных запросов, созданных в рамках заявки
-        #
-        # @return [Sequel::Dataset]
-        #   результирующий запрос
-        #
-        def attrs_dataset
-          Models::RequestAttribute.dataset.where(request_id: request_ids)
-        end
-
-        # Возвращает ассоциативный массив, в котором идентификаторы
-        # межведомственных запросов, созданных в рамках заявки, отображаются в
-        # списки двухэлементных списков из названий и значений атрибутов этих
-        # запросов
-        #
-        # @return [Hash]
-        #   результирующий ассоциативный массив
-        #
-        def attrs_info
-          attrs_dataset.select_hash_groups(:request_id, %i(name value))
+        def attr_model
+          Models::RequestAttribute
         end
       end
     end
