@@ -155,6 +155,35 @@ module CaseCore
           @main_records ||= dataset.select(*main_fields).naked.to_a
         end
 
+        # Максимальное количество записей для использования списка
+        # идентификаторов записей основной таблицы вместо вложенного запроса на
+        # получение этих идентификаторов при создании запроса на получение
+        # записей атрибутов.  Если выставить слишком большим, то запрос станет
+        # слишком большим и его разбор затянется. Если выставить слишком
+        # маленьким, то извлечение записей атрибутов будет слишком долгим из-за
+        # обработки вложенного запроса.
+        #
+        MAIN_RECORDS_THRESHOLD_COUNT = 200
+
+        # Возвращает либо список идентификаторов записей основной таблицы, либо
+        # запрос Sequel на извлечение этих идентификаторов в зависимости от
+        # того, сколько записей основной таблицы извлекается методом
+        # `main_records`
+        #
+        # @return [Array]
+        #   если записей основной таблицы извлечено не очень много
+        #
+        # @return [Sequel::Dataset]
+        #   если записей основной таблицы извлечено много
+        #
+        def main_record_ids
+          if main_records.count < MAIN_RECORDS_THRESHOLD_COUNT
+            main_records.map { |hash| hash[:id] }
+          else
+            dataset.select(:id)
+          end
+        end
+
         # Возвращает название внешнего ключа таблицы атрибутов
         #
         # @return [Symbol]
@@ -167,14 +196,6 @@ module CaseCore
             .each_value
             .find { |refl| refl.associated_class == main_model }
             .default_key
-        end
-
-        def main_record_ids
-          if main_records.count < 200
-            main_records.map { |hash| hash[:id] }
-          else
-            dataset.select(:id)
-          end
         end
 
         # Возвращает запрос на получение названий и значений атрибутов
