@@ -169,13 +169,21 @@ module CaseCore
             .default_key
         end
 
+        def main_record_ids
+          if main_records.count < 200
+            main_records.map { |hash| hash[:id] }
+          else
+            dataset.select(:id)
+          end
+        end
+
         # Возвращает запрос на получение названий и значений атрибутов
         #
         # @return [Sequel::Dataset]
         #   результирующий запрос
         #
         def attrs_dataset
-          filtered = attr_model.where(attr_foreign_key => dataset.select(:id))
+          filtered = attr_model.where(attr_foreign_key => main_record_ids)
           return filtered unless attr_fields.present?
           attr_names = attr_fields.map(&:to_s)
           filtered.where(name: attr_names)
