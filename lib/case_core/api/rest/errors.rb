@@ -62,6 +62,7 @@ module CaseCore
         # Отображение классов ошибок в коды ошибок
         #
         ERRORS_MAP = {
+          ArgumentError                       => 422,
           JSON::ParserError                   => 422,
           JSON::Schema::ValidationError       => 422,
           JSON::Schema::ReadFailed            => 404,
