@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  app:
+    build:
+      context: .
+    environment:
+      - RACK_ENV=production
+      - SERVICE_NAME=case_core
+      # Настройки журнала событий
+      - CC_LOG_LEVEL=debug
+
+      # Настройки подключения к базе данных
+      - CC_DB_USER=user_case_core
+      - CC_DB_PASS=123456
+      - CC_DB_HOST=pgsql.dev.it.vm
+      - CC_DB_NAME=case_core
+
+      # Настройки REST-контроллера
+      - CC_BIND=0.0.0.0
+      - CC_PORT=8095
+
+      # Настройки подключения к ActiveMQ
+      - CC_STOMP_HOST=smev.dev.it.vm
+      - CC_STOMP_PORT=61613
+      - CC_STOMP_INCOMING_QUEUE=case_core.incoming.queue2
+    expose:
+      - "8095"
+    networks:
+      - internal
+    restart: always
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.20.0/24
+        gateway: 192.168.20.1
