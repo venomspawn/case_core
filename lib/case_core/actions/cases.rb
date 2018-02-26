@@ -25,6 +25,21 @@ module CaseCore
         Call.new(params).call
       end
 
+      require_relative 'cases/count'
+
+      # Возвращает ассоциативный массив с количеством записей заявок
+      #
+      # @param [Hash] params
+      #   ассоциативный массив параметров действия
+      #
+      # @return [Hash]
+      #   ассоциативный массив с единственным атрибутом `count`, содержащим
+      #   количество записей заявок
+      #
+      def self.count(params)
+        Count.new(params).count
+      end
+
       require_relative 'cases/create'
 
       # Создаёт новую запись заявки вместе с записями приложенных документов
