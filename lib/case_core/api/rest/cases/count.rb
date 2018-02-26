@@ -30,6 +30,7 @@ module CaseCore
             #   {CaseCore::Actions::Cases::Count::ResultSchema::RESULT_SCHEMA}
             #
             controller.get '/cases_count' do
+              make_integer(params, :limit, :offset)
               content = cases.count(params)
               status :ok
               body Oj.dump(content)
