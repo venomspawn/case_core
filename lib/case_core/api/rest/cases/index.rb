@@ -36,6 +36,7 @@ module CaseCore
             #   {CaseCore::Actions::Cases::Index::ResultSchema::RESULT_SCHEMA}
             #
             controller.get '/cases' do
+              make_integer(params, :limit, :offset)
               content = cases.index(params)
               status :ok
               body Oj.dump(content)
