@@ -3,16 +3,10 @@
 require 'securerandom'
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Cases::Create = Class.new(CaseCore::Actions::Base::Action)
-
+require "#{$lib}/actions/base/mixins/transactional"
 require "#{$lib}/helpers/log"
 require "#{$lib}/helpers/safe_call"
 
-require_relative 'create/errors'
-require_relative 'create/params_schema'
 require_relative 'mixins/logic'
 
 module CaseCore
@@ -24,10 +18,14 @@ module CaseCore
       # который создаёт новую запись заявки вместе с записями приложенных
       # документов
       #
-      class Create
+      class Create < Base::Action
+        require_relative 'create/errors'
+        require_relative 'create/params_schema'
+
+        include Base::Mixins::Transactional
+        include Cases::Mixins::Logic
         include Helpers::Log
         include Helpers::SafeCall
-        include Mixins::Logic
         include ParamsSchema
 
         # Создаёт новую запись заявки вместе с записями приложенных документов
@@ -45,7 +43,7 @@ module CaseCore
         #   бизнес-логики создалось исключение класса `ArgumentError`
         #
         def create
-          Sequel::Model.db.transaction(savepoint: :only) do
+          transaction do
             Models::Case.create(case_attrs).tap do |c4s3|
               check_case_logic!(c4s3)
               create_attributes(c4s3)

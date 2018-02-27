@@ -2,15 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::ProcessingStatuses::Show =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'show/errors'
-require_relative 'show/params_schema'
-require_relative 'show/result_schema'
-
 module CaseCore
   module Actions
     module ProcessingStatuses
@@ -20,7 +11,11 @@ module CaseCore
       # предоставляющий метод `show`, который возвращает информацию о статусе
       # обработки сообщения STOMP с данным значением заголовка `x_message_id`
       #
-      class Show
+      class Show < Base::Action
+        require_relative 'show/errors'
+        require_relative 'show/params_schema'
+        require_relative 'show/result_schema'
+
         include ParamsSchema
         include ResultSchema
 

@@ -3,13 +3,7 @@
 require 'securerandom'
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Requests::Create =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'create/params_schema'
+require "#{$lib}/actions/base/mixins/transactional"
 
 module CaseCore
   module Actions
@@ -20,7 +14,10 @@ module CaseCore
       # метод `create`, который создаёт новую запись межведомственного запроса
       # вместе с записями его атрибутов
       #
-      class Create
+      class Create < Base::Action
+        require_relative 'create/params_schema'
+
+        include Base::Mixins::Transactional
         include ParamsSchema
 
         # Создаёт новую запись межведомственного запроса вместе с записями его
@@ -30,7 +27,7 @@ module CaseCore
         #   созданная запись межведомственного запроса
         #
         def create
-          Sequel::Model.db.transaction(savepoint: :only) do
+          transaction do
             Models::Request.create(request_attrs).tap(&method(:create_attrs))
           end
         end

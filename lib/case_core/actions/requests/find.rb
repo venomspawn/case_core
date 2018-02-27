@@ -2,12 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Requests::Find = Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'find/params_schema'
-
 module CaseCore
   module Actions
     module Requests
@@ -17,7 +11,9 @@ module CaseCore
       # метод `find`, который возвращает запись междведомственного запроса,
       # найденную по предоставленным атрибутам
       #
-      class Find
+      class Find < Base::Action
+        require_relative 'find/params_schema'
+
         include ParamsSchema
 
         # Возвращает запись междведомственного запроса, найденную по

@@ -2,14 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Cases::ShowAttributes =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'show_attributes/params_schema'
-require_relative 'show_attributes/result_schema'
-
 module CaseCore
   module Actions
     module Cases
@@ -19,7 +11,10 @@ module CaseCore
       # `show_attributes`, который возвращает информацию об атрибутах заявки,
       # кроме тех, что присутствуют непосредственно в записи заявки
       #
-      class ShowAttributes
+      class ShowAttributes < Base::Action
+        require_relative 'show_attributes/params_schema'
+        require_relative 'show_attributes/result_schema'
+
         include ParamsSchema
         include ResultSchema
 

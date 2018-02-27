@@ -2,13 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Cases::Show = Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'show/params_schema'
-require_relative 'show/result_schema'
-
 module CaseCore
   module Actions
     module Cases
@@ -17,7 +10,10 @@ module CaseCore
       # Класс действий над записями заявок, предоставляющих метод `show`,
       # который возвращает информацию о заявке
       #
-      class Show
+      class Show < Base::Action
+        require_relative 'show/params_schema'
+        require_relative 'show/result_schema'
+
         include ParamsSchema
         include ResultSchema
 

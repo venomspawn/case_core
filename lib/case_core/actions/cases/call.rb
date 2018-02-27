@@ -2,12 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Cases::Call = Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'call/errors'
-require_relative 'call/params_schema'
 require_relative 'mixins/logic'
 
 module CaseCore
@@ -19,8 +13,11 @@ module CaseCore
       # который вызывает метод модуля бизнес-логики с записью заявки в качестве
       # аргумента
       #
-      class Call
-        include Mixins::Logic
+      class Call < Base::Action
+        require_relative 'call/errors'
+        require_relative 'call/params_schema'
+
+        include Cases::Mixins::Logic
         include ParamsSchema
 
         # Вызывает метод модуля бизнес-логики с записью заявки в качестве

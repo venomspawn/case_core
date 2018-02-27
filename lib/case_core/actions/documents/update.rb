@@ -3,13 +3,7 @@
 require 'securerandom'
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Documents::Update =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'update/params_schema'
+require "#{$lib}/actions/base/mixins/transactional"
 
 module CaseCore
   module Actions
@@ -19,15 +13,16 @@ module CaseCore
       # Класс действий над записями документов, предоставляющих метод `update`,
       # который обновляет запись документа
       #
-      class Update
+      class Update < Base::Action
+        require_relative 'update/params_schema'
+
+        include Base::Mixins::Transactional
         include ParamsSchema
 
         # Обновляет запись документа
         #
         def update
-          Sequel::Model.db.transaction(savepoint: :only) do
-            record.update(attrs)
-          end
+          transaction { record.update(attrs) }
         end
 
         private
