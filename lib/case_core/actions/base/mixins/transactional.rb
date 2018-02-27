@@ -16,7 +16,7 @@ module CaseCore
         module Transactional
           # Настройки транзакции
           #
-          TRANSACTION_OPTIONS = { savepoint: :only }
+          TRANSACTION_OPTIONS = { savepoint: true }
 
           # Предоставляет блок методу `transaction` объекту базы данных Sequel
           #
