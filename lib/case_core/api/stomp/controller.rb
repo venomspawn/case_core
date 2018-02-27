@@ -26,7 +26,7 @@ module CaseCore
         extend Settings::Configurable
         include Singleton
 
-        settings_names :connection_info, :incoming_queue, :response_queue
+        settings_names :connection_info, :incoming_queue, :response_queues
 
         # Публикует сообщение STOMP в очереди с данным названием
         #
@@ -119,16 +119,14 @@ module CaseCore
           end
         end
 
-        # Подписывается на основную очередь, название которой задаётся с
-        # помощью настройки `incoming_queue`, и осуществляет разбор входящих
-        # сообщений STOMP.
+        # Подписывается на очереди сообщений, заданные настройками контроллера,
+        # устанавливает обработку сигналов прекращения работы приложения, после
+        # чего останавливает текущий поток выполнения
         #
         def run!
           subscribe_on_incoming
           subscribe_on_responses
-
-          %w(INT TERM).each { |signal| trap(signal) { Thread.exit } }
-
+          setup_traps
           sleep
         end
 
@@ -154,12 +152,29 @@ module CaseCore
           subscribe(incoming_queue, false, &block)
         end
 
-        # Осуществляет подписку на очередь ответных сообщений
+        # Осуществляет подписку на очереди ответных сообщений
         #
         def subscribe_on_responses
-          response_queue = Controller.settings.response_queue
+          response_queues = Controller.settings.response_queues
           block = Processors::Response.method(:process)
-          subscribe(response_queue, false, &block)
+          response_queues.each do |response_queue|
+            subscribe(response_queue, false, &block)
+          end
+        end
+
+        # Названия обрабатываемых сигналов
+        #
+        SIGNALS = %w(INT TERM)
+
+        # Устанавливает обработку входящих сигналов
+        #
+        def setup_traps
+          SIGNALS.each do |signal|
+            previous_handler = trap(signal) do
+              Thread.exit
+              previous_handler.call
+            end
+          end
         end
       end
     end
