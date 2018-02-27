@@ -1,12 +1,7 @@
 # encoding: utf-8
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Cases::Update = Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'update/params_schema'
+require "#{$lib}/actions/base/mixins/transactional"
 
 module CaseCore
   module Actions
@@ -16,7 +11,10 @@ module CaseCore
       # Класс действий над записями заявок, предоставляющих метод `update`,
       # который обновляет информацию о заявках
       #
-      class Update
+      class Update < Base::Action
+        require_relative 'update/params_schema'
+
+        include Base::Mixins::Transactional
         include ParamsSchema
 
         # Список с названиями полей, импортируемых в таблицу атрибутов заявок
@@ -33,7 +31,7 @@ module CaseCore
         #   если запись заявки не найдена по предоставленному идентификатору
         #
         def update
-          Sequel::Model.db.transaction(savepoint: :only) do
+          transaction do
             attributes.where(case_id: ids, name: names).delete
             attributes.import(IMPORT_FIELDS, import_values)
           end

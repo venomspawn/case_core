@@ -2,14 +2,6 @@
 
 require "#{$lib}/actions/base/action"
 
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Documents::Index =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'index/params_schema'
-require_relative 'index/result_schema'
-
 module CaseCore
   module Actions
     module Documents
@@ -19,7 +11,10 @@ module CaseCore
       # который возвращает список ассоциативных массивов атрибутов документов,
       # прикреплённых к заявке
       #
-      class Index
+      class Index < Base::Action
+        require_relative 'index/params_schema'
+        require_relative 'index/result_schema'
+
         include ParamsSchema
         include ResultSchema
 

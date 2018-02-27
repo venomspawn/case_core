@@ -1,13 +1,7 @@
 # encoding: utf-8
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Requests::Update =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'update/params_schema'
+require "#{$lib}/actions/base/mixins/transactional"
 
 module CaseCore
   module Actions
@@ -17,7 +11,10 @@ module CaseCore
       # Класс действий над записями межведомственных запросов, предоставляющих
       # метод `update`, который обновляет атрибуты межведомственных запросов
       #
-      class Update
+      class Update < Base::Action
+        require_relative 'update/params_schema'
+
+        include Base::Mixins::Transactional
         include ParamsSchema
 
         # Список с названиями полей, значения которых импортируются в таблицу
@@ -33,7 +30,7 @@ module CaseCore
         #   предоставленному идентификатору
         #
         def update
-          Sequel::Model.db.transaction(savepoint: :only) do
+          transaction do
             attributes.where(request_id: id, name: names).delete
             attributes.import(IMPORT_FIELDS, import_values)
           end

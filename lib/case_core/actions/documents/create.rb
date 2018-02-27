@@ -3,13 +3,7 @@
 require 'securerandom'
 
 require "#{$lib}/actions/base/action"
-
-# Предварительное создание класса, чтобы не надо было указывать в дальнейшем
-# базовый класс
-CaseCore::Actions::Documents::Create =
-  Class.new(CaseCore::Actions::Base::Action)
-
-require_relative 'create/params_schema'
+require "#{$lib}/actions/base/mixins/transactional"
 
 module CaseCore
   module Actions
@@ -19,15 +13,16 @@ module CaseCore
       # Класс действий над записями документов, предоставляющих метод `create`,
       # который создаёт запись документа и прикрепляет её к записи заявки
       #
-      class Create
+      class Create < Base::Action
+        require_relative 'create/params_schema'
+
+        include Base::Mixins::Transactional
         include ParamsSchema
 
         # Создаёт запись документа и прикрепляет её к записи заявки
         #
         def create
-          Sequel::Model.db.transaction(savepoint: :only) do
-            Models::Document.create(attrs)
-          end
+          transaction { Models::Document.create(attrs) }
         end
 
         private
