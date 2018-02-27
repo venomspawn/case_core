@@ -14,7 +14,7 @@ module CaseCore
       # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
       #
       # Класс действий над записями заявок, предоставляющих метод `update`,
-      # который обновляет информацию о заявке
+      # который обновляет информацию о заявках
       #
       class Update
         include ParamsSchema
@@ -23,27 +23,32 @@ module CaseCore
         #
         IMPORT_FIELDS = %i(case_id name value)
 
-        # Обновляет запись заявки с указанным идентификатором
+        # Обновляет атрибуты заявок с указанными идентификаторами
+        #
+        # @note
+        #   В случае возникновения ошибки отменяются обновления атрибутов всех
+        #   заявок
         #
         # @raise [Sequel::ForeignKeyConstraintViolation]
         #   если запись заявки не найдена по предоставленному идентификатору
         #
         def update
           Sequel::Model.db.transaction(savepoint: :only) do
-            attributes.where(case_id: id, name: names).delete
+            attributes.where(case_id: ids, name: names).delete
             attributes.import(IMPORT_FIELDS, import_values)
           end
         end
 
         private
 
-        # Возвращает значение атрибута `id` ассоциативного массива параметров
+        # Возвращает список идентификаторов на основе значения атрибута `id`
+        # ассоциативного массива параметров
         #
-        # @return [Object]
-        #   результирующее значение
+        # @return [Array]
+        #   результирующий список
         #
-        def id
-          @id ||= params[:id].to_s
+        def ids
+          @ids ||= Array(params[:id])
         end
 
         # Возвращает список названий обновляемых атрибутов
@@ -62,7 +67,9 @@ module CaseCore
         #   результирующий список
         #
         def import_values
-          names.map { |name| [id, name, params[name.to_sym]] }
+          ids.each_with_object([]) do |id, memo|
+            names.each { |name| memo << [id, name, params[name.to_sym]] }
+          end
         end
 
         # Возвращает запрос Sequel на получение всех записей атрибутов заявки
