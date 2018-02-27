@@ -84,12 +84,48 @@ RSpec.describe CaseCore::Actions::Cases::Update do
     let(:name) { 'attr' }
     let(:value) { 'value' }
     let(:new_value) { 'new_value' }
+    let(:show) { CaseCore::Actions::Cases.method(:show_attributes) }
 
     it 'should update attributes of the case' do
       expect { subject }
-        .to change { CaseCore::Actions::Cases.show(id: id)[name.to_sym] }
+        .to change { show[id: id][name.to_sym] }
         .from(value)
         .to(new_value)
+    end
+
+    context 'when many case identifiers are specified' do
+      let(:c4s4) { create(:case) }
+      let!(:another_attr) { create(:case_attribute, *another_attr_traits) }
+      let(:another_attr_traits) { [case: c4s4, name: name, value: value] }
+      let(:id3) { c4s3.id }
+      let(:id4) { c4s4.id }
+      let(:id) { [id3, id4] }
+
+      it 'should update attributes of the cases' do
+        expect { subject }
+          .to change { show[id: id3][name.to_sym] }
+          .from(value)
+          .to(new_value)
+          .and change { show[id: id3][name.to_sym] }
+          .from(value)
+          .to(new_value)
+      end
+
+      context 'when at least one update brings an error' do
+        let(:id4) { 'brings an error' }
+
+        it 'should raise the error' do
+          expect { subject }
+            .to raise_error(Sequel::ForeignKeyConstraintViolation)
+        end
+
+        it 'shouldn\'t update attributes of the cases' do
+          expect { subject rescue nil }
+            .not_to change { show[id: id3][name.to_sym] }
+          expect { subject rescue nil }
+            .not_to change { show[id: id4][name.to_sym] }
+        end
+      end
     end
 
     context 'when request record isn\'t found' do

@@ -16,7 +16,10 @@ module CaseCore
             type: :object,
             properties: {
               id: {
-                type: %i(string number boolean)
+                type: %i(string array),
+                items: {
+                  type: :string
+                }
               },
               # Исключение `type`
               type: {
