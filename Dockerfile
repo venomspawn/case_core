@@ -25,7 +25,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY Gemfile .
-COPY Gemfile.lock .
+COPY Gemfile.lock . 
 
 RUN bundle install
 

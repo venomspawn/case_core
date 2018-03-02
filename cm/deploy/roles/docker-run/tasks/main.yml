@@ -1,0 +1,31 @@
+---
+- name: Проверяем, что указан тег при запуске
+  fail:
+    msg: 'Необходимо указать тег docker образа ( пример: make deploy TAG=<> )'
+  when: docker_image_tag | trim == ""
+
+- name: Запустить приложение
+  docker_container:
+    name: '{{ app_name }}_{{ app_env }}'
+    image: '{{ docker_private_registry_url }}/{{ app_name }}:{{ docker_image_tag }}'
+    recreate: yes
+    state: started
+    restart_policy: always
+    env: '{{ docker_run_variables }}'
+    labels: '{{ docker_run_labels }}'
+    published_ports: '{{ docker_published_ports }}'
+    volumes: '{{ docker_mount_volumes }}'
+  when: docker_command | trim == ""
+
+- name: Выполнить команду | {{ docker_command }}
+  docker_container:
+    name: '{{ app_name }}_{{ app_env }}'
+    image: '{{ docker_private_registry_url }}/{{ app_name }}:{{ docker_image_tag }}'
+    command: '{{ docker_command }}'
+    recreate: yes
+    detach: yes
+    env: '{{ docker_run_variables }}'
+    labels: '{{ docker_run_labels }}'
+    published_ports: '{{ docker_published_ports }}'
+    volumes: '{{ docker_mount_volumes }}'
+  when: docker_command | trim != ""

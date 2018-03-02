@@ -1,0 +1,44 @@
+- block:
+    - name: Создать темповую директорию
+      shell: 'mktemp -d -t {{ app_name }}.XXXXXXXXXX'
+      register: mktemp
+
+    - name: Скопировать файлы приложения через rsync
+      synchronize:
+        src: "{{ playbook_dir }}/../../"
+        dest: "{{ mktemp.stdout }}"
+        set_remote_user: yes
+        recursive: yes
+        delete: yes
+        archive: yes
+        compress: yes
+        rsync_opts: "--rsh='sshpass -p {{ ansible_ssh_pass }} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+
+    - name: Выбрать тег для образа | Если есть тег на текущем коммите, то его, если нет, то хеш коммита
+      shell: 'git describe --exact-match --tags || expr substr $(git rev-parse HEAD) 1 8'
+      args:
+        chdir: '{{ mktemp.stdout }}'
+      register: tag_or_commit
+
+    - name: Проверить, наличие образа
+      shell: docker images -q {{ docker_private_registry_url }}/{{ app_name }}:{{ tag_or_commit.stdout }}
+      register: docker_image_present
+
+    - name: Собрать образ {{ docker_private_registry_url }}/{{ app_name }}:{{ tag_or_commit.stdout }}
+      shell: 'docker build --tag={{ docker_private_registry_url }}/{{ app_name }}:{{ tag_or_commit.stdout }} .'
+      args:
+        chdir: '{{ mktemp.stdout }}'
+      when: docker_image_present.stdout|trim == ""
+      register: build_result
+
+    - name: Показать вывод команды сборки
+      debug:
+        msg: '{{ build_result.stdout_lines }}'
+      when: build_result.changed
+
+  always:
+    - name: Удалить темповую директорию
+      file:
+        path: '{{ mktemp.stdout }}'
+        state: absent
+      when: mktemp is defined

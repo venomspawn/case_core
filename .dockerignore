@@ -7,4 +7,3 @@ Dockerfile
 CHANGELOG.md
 README.md
 .irbrc
-docker-compose.yml
