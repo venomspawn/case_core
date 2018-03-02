@@ -26,6 +26,6 @@ docker_run_variables:
 docker_run_labels:
   app_name: '{{ app_name }}'
   app_env: '{{ app_env }}'
-  app_url: '{{ docker_run_variables["VIRTUAL_HOST"] }}'
+  #app_url: '{{ docker_run_variables["VIRTUAL_HOST"] }}'
   SERVICE_TAGS: '{{ app_env }}'
   SERVICE_NAME: 'case-core'
