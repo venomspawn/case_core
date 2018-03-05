@@ -7,10 +7,12 @@
 
 require 'diplomat'
 
-consul_host = ENV['CC_CONSUL_HOST'] || '169.254.1.1'
-consul_port = ENV['CC_CONSUL_PORT'] || 8500
+consul_schema = ENV['CC_CONSUL_SCHEMA'] || 'http'
+consul_host   = ENV['CC_CONSUL_HOST']   || '169.254.1.1'
+consul_port   = ENV['CC_CONSUL_PORT']   || 8500
 
 # Настройка библиотеки `diplomat`
 Diplomat.configure do |settings|
-  settings.url = "#{consul_host}:#{consul_port}"
+  settings.url = "#{consul_schema}://#{consul_host}:#{consul_port}"
+  settings.options = { request: { timeout: 0.5 } }
 end
