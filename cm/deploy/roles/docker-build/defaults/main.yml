@@ -1,4 +1,0 @@
----
-# defaults file for docker-build
-app_name: ""
-docker_private_registry_url: ""
