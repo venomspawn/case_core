@@ -24,8 +24,7 @@ RUN echo "export TERM=xterm" >> /root/.bashrc && echo "export PS1=\"[\d \A]\u:\w
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY Gemfile .
-COPY Gemfile.lock . 
+COPY Gemfile Gemfile.lock ./
 
 RUN bundle install
 
