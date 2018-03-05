@@ -8,6 +8,21 @@ module CaseCore
     # созданных в рамках заявки
     #
     module Requests
+      require_relative 'requests/count'
+
+      # Возвращает ассоциативный массив с информацией о количестве
+      # межведомственных запросов, созданных в рамках заявки
+      #
+      # @return [Hash{count: Integer}]
+      #   результирующий ассоциативный массив
+      #
+      # @raise [Sequel::NoMatchingRow]
+      #   если запись заявки не найдена
+      #
+      def self.count(params)
+        Count.new(params).count
+      end
+
       require_relative 'requests/create'
 
       # Создаёт новую запись межведомственного запроса вместе с записями его
