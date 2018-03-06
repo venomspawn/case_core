@@ -278,7 +278,7 @@ end
 
 Результирующее описание обработчиков переходов может выглядеть следующим
 образом:
-```
+```ruby
 require 'active_support/core_ext/hash/slice.rb'
 require 'active_support/core_ext/object/blank.rb'
 require 'active_support/core_ext/string/filters.rb'
