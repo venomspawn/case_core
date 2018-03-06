@@ -8,7 +8,7 @@
 require 'diplomat'
 
 consul_schema = ENV['CC_CONSUL_SCHEMA'] || 'http'
-consul_host   = ENV['CC_CONSUL_HOST']   || '169.254.1.1'
+consul_host   = ENV['CC_CONSUL_HOST']   || 'localhost'
 consul_port   = ENV['CC_CONSUL_PORT']   || 8500
 
 # Настройка библиотеки `diplomat`

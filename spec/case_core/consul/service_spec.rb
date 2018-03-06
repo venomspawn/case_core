@@ -36,7 +36,7 @@ RSpec.describe CaseCore::Consul do
       it { is_expected.to respond_to(*attrs) }
     end
 
-    context 'when an error happend during information download' do
+    context 'when an error happened during information download' do
       let(:status) { 404 }
 
       it 'should raise Diplomat::PathNotFound error' do
