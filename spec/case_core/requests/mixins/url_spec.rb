@@ -32,6 +32,8 @@ RSpec.describe CaseCore::Requests::Mixins::URL do
   end
 
   context 'when `url` parameter is specified' do
+    subject { instance.send(:get, url: 'www.h4xx0r.com') }
+
     it 'should ignore it' do
       subject
       expect(WebMock).to have_requested(:get, url)
