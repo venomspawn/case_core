@@ -1,6 +1,5 @@
 ---
 app_env: test
-docker_published_ports: 8096:8095
 
 docker_run_variables:
   RACK_ENV: production
@@ -26,6 +25,5 @@ docker_run_variables:
 docker_run_labels:
   app_name: '{{ app_name }}'
   app_env: '{{ app_env }}'
-  #app_url: '{{ docker_run_variables["VIRTUAL_HOST"] }}'
   SERVICE_TAGS: '{{ app_env }}'
   SERVICE_NAME: 'case-core'
