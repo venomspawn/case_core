@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-source 'https://rubygems.org'
+source 'http://repo.it2.vm/repository/gem-group'
 
 gem 'activesupport'
 gem 'diplomat'
