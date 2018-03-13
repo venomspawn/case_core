@@ -1,0 +1,9 @@
+.dockerignore
+.git
+.gitignore
+cm
+Vagrantfile
+Dockerfile
+CHANGELOG.md
+README.md
+.irbrc

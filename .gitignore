@@ -1,6 +1,7 @@
 # Инфраструктура
 .vagrant
-cm/provisioning/roles
+cm/provisioning/
+cm/deploy/roles/
 
 # Временные файлы
 tmp

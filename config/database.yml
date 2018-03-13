@@ -1,0 +1,16 @@
+---
+default: &default
+  adapter: postgres
+  user: <%= ENV['CC_DB_USER'] %>
+  password: "<%= ENV['CC_DB_PASS'] %>"
+  host: <%= ENV['CC_DB_HOST'] %>
+  database: <%= ENV['CC_DB_NAME'] %>
+
+development:
+  <<: *default
+
+production:
+  <<: *default
+
+test:
+  <<: *default

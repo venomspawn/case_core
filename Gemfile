@@ -1,16 +1,22 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-source 'https://rubygems.org'
+source 'http://repo.it2.vm/repository/gem-group'
 
 gem 'activesupport'
+gem 'diplomat'
 gem 'dotenv'
+gem 'foreman'
 gem 'json-schema'
+gem 'oj'
 gem 'pg'
 gem 'rake'
+gem 'rb-inotify'
 gem 'rest-client'
+gem 'rufus-scheduler'
 gem 'sequel'
 gem 'sequel_pg'
 gem 'sinatra'
+gem 'stomp'
 gem 'thin'
 gem 'yard'
 gem 'yard-sinatra', git: 'https://github.com/OwnLocal/yard-sinatra.git'
@@ -24,7 +30,6 @@ end
 
 group :test do
   gem 'database_cleaner'
-  gem 'json-schema-rspec'
   gem 'webmock'
 end
 

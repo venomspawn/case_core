@@ -1,0 +1,38 @@
+---
+app_env: development
+
+docker_run_variables:
+  RACK_ENV: production
+
+  # Настройки журнала событий
+  CC_LOG_LEVEL: debug
+
+  # Настройки подключения к базе данных
+  CC_DB_USER: user_case_core
+  CC_DB_PASS: 123456
+  CC_DB_HOST: pgsql.dev.it.vm
+  CC_DB_NAME: case_core
+
+  # Настройки REST-контроллера
+  CC_BIND: 0.0.0.0
+  CC_PORT: 8095
+
+  # Настройки подключения к ActiveMQ
+  CC_STOMP_HOST: smev.dev.it.vm
+  CC_STOMP_PORT: 61613
+  CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
+
+  # Настройки подключения к Consul
+  CC_CONSUL_SCHEMA: http
+  CC_CONSUL_HOST: 10.33.96.33
+  CC_CONSUL_PORT: 8500
+
+  SERVICE_CHECK_HTTP: '/version'
+
+  BUILD_ENV: '{{ app_env }}'
+
+docker_run_labels:
+  app_name: '{{ app_name }}'
+  app_env: '{{ app_env }}'
+  SERVICE_TAGS: '{{ app_env }}'
+  SERVICE_NAME: 'case-core'
