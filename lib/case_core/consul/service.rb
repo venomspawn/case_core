@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require "#{$lib}/settings/configurable"
+
 module CaseCore
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
   #
@@ -7,6 +9,10 @@ module CaseCore
   # библиотекой `diplomat`
   #
   module Consul
+    extend Settings::Configurable
+
+    settings_names :tag
+
     # Возвращает информацию о сервисе
     #
     # @param [String] name
@@ -16,7 +22,9 @@ module CaseCore
     #   информация о сервисе
     #
     def self.service(name)
-      Diplomat::Service.get(name)
+      args = [name, :first]
+      args << { tag: settings.tag } unless settings.tag.blank?
+      Diplomat::Service.get(*args)
     end
   end
 end

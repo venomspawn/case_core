@@ -6,7 +6,7 @@ GIT
       yard (~> 0.7)
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://repo.it2.vm/repository/gem-group/
   specs:
     activesupport (5.1.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
@@ -56,7 +56,7 @@ GEM
     oj (3.5.0)
     pg (1.0.0)
     public_suffix (3.0.2)
-    puma (3.11.2)
+    puma (3.11.3)
     rack (2.0.4)
     rack-protection (2.0.1)
       rack
