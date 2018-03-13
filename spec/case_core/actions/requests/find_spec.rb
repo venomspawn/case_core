@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -46,6 +46,7 @@ RSpec.describe CaseCore::Actions::Requests::Find do
 
     let(:instance) { described_class.new(params) }
     let(:params) { {} }
+    let(:requests_dataset) { CaseCore::Models::Request.dataset }
 
     describe 'result' do
       subject { result }
@@ -61,8 +62,8 @@ RSpec.describe CaseCore::Actions::Requests::Find do
           it { is_expected.to be_a(CaseCore::Models::Request) }
 
           it 'should be last created one' do
-            expect(result).to be ==
-              CaseCore::Models::Request.order_by(:created_at.desc).first
+            expect(result)
+              .to be == requests_dataset.order_by(:created_at.desc).first
           end
         end
       end
@@ -94,8 +95,8 @@ RSpec.describe CaseCore::Actions::Requests::Find do
             it { is_expected.to be_a(CaseCore::Models::Request) }
 
             it 'should be last created one with the attributes' do
-              expect(result).to be ==
-                CaseCore::Models::Request.order_by(:created_at.desc).first
+              expect(result)
+                .to be == requests_dataset.order_by(:created_at.desc).first
             end
           end
         end

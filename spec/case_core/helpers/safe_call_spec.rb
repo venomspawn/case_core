@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -22,9 +22,9 @@ RSpec.describe CaseCore::Helpers::SafeCall do
   describe '#safe_call' do
     subject(:result) { instance.send(:safe_call, obj, name, *args) }
 
-    let(:obj) { '123' }
-    let(:name) { :start_with? }
-    let(:args) { ['12'] }
+    let(:obj) { Object.new }
+    let(:name) { :respond_to? }
+    let(:args) { %w[respond_to?] }
 
     it 'should call the method of the object with provided arguments' do
       expect(obj).to receive(name).with(*args)

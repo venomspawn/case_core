@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'securerandom'
 
@@ -18,7 +18,6 @@ module CaseCore
         require_relative 'create/params_schema'
 
         include Base::Mixins::Transactional
-        include ParamsSchema
 
         # Создаёт новую запись межведомственного запроса вместе с записями его
         # атрибутов и возвращает её
@@ -47,7 +46,7 @@ module CaseCore
         # Список ключей ассоциативного массива параметров, исключаемых из
         # сохранения в записях атрибутов межведомственного запроса
         #
-        BANNED_NAMES = %i(id case_id created_at)
+        BANNED_NAMES = %i[id case_id created_at].freeze
 
         # Возвращает, находится ли аргумент среди ключей ассоциативного массива
         # параметров, исключаемых из сохранения в записях атрибутов
@@ -82,7 +81,7 @@ module CaseCore
 
         # Названия полей записей атрибутов межведомственных запросов
         #
-        ATTRIBUTE_FIELDS = %i(request_id name value)
+        ATTRIBUTE_FIELDS = %i[request_id name value].freeze
 
         # Создаёт записи атрибутов межведомственного запроса
         #

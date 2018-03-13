@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module API
@@ -20,14 +20,14 @@ module CaseCore
             #
             # @param [Hash] params
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Count::ParamsSchema::PARAMS_SCHEMA}
+            #   {CaseCore::Actions::Cases::Count::PARAMS_SCHEMA}
             #
             # @return [Status]
             #   200
             #
             # @return [Hash]
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Count::ResultSchema::RESULT_SCHEMA}
+            #   {CaseCore::Actions::Cases::Count::RESULT_SCHEMA}
             #
             controller.get '/cases_count' do
               make_integer(params, :limit, :offset)

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -11,7 +11,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     it { is_expected.not_to respond_to(:new) }
 
-    functions = %i(instance logic loaded_logics reload_all unload)
+    functions = %i[instance logic loaded_logics reload_all unload]
     it { is_expected.to respond_to(*functions) }
   end
 
@@ -232,7 +232,7 @@ RSpec.describe CaseCore::Logic::Loader do
   describe 'instance' do
     subject { described_class.instance }
 
-    methods = %i(logic loaded_logics reload_all unload)
+    methods = %i[logic loaded_logics reload_all unload]
     it { is_expected.to respond_to(*methods) }
   end
 

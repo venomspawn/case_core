@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 require "#{$lib}/requests/get"
@@ -65,8 +65,8 @@ module CaseCore
             memo.nil? || memo < version ? version : memo
           end
           result.to_s if result.is_a?(Gem::Version)
-        rescue => e
-          log_latest_version_error(e, binding)
+        rescue StandardError => err
+          log_latest_version_error(err, binding)
         end
 
         private
@@ -116,22 +116,25 @@ module CaseCore
         #
         def specs
           specs_serialized = get.body
+          # rubocop: disable Security/MarshalLoad
           Marshal.load(specs_serialized)
+          # rubocop: enable Security/MarshalLoad
         end
 
         # Создаёт запись в журнале событий о том, что во время загрузки или
         # извлечения информации о последней версии библиотеки произошла ошибка
         #
-        # @param [Exception] e
+        # @param [Exception] err
         #   объект с информацией об ошибке
         #
         # @param [Binding] context
         #   контекст
         #
-        def log_latest_version_error(e, context)
+        def log_latest_version_error(err, context)
           log_error(context) { <<-LOG }
             Во время загрузки или извлечения информации о последней версии
-            библиотеки `#{name}` произошла ошибка `#{e.class}`: `#{e.message}`
+            библиотеки `#{name}` произошла ошибка `#{err.class}`:
+            `#{err.message}`
           LOG
         end
       end

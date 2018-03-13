@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 require "#{$lib}/requests/get"
@@ -63,8 +63,8 @@ module CaseCore
         #
         def gem
           get.body
-        rescue => e
-          log_gem_error(e, binding)
+        rescue StandardError => err
+          log_gem_error(err, binding)
         end
 
         private
@@ -115,16 +115,16 @@ module CaseCore
         # Создаёт запись в журнале событий о том, что во время загрузки файла
         # библиотеки произошла ошибка
         #
-        # @param [Exception] e
+        # @param [Exception] err
         #   объект с информацией об ошибке
         #
         # @param [Binding] context
         #   контекст
         #
-        def log_gem_error(e, context)
+        def log_gem_error(err, context)
           log_error(context) { <<-LOG }
             Во время загрузки файла библиотеки `#{name}` версии `#{version}`
-            произошла ошибка `#{e.class}`: `#{e.message}`
+            произошла ошибка `#{err.class}`: `#{err.message}`
           LOG
         end
       end

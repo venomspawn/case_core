@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Helpers
@@ -32,8 +32,10 @@ module CaseCore
         name = name.to_s
         result = obj.send(name, *args)
         [result, nil]
-      rescue Exception => e
-        [nil, e]
+        # rubocop: disable Lint/RescueException
+      rescue Exception => err
+        # rubocop: enable Lint/RescueException
+        [nil, err]
       end
     end
   end

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/search/query"
 
@@ -218,8 +218,8 @@ module CaseCore
         #   результирующий ассоциативный массив
         #
         def attrs
-          @attr_records ||=
-            attrs_dataset.select_hash_groups(attr_foreign_key, %i(name value))
+          @attrs ||=
+            attrs_dataset.select_hash_groups(attr_foreign_key, %i[name value])
         end
 
         # Возвращает ассоциативный массив со значениями полей записи основной

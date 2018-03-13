@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -28,10 +28,10 @@ Sequel.migration do
             opclass: :gin_trgm_ops,
             where:   Sequel.function(:value_is_short, :value)
 
-      primary_key %i(request_id name), name: :request_attributes_pk
+      primary_key %i[request_id name], name: :request_attributes_pk
 
       constraint :case_attributes_name_exclusions,
-                 Sequel.expr(name: %w(id case_id created_at)).~
+                 Sequel.expr(name: %w[id case_id created_at]).~
     end
   end
 end

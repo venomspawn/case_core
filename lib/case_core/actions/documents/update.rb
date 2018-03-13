@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'securerandom'
 
@@ -17,7 +17,6 @@ module CaseCore
         require_relative 'update/params_schema'
 
         include Base::Mixins::Transactional
-        include ParamsSchema
 
         # Обновляет запись документа
         #

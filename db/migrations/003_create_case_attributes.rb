@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -18,7 +18,7 @@ Sequel.migration do
       column :name,  :text, index: true, null: false
       column :value, :text
 
-      primary_key %i(case_id name), name: :case_attributes_pk
+      primary_key %i[case_id name], name: :case_attributes_pk
 
       index :value,
             name:  :case_attributes_short_value_index,
@@ -31,7 +31,7 @@ Sequel.migration do
             where:   Sequel.function(:value_is_short, :value)
 
       constraint :case_attributes_name_exclusions,
-                 Sequel.expr(name: %w(id type created_at documents)).~
+                 Sequel.expr(name: %w[id type created_at documents]).~
     end
   end
 end

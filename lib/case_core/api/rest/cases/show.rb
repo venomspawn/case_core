@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module API
@@ -19,14 +19,14 @@ module CaseCore
             #
             # @param [Hash] params
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Show::ParamsSchema::PARAMS_SCHEMA}
+            #   {CaseCore::Actions::Cases::Show::PARAMS_SCHEMA}
             #
             # @return [Status]
             #   200
             #
             # @return [Hash]
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Cases::Show::ResultSchema::RESULT_SCHEMA}
+            #   {CaseCore::Actions::Cases::Show::RESULT_SCHEMA}
             #
             controller.get '/cases/:id' do
               content = cases.show(params)

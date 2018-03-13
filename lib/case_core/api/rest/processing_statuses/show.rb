@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module API
@@ -28,14 +28,14 @@ module CaseCore
             #
             # @param [Hash] params
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::ProcessingStatuses::Show::ParamsSchema::PARAMS_SCHEMA}
+            #   {CaseCore::Actions::ProcessingStatuses::Show::PARAMS_SCHEMA}
             #
             # @return [Status]
             #   200
             #
             # @return [Hash]
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::ProcessingStatuses::Show::ResultSchema::RESULT_SCHEMA}
+            #   {CaseCore::Actions::ProcessingStatuses::Show::RESULT_SCHEMA}
             #
             controller.get '/processing_statuses/:message_id' do
               content = processing_statuses.show(params)

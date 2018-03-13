@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -55,7 +55,7 @@ Sequel::Model.plugin :string_stripper
 Dir["#{$lib}/models/**/*.rb"].each do |filename|
   begin
     require filename
-  rescue
+  rescue StandardError
     nil
   end
 end

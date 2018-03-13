@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'singleton'
 
@@ -316,7 +316,9 @@ module CaseCore
         module_info = ModuleInfo.new(version, logic_module)
         modules_info[name] = module_info
         call_logic_func(module_info, :on_load)
+        # rubocop: disable Lint/RescueException
       rescue Exception => e
+        # rubocop: enable Lint/RescueException
         log_load_module_error(name, e, binding)
       end
 

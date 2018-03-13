@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'singleton'
 require 'stomp'
@@ -164,7 +164,7 @@ module CaseCore
 
         # Названия обрабатываемых сигналов
         #
-        SIGNALS = %w(INT TERM)
+        SIGNALS = %w[INT TERM].freeze
 
         # Устанавливает обработку входящих сигналов
         #

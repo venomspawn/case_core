@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Actions
@@ -16,7 +16,7 @@ module CaseCore
         module Transactional
           # Настройки транзакции
           #
-          TRANSACTION_OPTIONS = { savepoint: true }
+          TRANSACTION_OPTIONS = { savepoint: true }.freeze
 
           # Предоставляет блок методу `transaction` объекту базы данных Sequel
           #

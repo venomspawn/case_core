@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module API
@@ -26,14 +26,14 @@ module CaseCore
             #
             # @param [Hash] params
             #   ассоциативный массив, структура которого описана схемой
-            #   {CaseCore::Actions::Documents::Index::ParamsSchema::PARAMS_SCHEMA}
+            #   {CaseCore::Actions::Documents::Index::PARAMS_SCHEMA}
             #
             # @return [Status]
             #   200
             #
             # @return [Array]
             #   список, структура которого описана схемой
-            #   {CaseCore::Actions::Documents::Index::ResultSchema::RESULT_SCHEMA}
+            #   {CaseCore::Actions::Documents::Index::RESULT_SCHEMA}
             #
             controller.get '/cases/:id/documents' do
               content = documents.index(params)

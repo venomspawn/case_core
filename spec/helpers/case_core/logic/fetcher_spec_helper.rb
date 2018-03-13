@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Logic
@@ -71,7 +71,7 @@ module CaseCore
         stream = StringIO.new
         tar_writer = Gem::Package::TarWriter.new(stream)
         names_to_content.each do |(name, content)|
-          tar_writer.add_file(name, 0444) { |io| io.write(content) }
+          tar_writer.add_file(name, 0o444) { |io| io.write(content) }
         end
         stream.rewind
         stream.read

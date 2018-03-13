@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -71,7 +71,7 @@ RSpec.describe CaseCore::Censorship::Filter do
     end
 
     context 'when argument is of Array type' do
-      let(:obj) { [:a, :b] }
+      let(:obj) { %i[a b] }
 
       describe 'result' do
         subject { result }

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 namespace :case_core do
   # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>

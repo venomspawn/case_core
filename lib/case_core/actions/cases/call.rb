@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 
@@ -18,7 +18,6 @@ module CaseCore
         require_relative 'call/params_schema'
 
         include Cases::Mixins::Logic
-        include ParamsSchema
 
         # Вызывает метод модуля бизнес-логики с записью заявки в качестве
         # аргумента

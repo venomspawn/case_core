@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require_relative 'consts'
 
@@ -33,7 +33,7 @@ module CaseCore
 
           # Названия методов объекта, возвращающих условия
           #
-          METHOD_NAMES = %i(exclude like min max)
+          METHOD_NAMES = %i[exclude like min max].freeze
 
           # Составляет SQL-выражение Sequel, выставляющее условие на значение
           # поля таблицы, и возвращает его
@@ -110,8 +110,8 @@ module CaseCore
           # @return [Sequel::SQL::BooleanExpression]
           #   результирующее выражение
           #
-          def lte(a, b)
-            Sequel::SQL::BooleanExpression.new(:<=, a, b)
+          def lte(left, right)
+            Sequel::SQL::BooleanExpression.new(:<=, left, right)
           end
 
           # Возвращает выражение, выставляющее условие на максимальное значение

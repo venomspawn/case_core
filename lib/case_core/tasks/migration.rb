@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 
@@ -96,6 +96,19 @@ module CaseCore
       def launch!
         Sequel.extension :migration
 
+        log_start
+
+        current = from.nil? ? nil : from.to_i
+        target = to.nil? ? nil : to.to_i
+        Sequel::Migrator.run(db, dir, current: current, target: target)
+
+        log_finish
+      end
+
+      # Создаёт записи в журнале событий о том, что начинается миграция базы
+      # данных и какова эта миграция
+      #
+      def log_start
         log_info { <<~LOG }
           Начинается миграция базы данных #{db.opts[:database]}
         LOG
@@ -104,11 +117,12 @@ module CaseCore
           Исходная версия: #{from.nil? ? 'текущая' : from},
           целевая версия: #{to.nil? ? 'максимальная' : to}
         LOG
+      end
 
-        current = from.nil? ? nil : from.to_i
-        target = to.nil? ? nil : to.to_i
-        Sequel::Migrator.run(db, dir, current: current, target: target)
-
+      # Создаёт запись в журнале событий о том, что миграция базы данных
+      # завершена
+      #
+      def log_finish
         log_info { <<~LOG }
           Миграция базы данных #{db.opts[:database]} завершена
         LOG

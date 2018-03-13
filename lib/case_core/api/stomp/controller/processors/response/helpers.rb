@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 require "#{$lib}/helpers/safe_call"
@@ -123,7 +123,7 @@ module CaseCore
               # функции обработки STOMP-сообщения у модуля бизнес-логики
               # произошла ошибка
               #
-              # @param [Exception] e
+              # @param [Exception] err
               #   объект с информацией об ошибке
               #
               # @param [Module] logic
@@ -138,12 +138,12 @@ module CaseCore
               # @param [Binding] context
               #   контекст
               #
-              def log_handler_error(e, logic, handler_name, message, context)
+              def log_handler_error(err, logic, handler_name, message, context)
                 log_error(context) { <<-LOG }
                   При вызове функции `#{handler_name}` модуля бизнес-логики
                   `#{logic}` для обработки STOMP-сообщения с заголовками
-                  `#{message.headers}` произошла ошибка `#{e.class}`:
-                  `#{e.message}`
+                  `#{message.headers}` произошла ошибка `#{err.class}`:
+                  `#{err.message}`
                 LOG
               end
             end

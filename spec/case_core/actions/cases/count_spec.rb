@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -135,7 +135,7 @@ RSpec.describe CaseCore::Actions::Cases::Count do
             end
 
             context 'when a value is a list' do
-              let(:filter) { { state: %w(ok error) } }
+              let(:filter) { { state: %w[ok error] } }
 
               it 'should be count of cases with values from the list' do
                 expect(subject).to be == 3
@@ -190,7 +190,7 @@ RSpec.describe CaseCore::Actions::Cases::Count do
 
         context 'when all supported parameters are specified' do
           let(:params) { { filter: filter, limit: 2, offset: 1 } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } } ] }
+          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
 
           it 'should be count of filtered cases' do
             expect(subject).to be == 2

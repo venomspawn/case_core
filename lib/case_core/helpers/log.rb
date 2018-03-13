@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require_relative 'log/prefix'
 
@@ -118,7 +118,10 @@ module CaseCore
       #   результирующая строка
       #
       def repaired_string(obj)
-        str = obj.to_s.force_encoding(Encoding::UTF_8)
+        str = obj.to_s
+        return str if str.encoding == Encoding::UTF_8 && str.valid_encoding?
+        str = str.dup if str.frozen?
+        str.force_encoding(Encoding::UTF_8)
         return str if str.valid_encoding?
         str.force_encoding(Encoding::ASCII_8BIT)
         str.encode(Encoding::UTF_8, undef: :replace, invalid: :replace)

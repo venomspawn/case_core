@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 
@@ -13,8 +13,6 @@ module CaseCore
       #
       class Find < Base::Action
         require_relative 'find/params_schema'
-
-        include ParamsSchema
 
         # Возвращает запись междведомственного запроса, найденную по
         # предоставленным атрибутам, или `nil`, если найти запись невозможно

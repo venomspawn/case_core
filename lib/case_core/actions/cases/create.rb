@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'securerandom'
 
@@ -26,7 +26,6 @@ module CaseCore
         include Cases::Mixins::Logic
         include Helpers::Log
         include Helpers::SafeCall
-        include ParamsSchema
 
         # Создаёт новую запись заявки вместе с записями приложенных документов
         #
@@ -149,15 +148,15 @@ module CaseCore
         #
         def do_case_creation(c4s3)
           obj = logic(c4s3)
-          _, e = safe_call(obj, :on_case_creation, c4s3)
-          log_case_creation(e, c4s3, binding)
-          raise e if e.is_a?(ArgumentError)
+          _, err = safe_call(obj, :on_case_creation, c4s3)
+          log_case_creation(err, c4s3, binding)
+          raise err if err.is_a?(ArgumentError)
         end
 
         # Создаёт новую запись в журнале событий о том, как прошла обработка
         # бизнес-логикой создания заявки
         #
-        # @param [NilClass, Exception] e
+        # @param [NilClass, Exception] err
         #   объект с информацией об ошибке или `nil`, если ошибки не произошло
         #
         # @param [CaseCore::Models::Case] c4s3
@@ -166,15 +165,15 @@ module CaseCore
         # @param [Binding] context
         #   контекст
         #
-        def log_case_creation(e, c4s3, context)
-          log_debug(context) { <<-LOG } if e.nil?
+        def log_case_creation(err, c4s3, context)
+          log_debug(context) { <<-LOG } if err.nil?
             Модулем бизнес-логики успешно обработано создание заявки с
             идентификатором `#{c4s3.id}` и типом `#{c4s3.type}`
           LOG
-          log_error(context) { <<-LOG } unless e.nil?
+          log_error(context) { <<-LOG } unless err.nil?
             Во время обработки модулем бизнес-логики создания заявки с
             идентификатором `#{c4s3.id}` и типом `#{c4s3.type}` возникла
-            ошибка `#{e.class}`: `#{e.message}`
+            ошибка `#{err.class}`: `#{err.message}`
           LOG
         end
       end

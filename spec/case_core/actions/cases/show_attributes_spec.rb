@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -58,7 +58,7 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
     end
 
     context 'when `names` parameter contains `id` string' do
-      let(:params) { { id: 'id', names: %w(attr id) } }
+      let(:params) { { id: 'id', names: %w[attr id] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -66,7 +66,7 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
     end
 
     context 'when `names` parameter contains `type` string' do
-      let(:params) { { id: 'id', names: %w(attr type) } }
+      let(:params) { { id: 'id', names: %w[attr type] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -74,7 +74,7 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
     end
 
     context 'when `names` parameter contains `created_at` string' do
-      let(:params) { { id: 'id', names: %w(attr created_at) } }
+      let(:params) { { id: 'id', names: %w[attr created_at] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -161,7 +161,7 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
       end
 
       context 'when `names` parameter specifies absent attributes`' do
-        let(:params) { { id: id, names: %w(absent) } }
+        let(:params) { { id: id, names: %w[absent] } }
 
         it { is_expected.to be_empty }
       end

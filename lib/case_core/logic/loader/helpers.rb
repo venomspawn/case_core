@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 require "#{$lib}/helpers/safe_call"
@@ -59,16 +59,16 @@ module CaseCore
         # @param [String] name
         #   название модуля в змеином_регистре
         #
-        # @param [Exception] e
+        # @param [Exception] err
         #   объект с информацией об ошибке
         #
         # @param [Binding] context
         #   контекст
         #
-        def log_load_module_error(name, e, context)
+        def log_load_module_error(name, err, context)
           log_error(context) { <<-LOG }
             Во время загрузки модуля с названием #{name} произошла ошибка
-            `#{e.class}`: `#{e.message}`
+            `#{err.class}`: `#{err.message}`
           LOG
         end
 
@@ -94,7 +94,7 @@ module CaseCore
         # Создаёт новую запись в журнале событий о том, что при вызове функции
         # у модуля бизнес-логики произошла ошибка
         #
-        # @param [Exception] e
+        # @param [Exception] err
         #   объект с информацией об ошибке
         #
         # @param [Module] logic
@@ -106,10 +106,10 @@ module CaseCore
         # @param [Binding] context
         #   контекст
         #
-        def log_func_error(e, logic, func_name, context)
+        def log_func_error(err, logic, func_name, context)
           log_error(context) { <<-LOG }
             При вызове функции `#{func_name}` модуля бизнес-логики `#{logic}`
-            произошла ошибка `#{e.class}`: `#{e.message}`
+            произошла ошибка `#{err.class}`: `#{err.message}`
           LOG
         end
       end

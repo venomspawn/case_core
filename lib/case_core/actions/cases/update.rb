@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 require "#{$lib}/actions/base/mixins/transactional"
@@ -15,11 +15,10 @@ module CaseCore
         require_relative 'update/params_schema'
 
         include Base::Mixins::Transactional
-        include ParamsSchema
 
         # Список с названиями полей, импортируемых в таблицу атрибутов заявок
         #
-        IMPORT_FIELDS = %i(case_id name value)
+        IMPORT_FIELDS = %i[case_id name value].freeze
 
         # Обновляет атрибуты заявок с указанными идентификаторами
         #
@@ -55,7 +54,7 @@ module CaseCore
         #   список названий обновляемых атрибутов
         #
         def names
-          @names ||= (params.keys - %i(id)).map(&:to_s)
+          @names ||= (params.keys - %i[id]).map(&:to_s)
         end
 
         # Возвращает список трёхэлементных списков значений полей записей

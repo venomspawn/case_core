@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module API
@@ -20,11 +20,11 @@ module CaseCore
                   type: :string
                 }
               },
-              required: %i(
+              required: %i[
                 version
-              ),
+              ],
               additionalProperties: false
-            }
+            }.freeze
 
             # Возвращает JSON-схему результата работы REST API метода
             #

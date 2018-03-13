@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -9,7 +9,7 @@
 RSpec::Matchers.define :extract_logic_file do |filepath|
   match do |object|
     object.call
-    File.exists?(filepath)
+    File.exist?(filepath)
   end
 
   supports_block_expectations

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 source 'http://repo.it2.vm/repository/gem-group'
 

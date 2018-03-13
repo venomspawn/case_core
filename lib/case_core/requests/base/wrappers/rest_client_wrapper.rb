@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'rest-client'
 
@@ -50,7 +50,7 @@ module CaseCore
             log_request(binding)
             response = RestClient::Request.execute(request_params)
             response.tap { log_request_response(binding, response) }
-          rescue => e
+          rescue StandardError => e
             log_request_error(binding, e)
             raise e
           end

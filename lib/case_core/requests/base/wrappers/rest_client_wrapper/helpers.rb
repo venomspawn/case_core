@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/censorship/filter"
 require "#{$lib}/helpers/log"
@@ -52,7 +52,6 @@ module CaseCore
               return EMPTY_URL       if request_params[:url].to_s.empty?
               request_params[:url]
             end
-
 
             # Строка, возвращаемая методом {method} в случае, когда значение
             # параметра `:method` не приведено
@@ -148,14 +147,14 @@ module CaseCore
             # @param [Binding] context
             #   контекст, из которого извлекается информация о вызвавшем методе
             #
-            # @param [Exception] e
+            # @param [Exception] err
             #   объект с информацией об ошибке
             #
-            def log_request_error(context, e)
-              if e.is_a?(RestClient::ExceptionWithResponse)
-                log_rest_client_error(context, e)
+            def log_request_error(context, err)
+              if err.is_a?(RestClient::ExceptionWithResponse)
+                log_rest_client_error(context, err)
               else
-                log_common_error(context, e)
+                log_common_error(context, err)
               end
             end
 
@@ -165,14 +164,14 @@ module CaseCore
             # @param [Binding] context
             #   контекст, из которого извлекается информация о вызвавшем методе
             #
-            # @param [RestClient::ExceptionWithResponse] e
+            # @param [RestClient::ExceptionWithResponse] err
             #   объект с информацией об ошибке
             #
-            def log_rest_client_error(context, e)
+            def log_rest_client_error(context, err)
               log_error(context) { <<-LOG }
                 #{method} REQUEST TO `#{url}` WITH PARAMS #{censored_params}
-                GOT ERROR `#{adjusted_response_body(e.response)}` WITH
-                #{e.response.code} CODE
+                GOT ERROR `#{adjusted_response_body(err.response)}` WITH
+                #{err.response.code} CODE
               LOG
             end
 
@@ -182,13 +181,13 @@ module CaseCore
             # @param [Binding] context
             #   контекст, из которого извлекается информация о вызвавшем методе
             #
-            # @param [Exception] e
+            # @param [Exception] err
             #   объект с информацией об ошибке
             #
-            def log_common_error(context, e)
+            def log_common_error(context, err)
               log_error(context) { <<-LOG }
                 #{method} REQUEST TO `#{url}` WITH PARAMS #{censored_params}
-                GOT ERROR `#{e.class}` WITH `#{e.message}` MESSAGE
+                GOT ERROR `#{err.class}` WITH `#{err.message}` MESSAGE
               LOG
             end
           end

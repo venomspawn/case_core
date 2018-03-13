@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'rb-inotify'
 require 'set'
@@ -82,7 +82,7 @@ module CaseCore
         # бизнес-логики
         #
         def close_watcher
-          watcher.close unless watcher.nil?
+          watcher&.close
         ensure
           @watcher = nil
         end
@@ -90,8 +90,15 @@ module CaseCore
         # Флаги, используемые при создании объекта, наблюдающего за изменениями
         # в директории с библиотеками бизнес-логики
         #
-        WATCHER_FLAGS =
-          %i(create delete delete_self moved_from moved_to move_self onlydir)
+        WATCHER_FLAGS = %i[
+          create
+          delete
+          delete_self
+          moved_from
+          moved_to
+          move_self
+          onlydir
+        ].freeze
 
         # Создаёт объект, наблюдающий за изменениями в директории с
         # библиотеками бизнес-логики, и возвращает его или `nil`, если во время
@@ -106,7 +113,7 @@ module CaseCore
         #
         def create_watcher
           notifier.watch(dir, *WATCHER_FLAGS, &method(:process))
-        rescue
+        rescue StandardError
           nil
         end
 
@@ -202,13 +209,13 @@ module CaseCore
         #
         def process(event)
           flags = Set.new(event.flags)
-          if flags.intersect?(REMOVE_DIR_FLAGS)
-            reload_all
-          elsif flags.include?(:create) && flags.include?(:isdir)
+          return reload_all if flags.intersect?(REMOVE_DIR_FLAGS)
+          return unless flags.include?(:isdir)
+          if flags.include?(:create)
             process_subdir_creation(event, DELAY_DUE_CREATION)
-          elsif flags.include?(:moved_to) && flags.include?(:isdir)
+          elsif flags.include?(:moved_to)
             process_subdir_creation(event, 0)
-          elsif flags.intersect?(REMOVE_SUBDIR_FLAGS) && flags.include?(:isdir)
+          elsif flags.intersect?(REMOVE_SUBDIR_FLAGS)
             process_subdir_removal(event)
           end
         end

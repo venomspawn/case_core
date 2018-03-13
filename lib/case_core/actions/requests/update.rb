@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 require "#{$lib}/actions/base/mixins/transactional"
@@ -15,12 +15,11 @@ module CaseCore
         require_relative 'update/params_schema'
 
         include Base::Mixins::Transactional
-        include ParamsSchema
 
         # Список с названиями полей, значения которых импортируются в таблицу
         # атрибутов межведомственных запросов
         #
-        IMPORT_FIELDS = %i(request_id name value)
+        IMPORT_FIELDS = %i[request_id name value].freeze
 
         # Обновляет атрибуты межведомственного запроса с указанным
         # идентификатором записи
@@ -53,7 +52,7 @@ module CaseCore
         #   список названий обновляемых атрибутов
         #
         def names
-          @names ||= (params.keys - %i(id)).map(&:to_s)
+          @names ||= (params.keys - %i[id]).map(&:to_s)
         end
 
         # Возвращает список трёхэлементных списков значений полей записей

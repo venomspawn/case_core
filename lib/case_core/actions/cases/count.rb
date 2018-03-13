@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 require "#{$lib}/search/query"
@@ -13,9 +13,6 @@ module CaseCore
       class Count < Base::Action
         require_relative 'count/params_schema'
         require_relative 'count/result_schema'
-
-        include ParamsSchema
-        include ResultSchema
 
         # Возвращает ассоциативный массив с количеством записей заявок
         #

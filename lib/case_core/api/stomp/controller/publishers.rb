@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require_relative 'publisher'
 
@@ -60,6 +60,7 @@ module CaseCore
           #   публикующий сообщения STOMP
           #
           def create_publisher(obj)
+            return Publisher.new if obj.frozen?
             ObjectSpace.define_finalizer(obj, &publishers.method(:delete))
             Publisher.new
           end

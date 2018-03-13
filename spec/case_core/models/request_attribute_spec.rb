@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -96,7 +96,7 @@ RSpec.describe CaseCore::Models::RequestAttribute do
   describe 'instance of the model' do
     subject(:instance) { create(:request_attribute) }
 
-    methods = %i(request request_id name value update)
+    methods = %i[request request_id name value update]
     it { is_expected.to respond_to(*methods) }
   end
 

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -9,14 +9,18 @@
 RSpec.describe CaseCore::Censorship::Filter::Settings do
   subject(:instance) { described_class.new }
 
-  methods = %i(
-    censored_message    censored_message=
-    too_long_message    too_long_message=
-    string_length_limit string_length_limit=
-    filters             filters=
+  methods = %i[
+    censored_message
+    censored_message=
     filter
+    filters
+    filters=
     set
-  )
+    string_length_limit
+    string_length_limit=
+    too_long_message
+    too_long_message=
+  ]
 
   it { is_expected.to respond_to(*methods) }
 
@@ -183,16 +187,16 @@ RSpec.describe CaseCore::Censorship::Filter::Settings do
       it { is_expected.to be_an(Array) }
 
       context 'when it is not empty' do
-        before { instance.filters = %w(abc def) }
+        before { instance.filters = %w[abc def] }
 
         it { is_expected.to all(be_a(Symbol)) }
       end
 
       context 'when filters are set' do
-        before { instance.filters = %w(abc def) }
+        before { instance.filters = %w[abc def] }
 
         it 'should return new values' do
-          expect(subject).to match_array %i(abc def)
+          expect(subject).to match_array %i[abc def]
         end
       end
     end
@@ -201,10 +205,10 @@ RSpec.describe CaseCore::Censorship::Filter::Settings do
   describe '#filters=' do
     subject { instance.filters = filters }
 
-    let(:filters) { %w(abc def) }
+    let(:filters) { %w[abc def] }
 
     it 'should change return value of `filters` method' do
-      expect { subject }.to change { instance.filters }.to(%i(abc def))
+      expect { subject }.to change { instance.filters }.to(%i[abc def])
     end
 
     context 'when argument doesn\'t support `map` method' do
@@ -225,14 +229,14 @@ RSpec.describe CaseCore::Censorship::Filter::Settings do
   end
 
   describe '#filter' do
-    before { instance.filters = %i(abc) }
+    before { instance.filters = %i[abc] }
 
     subject { instance.filter(*args) }
 
-    let(:args) { %w(def key) }
+    let(:args) { %w[def key] }
 
     it 'should add elements to return value of `filters` method' do
-      expect { subject }.to change { instance.filters }.to(%i(abc def key))
+      expect { subject }.to change { instance.filters }.to(%i[abc def key])
     end
 
     context 'when arguments don\'t support `to_sym` method' do

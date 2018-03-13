@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Search
@@ -53,7 +53,7 @@ module CaseCore
             state:      'ok',
             rguid:      '1000001'
           }
-        ]
+        ].freeze
 
         # Создаёт записи заявок вместе с записями атрибутов, после чего
         # возвращает созданные записи заявок

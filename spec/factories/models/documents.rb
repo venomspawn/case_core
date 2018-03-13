@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -9,7 +9,7 @@ FactoryGirl.define do
   factory :document, class: CaseCore::Models::Document do
     id             { create(:string) }
     title          { create(:string) }
-    direction      { create(:enum, values: %w(input output)) }
+    direction      { create(:enum, values: %w[input output]) }
     correct        { create(:boolean) }
     provided_as    { create(:document_provided_as) }
     size           { create(:string) }
@@ -28,7 +28,7 @@ FactoryGirl.define do
   factory :document_provided_as, class: String do
     skip_create
     initialize_with do
-      create(:enum, values: %w(original copy notarized_copy doc_list))
+      create(:enum, values: %w[original copy notarized_copy doc_list])
     end
   end
 end

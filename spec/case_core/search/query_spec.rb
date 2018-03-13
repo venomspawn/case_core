@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -44,7 +44,7 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { rguid: { exclude: '101' } } }
 
                 it 'should be all records but selected by `exclude` value' do
-                  expect(ids).to match_array %w(2 3 4 5)
+                  expect(ids).to match_array %w[2 3 4 5]
                 end
               end
 
@@ -52,7 +52,7 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { rguid: { like: '%000%' } } }
 
                 it 'should be all records with likely value' do
-                  expect(ids).to match_array %w(3 4 5)
+                  expect(ids).to match_array %w[3 4 5]
                 end
               end
 
@@ -60,7 +60,7 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { state: { min: 'error' } } }
 
                 it 'should be all records with values no less than value' do
-                  expect(ids).to match_array %w(1 2 4 5)
+                  expect(ids).to match_array %w[1 2 4 5]
                 end
               end
 
@@ -68,7 +68,7 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { state: { max: 'error' } } }
 
                 it 'should be all records with values no more than value' do
-                  expect(ids).to match_array %w(2 3)
+                  expect(ids).to match_array %w[2 3]
                 end
               end
 
@@ -76,7 +76,7 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { state: { min: 'error', exclude: 'ok' } } }
 
                 it 'should be all records selected by all filters together' do
-                  expect(ids).to match_array %w(2 4)
+                  expect(ids).to match_array %w[2 4]
                 end
               end
 
@@ -84,16 +84,16 @@ RSpec.describe CaseCore::Search::Query do
                 let(:filter) { { state: { unsupported: :key } } }
 
                 it 'should be all records' do
-                  expect(ids).to match_array %w(1 2 3 4 5)
+                  expect(ids).to match_array %w[1 2 3 4 5]
                 end
               end
             end
 
             context 'when a value is a list' do
-              let(:filter) { { state: %w(ok error) } }
+              let(:filter) { { state: %w[ok error] } }
 
               it 'should be all records with values from the list' do
-                expect(ids).to match_array %w(1 2 5)
+                expect(ids).to match_array %w[1 2 5]
               end
             end
 
@@ -101,7 +101,7 @@ RSpec.describe CaseCore::Search::Query do
               let(:filter) { { state: 'ok' } }
 
               it 'should be all records with the value' do
-                expect(ids).to match_array %w(1 5)
+                expect(ids).to match_array %w[1 5]
               end
             end
           end
@@ -111,7 +111,7 @@ RSpec.describe CaseCore::Search::Query do
               let(:filter) { [] }
 
               it 'should be all records' do
-                expect(ids).to match_array %w(1 2 3 4 5)
+                expect(ids).to match_array %w[1 2 3 4 5]
               end
             end
 
@@ -119,7 +119,7 @@ RSpec.describe CaseCore::Search::Query do
               let(:filter) { [{ state: 'ok' }, { op_id: '2abc' }] }
 
               it 'should be selected by at least one filter' do
-                expect(ids).to match_array %w(1 2 5)
+                expect(ids).to match_array %w[1 2 5]
               end
             end
           end
@@ -135,7 +135,7 @@ RSpec.describe CaseCore::Search::Query do
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == %w(1 2)
+              expect(ids).to be == %w[1 2]
             end
           end
         end
@@ -145,12 +145,12 @@ RSpec.describe CaseCore::Search::Query do
           let(:offset) { 2 }
 
           it 'should be shifted by offset' do
-            expect(ids).to match_array %w(3 4 5)
+            expect(ids).to match_array %w[3 4 5]
           end
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == %w(3 4 5)
+              expect(ids).to be == %w[3 4 5]
             end
           end
         end
@@ -159,20 +159,20 @@ RSpec.describe CaseCore::Search::Query do
           let(:args) { { order: { type: :asc, id: :desc } } }
 
           it 'should be ordered by specified fields and directions' do
-            expect(ids).to be == %w(5 4 3 2 1)
+            expect(ids).to be == %w[5 4 3 2 1]
           end
         end
 
         context 'when all supported parameters are specified' do
           let(:args) { { filter: filter, **paging, order: order } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } } ] }
+          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
           let(:paging) { { limit: limit, offset: offset } }
           let(:limit) { 2 }
           let(:offset) { 1 }
           let(:order) { { id: :desc } }
 
           it 'should be properly extracted records' do
-            expect(ids).to be == %w(4 3)
+            expect(ids).to be == %w[4 3]
           end
         end
       end

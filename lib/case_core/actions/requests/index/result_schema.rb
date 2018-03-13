@@ -1,32 +1,25 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Actions
     module Requests
       class Index
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
+        # Схема результатов действия
         #
-        # Модуль, предоставляющий пространство имён для константы, в которой
-        # задаётся схема результатов действия родительского класса
-        #
-        module ResultSchema
-          # Схема результатов действия
-          #
-          RESULT_SCHEMA = {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: {
-                  type: :integer
-                }
-              },
-              additonalProperties: {
-                type: :string
+        RESULT_SCHEMA = {
+          type: :array,
+          items: {
+            type: :object,
+            properties: {
+              id: {
+                type: :integer
               }
+            },
+            additonalProperties: {
+              type: :string
             }
           }
-        end
+        }.freeze
       end
     end
   end

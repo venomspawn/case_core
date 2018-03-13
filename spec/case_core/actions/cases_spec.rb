@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -26,7 +26,7 @@ RSpec.describe CaseCore::Actions::Cases do
         subject(:ids) { result.map { |hash| hash[:id] } }
 
         it 'should contain info of cases' do
-          expect(ids).to match_array %w(1 2 3 4 5)
+          expect(ids).to match_array %w[1 2 3 4 5]
         end
 
         context 'when `filter` parameter is specified' do
@@ -38,7 +38,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 let(:filter) { { rguid: { exclude: '101' } } }
 
                 it 'should be all infos but selected by `exclude` value' do
-                  expect(ids).to match_array %w(2 3 4 5)
+                  expect(ids).to match_array %w[2 3 4 5]
                 end
               end
 
@@ -46,7 +46,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 let(:filter) { { rguid: { like: '%000%' } } }
 
                 it 'should be all infos with likely value' do
-                  expect(ids).to match_array %w(3 4 5)
+                  expect(ids).to match_array %w[3 4 5]
                 end
               end
 
@@ -54,7 +54,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 let(:filter) { { state: { min: 'error' } } }
 
                 it 'should be all infos with values no less than value' do
-                  expect(ids).to match_array %w(1 2 4 5)
+                  expect(ids).to match_array %w[1 2 4 5]
                 end
               end
 
@@ -62,7 +62,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 let(:filter) { { state: { max: 'error' } } }
 
                 it 'should be all infos with values no more than value' do
-                  expect(ids).to match_array %w(2 3)
+                  expect(ids).to match_array %w[2 3]
                 end
               end
 
@@ -70,7 +70,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 let(:filter) { { state: { min: 'error', exclude: 'ok' } } }
 
                 it 'should be all infos selected by all filters together' do
-                  expect(ids).to match_array %w(2 4)
+                  expect(ids).to match_array %w[2 4]
                 end
               end
 
@@ -94,10 +94,10 @@ RSpec.describe CaseCore::Actions::Cases do
             end
 
             context 'when a value is a list' do
-              let(:filter) { { state: %w(ok error) } }
+              let(:filter) { { state: %w[ok error] } }
 
               it 'should be all infos with values from the list' do
-                expect(ids).to match_array %w(1 2 5)
+                expect(ids).to match_array %w[1 2 5]
               end
             end
 
@@ -105,7 +105,7 @@ RSpec.describe CaseCore::Actions::Cases do
               let(:filter) { { state: 'ok' } }
 
               it 'should be all infos with the value' do
-                expect(ids).to match_array %w(1 5)
+                expect(ids).to match_array %w[1 5]
               end
             end
           end
@@ -115,7 +115,7 @@ RSpec.describe CaseCore::Actions::Cases do
               let(:filter) { [] }
 
               it 'should be all infos' do
-                expect(ids).to match_array %w(1 2 3 4 5)
+                expect(ids).to match_array %w[1 2 3 4 5]
               end
             end
 
@@ -123,7 +123,7 @@ RSpec.describe CaseCore::Actions::Cases do
               let(:filter) { [{ state: 'ok' }, { op_id: '2abc' }] }
 
               it 'should be selected by at least one filter' do
-                expect(ids).to match_array %w(1 2 5)
+                expect(ids).to match_array %w[1 2 5]
               end
             end
           end
@@ -139,7 +139,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == %w(1 2)
+              expect(ids).to be == %w[1 2]
             end
           end
         end
@@ -149,12 +149,12 @@ RSpec.describe CaseCore::Actions::Cases do
           let(:offset) { 2 }
 
           it 'should be shifted by offset' do
-            expect(ids).to match_array %w(3 4 5)
+            expect(ids).to match_array %w[3 4 5]
           end
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == %w(3 4 5)
+              expect(ids).to be == %w[3 4 5]
             end
           end
         end
@@ -163,19 +163,19 @@ RSpec.describe CaseCore::Actions::Cases do
           let(:params) { { order: { type: :asc, id: :desc } } }
 
           it 'should be ordered by specified fields and directions' do
-            expect(ids).to be == %w(5 4 3 2 1)
+            expect(ids).to be == %w[5 4 3 2 1]
           end
         end
 
         context 'when `fields` parameter is specified' do
-          let(:params) { { fields: %w(id state) } }
+          let(:params) { { fields: %w[id state] } }
 
           it 'should contain only specified fields' do
-            expect(result.map(&:keys).flatten.uniq).to match_array %i(id state)
+            expect(result.map(&:keys).flatten.uniq).to match_array %i[id state]
           end
 
           context 'when there is no `id` field in the value' do
-            let(:params) { { fields: %w(state) } }
+            let(:params) { { fields: %w[state] } }
 
             it 'should still contain `id` field' do
               expect(result.map(&:keys).flatten.uniq).to include :id
@@ -185,14 +185,14 @@ RSpec.describe CaseCore::Actions::Cases do
 
         context 'when all supported parameters are specified' do
           let(:params) { { filter: filter, **paging, order: order } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } } ] }
+          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
           let(:paging) { { limit: limit, offset: offset } }
           let(:limit) { 2 }
           let(:offset) { 1 }
           let(:order) { { id: :desc } }
 
           it 'should be properly extracted infos' do
-            expect(ids).to be == %w(4 3)
+            expect(ids).to be == %w[4 3]
           end
         end
       end
@@ -325,7 +325,7 @@ RSpec.describe CaseCore::Actions::Cases do
       end
 
       context 'when `names` parameter specifies absent attributes`' do
-        let(:params) { { id: id, names: %w(absent) } }
+        let(:params) { { id: id, names: %w[absent] } }
 
         it { is_expected.to be_empty }
       end
@@ -364,7 +364,7 @@ RSpec.describe CaseCore::Actions::Cases do
     end
 
     context 'when `names` parameter contains `id` string' do
-      let(:params) { { id: 'id', names: %w(attr id) } }
+      let(:params) { { id: 'id', names: %w[attr id] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -372,7 +372,7 @@ RSpec.describe CaseCore::Actions::Cases do
     end
 
     context 'when `names` parameter contains `type` string' do
-      let(:params) { { id: 'id', names: %w(attr type) } }
+      let(:params) { { id: 'id', names: %w[attr type] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -380,7 +380,7 @@ RSpec.describe CaseCore::Actions::Cases do
     end
 
     context 'when `names` parameter contains `created_at` string' do
-      let(:params) { { id: 'id', names: %w(attr created_at) } }
+      let(:params) { { id: 'id', names: %w[attr created_at] } }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)
@@ -907,7 +907,7 @@ RSpec.describe CaseCore::Actions::Cases do
             end
 
             context 'when a value is a list' do
-              let(:filter) { { state: %w(ok error) } }
+              let(:filter) { { state: %w[ok error] } }
 
               it 'should be count of cases with values from the list' do
                 expect(subject).to be == 3
@@ -962,7 +962,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
         context 'when all supported parameters are specified' do
           let(:params) { { filter: filter, limit: 2, offset: 1 } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } } ] }
+          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
 
           it 'should be count of filtered cases' do
             expect(subject).to be == 2

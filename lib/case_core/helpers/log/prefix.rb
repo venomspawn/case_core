@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Helpers
@@ -53,7 +53,7 @@ module CaseCore
 
         # Список строк, вычисляемых в контексте
         #
-        EVAL_STRINGS = ['self.class', '__method__', '__LINE__']
+        EVAL_STRINGS = ['self.class', '__method__', '__LINE__'].freeze
 
         # Возвращает список с информацией, которая извлекается из контекста
         #

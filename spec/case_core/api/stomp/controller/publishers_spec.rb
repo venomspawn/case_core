@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -32,11 +32,12 @@ RSpec.describe CaseCore::API::STOMP::Controller::Publishers do
         end
       end
 
-      context 'when two equal strings are used as arguments' do
-        let(:obj) { '123' }
+      context 'when two equal unfrozen strings are used as arguments' do
+        let(:obj) { +'abc' }
+        let(:str) { +'abc' }
 
         it 'should not be the same' do
-          expect(subject).not_to be == instance['123']
+          expect(subject).not_to be == instance[str]
         end
       end
     end

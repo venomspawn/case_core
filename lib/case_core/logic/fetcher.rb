@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'fileutils'
 require 'rubygems/package'
@@ -66,7 +66,7 @@ module CaseCore
         extract_entries
         log_fetch_finish(name, version, binding)
         true
-      rescue => e
+      rescue StandardError => e
         log_fetch_error(e, binding)
         false
       end
@@ -163,7 +163,7 @@ module CaseCore
 
       # Названия директорий, не подлежащих распаковке
       #
-      BANNED_DIRS = %w(test spec)
+      BANNED_DIRS = %w[test spec].freeze
 
       # Проверяет, нужно ли распаковать содержимое потока
       #

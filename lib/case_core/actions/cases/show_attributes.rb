@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/actions/base/action"
 
@@ -14,9 +14,6 @@ module CaseCore
       class ShowAttributes < Base::Action
         require_relative 'show_attributes/params_schema'
         require_relative 'show_attributes/result_schema'
-
-        include ParamsSchema
-        include ResultSchema
 
         # Возвращает ассоциативный массив со всеми атрибутами заявки, кроме
         # тех, что присутствуют непосредственно в записи заявки
@@ -61,7 +58,7 @@ module CaseCore
         #   значение атрибута `names`
         #
         def names
-          @names ||= params[:names] && params[:names].map(&:to_s)
+          @names ||= params[:names]&.map(&:to_s)
         end
       end
     end

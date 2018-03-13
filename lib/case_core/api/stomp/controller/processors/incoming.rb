@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/helpers/log"
 
@@ -94,18 +94,13 @@ module CaseCore
             #
             def process
               message_id = message_id!
-              m0dul3     = module!
-              func_name  = action!
-              body       = body!
-
-              m0dul3.send(func_name, body)
-
+              module!.send(action!, body!)
               create_ok_processing_status
 
               true
-            rescue => e
-              log_processing_error(e, binding)
-              create_error_processing_status(e)
+            rescue StandardError => err
+              log_processing_error(err, binding)
+              create_error_processing_status(err)
 
               false
             end
@@ -282,32 +277,32 @@ module CaseCore
             # Создаёт запись модели {CaseCore::Models::ProcessingStatus} со
             # значением `error` поля `status`
             #
-            # @param [Exception] e
+            # @param [Exception] err
             #   объект с информацией об ошибке
             #
-            def create_error_processing_status(e)
+            def create_error_processing_status(err)
               Models::ProcessingStatus.create(
                 message_id:  message_id,
                 status:      :error,
                 headers:     headers,
-                error_class: e.class,
-                error_text:  e.message
+                error_class: err.class,
+                error_text:  err.message
               )
             end
 
             # Создаёт запись в журнале событий о том, что во время обработки
             # сообщения STOMP произошла ошибка
             #
-            # @param [Exception] e
+            # @param [Exception] err
             #   объект с информацией об ошибке
             #
             # @param [Binding] context
             #   контекст
             #
-            def log_processing_error(e, context)
+            def log_processing_error(err, context)
               log_error(context) { <<-LOG }
                 Во время обработки сообщения STOMP с заголовками `#{headers}`
-                произошла ошибка `#{e.class}`: `#{e.message}`
+                произошла ошибка `#{err.class}`: `#{err.message}`
               LOG
             end
           end

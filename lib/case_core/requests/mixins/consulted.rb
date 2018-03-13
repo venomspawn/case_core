@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/consul/service"
 
@@ -41,7 +41,7 @@ module CaseCore
         def service_info
           return @service_info if defined?(@service_info)
           @service_info = Consul.service(service_name)
-        rescue
+        rescue StandardError
           @service_info = nil
         end
 

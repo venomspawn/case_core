@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
 #
@@ -277,7 +277,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
 
       context 'when function call raises an error' do
         before do
-          CaseCore::Actions::Tests.define_singleton_method(:test) { |p| raise }
+          CaseCore::Actions::Tests.define_singleton_method(:test) { raise }
         end
 
         it 'should create record of `CaseCore::Models::ProcessingStatus`' do
@@ -655,7 +655,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
 
       context 'when function call raises an error' do
         before do
-          CaseCore::Actions::Tests.define_singleton_method(:test) { |p| raise }
+          CaseCore::Actions::Tests.define_singleton_method(:test) { raise }
         end
 
         it 'should create record of `CaseCore::Models::ProcessingStatus`' do
