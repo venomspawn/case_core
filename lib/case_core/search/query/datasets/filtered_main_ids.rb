@@ -89,12 +89,12 @@ module CaseCore
 
           # Составляет SQL-выражение Sequel на основе предоставленных
           # SQL-выражений Sequel, соединяя их конъюнкцией
-          # @param [Array<Sequel::SQL::ComplexExpression>]
+          # @param [Array<Sequel::SQL::ComplexExpression>] expressions
           #   список SQL-выражений Sequel
           # @return [Sequel::SQL::BooleanExpression]
           #   результирующее выражение
           def conjunction(expressions)
-            expressions.delete(TRUE)
+            expressions.delete(TRUE) # nodoc
             return TRUE if expressions.empty?
             Sequel::SQL::BooleanExpression.new(:AND, *expressions)
           end

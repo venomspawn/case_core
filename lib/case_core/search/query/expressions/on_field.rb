@@ -5,6 +5,7 @@ require_relative 'consts'
 module CaseCore
   module Search
     class Query
+      # Модуль классов объектов, составляющих SQL-выражения Sequel
       module Expressions
         # Класс объектов, которые составляют SQL-выражение Sequel, выставляющих
         # условия на значения полей таблиц
