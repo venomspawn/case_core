@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл поддержки тестирования контроллера Sinatra
-#
 
 require 'rack/test'
 
@@ -12,7 +9,6 @@ module Support
     include Rack::Test::Methods
 
     # Тестируемый REST-контроллер
-    #
     def app
       CaseCore::API::REST::Controller
     end

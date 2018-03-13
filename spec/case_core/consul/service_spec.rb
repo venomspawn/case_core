@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования функции `service` модуля `CaseCore::Consul`, возвращающей
 # информацию о сервисе с заданным именем
-#
 
 require "#{$lib}/consul/service"
 

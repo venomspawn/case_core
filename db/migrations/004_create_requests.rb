@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Создание таблицы записей межведомственных запросов, связанных с заявкой
-#
 
 Sequel.migration do
   change do

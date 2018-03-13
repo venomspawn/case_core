@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл поддержки проверки типов и структур объектов на соответствие JSON-схеме
-#
 
 RSpec::Matchers.define :match_json_schema do |schema|
   match { |object| JSON::Validator.validate(schema, object) }

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия получения информации о заявке
-#
 
 RSpec.describe CaseCore::Actions::Cases::Show do
   describe 'the class' do

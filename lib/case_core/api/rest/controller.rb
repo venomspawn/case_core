@@ -7,20 +7,11 @@ require 'sinatra/base'
 require_relative 'helpers'
 
 module CaseCore
-  # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-  #
   # Пространство имён для API
-  #
   module API
-    # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-    #
     # Пространство имён для REST API
-    #
     module REST
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Класс контроллера REST API, основанный на Sinatra
-      #
       class Controller < Sinatra::Base
         helpers Helpers
 

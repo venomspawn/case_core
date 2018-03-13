@@ -5,7 +5,6 @@ module CaseCore
     module Cases
       class Show
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           type: :object,
           properties: {

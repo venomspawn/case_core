@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Loader::ModuleInfo` объектов,
 # содержащих информацию о загруженных модулях бизнес-логики
-#
 
 RSpec.describe CaseCore::Logic::Loader::ModuleInfo do
   let(:instance) { described_class.new(version, logic_module) }

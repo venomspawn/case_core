@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования метода REST API, который возвращает информацию о количестве
 # межведомственных запросов, созданных в рамках заявки
-#
 
 RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /cases/:id/requests_count' do

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Cases::Call` действия вызова
 # метода модуля бизнес-логики с записью заявки в качестве аргумента
-#
 
 RSpec.describe CaseCore::Actions::Cases::Call do
   describe 'the class' do

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модуля `CaseCore::Settings::Configurable`, который
 # предоставляет методы для конфигурирования объектов
-#
 
 RSpec.describe CaseCore::Settings::Configurable do
   subject(:obj) { Object.new.extend(described_class) }

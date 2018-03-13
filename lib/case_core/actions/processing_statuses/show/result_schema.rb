@@ -5,7 +5,6 @@ module CaseCore
     module ProcessingStatuses
       class Show
         # Схема результатов действия
-        #
         RESULT_SCHEMA = {
           oneOf: [
             {

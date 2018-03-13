@@ -5,7 +5,6 @@ module CaseCore
     module Requests
       class Find
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           type: :object
         }.freeze

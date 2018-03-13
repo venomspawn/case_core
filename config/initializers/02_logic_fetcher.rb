@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки загрузки внешних бибилиотек из сервера библиотек в директорию
 # с сервисом
-#
 
 # Загрузка загрузчика библиотек
 require "#{$lib}/logic/fetcher"

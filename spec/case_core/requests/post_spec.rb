@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования подключаемого модуля `CaseCore::Requests::Post`
-#
 
 require "#{$lib}/requests/post"
 

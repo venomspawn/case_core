@@ -5,7 +5,6 @@ module CaseCore
     module Requests
       class Show
         # Схема результатов действия
-        #
         RESULT_SCHEMA = {
           type: :object,
           properties: {

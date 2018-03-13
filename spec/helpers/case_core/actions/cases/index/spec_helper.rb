@@ -4,15 +4,11 @@ module CaseCore
   module Actions
     module Cases
       class Index
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-        #
         # Вспомогательный модуль, предназначенный для включения в тесты
         # содержащего класса
-        #
         module SpecHelper
           # Ассоциативный массив, в котором моделям соответствуют списки
           # импортируемых значений
-          #
           DATA = [
             {
               id:         '1',
@@ -58,10 +54,8 @@ module CaseCore
 
           # Создаёт записи заявок вместе с записями атрибутов, после чего
           # возвращает созданные записи заявок
-          #
           # @return [Array<CaseCore::Models::Case>]
           #   список созданных записей заявок
-          #
           def create_cases
             FactoryGirl.create(:imported_cases, data: DATA)
           end

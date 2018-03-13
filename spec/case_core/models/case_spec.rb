@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели заявок `CaseCore::Models::Case`
-#
 
 RSpec.describe CaseCore::Models::Case do
   describe 'the model' do

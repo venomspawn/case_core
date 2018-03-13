@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::ProcessingStatuses::Show`
 # действий получения информации о статусе обработки сообщения STOMP
-#
 
 RSpec.describe CaseCore::Actions::ProcessingStatuses::Show do
   describe 'the class' do

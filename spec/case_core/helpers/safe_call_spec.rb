@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модуля `CaseCore::Helpers::SafeCall`, подключаемого для
 # получения поддержки безопасного вызова методов
-#
 
 require "#{$lib}/helpers/safe_call"
 

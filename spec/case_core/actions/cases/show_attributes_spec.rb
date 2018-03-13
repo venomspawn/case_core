@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия получения информации об атрибуах заявки,
 # кроме тех, что присутствуют непосредственно в записи заявки
-#
 
 RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
   describe 'the class' do

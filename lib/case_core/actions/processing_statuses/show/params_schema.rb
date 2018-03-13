@@ -5,7 +5,6 @@ module CaseCore
     module ProcessingStatuses
       class Show
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           type: :object,
           properties: {

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия обновления атрибутов межведомственного
 # запроса
-#
 
 RSpec.describe CaseCore::Actions::Requests::Update do
   describe 'the class' do

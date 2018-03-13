@@ -5,7 +5,6 @@ module CaseCore
     module Cases
       class Index
         # Схема результатов действия
-        #
         RESULT_SCHEMA = {
           type: :array,
           items: {

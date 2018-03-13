@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки STOMP-контроллера
-#
 
 # Загрузка STOMP-контроллера
 require "#{$lib}/api/stomp/controller.rb"

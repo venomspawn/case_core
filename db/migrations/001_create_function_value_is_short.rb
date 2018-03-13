@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Создание SQL-функции `value_is_short`
-#
 
 Sequel.migration do
   up do

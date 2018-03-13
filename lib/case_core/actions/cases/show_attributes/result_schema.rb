@@ -5,7 +5,6 @@ module CaseCore
     module Cases
       class ShowAttributes
         # Схема результатов действия
-        #
         RESULT_SCHEMA = {
           type: :object,
           additionalProperties: {

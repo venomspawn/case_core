@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования функций модуля `CaseCore::Actions::Requests`
-#
 
 RSpec.describe CaseCore::Actions::Requests do
   subject { described_class }

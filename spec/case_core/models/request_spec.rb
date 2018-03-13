@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели межведомственного запроса
 # `CaseCore::Models::Request`
-#
 
 RSpec.describe CaseCore::Models::Request do
   describe 'the model' do

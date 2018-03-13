@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Фабрика записей документов, прикреплённых к заявкам
-#
 
 FactoryGirl.define do
   factory :document, class: CaseCore::Models::Document do

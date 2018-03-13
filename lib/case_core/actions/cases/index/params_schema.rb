@@ -5,7 +5,6 @@ module CaseCore
     module Cases
       class Index
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           definitions: {
             condition: {

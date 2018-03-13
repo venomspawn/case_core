@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Requests::Count` действия
 # получения информации о количестве межведомственных запросах, созданных в
 # рамках заявки
-#
 
 RSpec.describe CaseCore::Actions::Requests::Count do
   describe 'the class' do

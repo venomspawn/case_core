@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Фабрика записей статусов обработки сообщений STOMP
-#
 
 FactoryGirl.define do
   factory :processing_status, class: CaseCore::Models::ProcessingStatus do

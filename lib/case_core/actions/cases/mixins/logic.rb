@@ -5,16 +5,10 @@ require "#{$lib}/helpers/log"
 module CaseCore
   module Actions
     module Cases
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Пространство имён для подключаемых модулей
-      #
       module Mixins
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-        #
         # Модуль, предоставляющий метод `logic` для извлечения модуля
         # бизнес-логики по значению поля `type` записи заявки
-        #
         module Logic
           include Helpers::Log
 
@@ -22,25 +16,19 @@ module CaseCore
 
           # Сообщение о том, что аргумент не является записью модели
           # `CaseCore::Models::Case`
-          #
           NOT_A_CASE =
             'Аргумент не является записью модели `CaseCore::Models::Case`'
 
           # Возвращает модуль бизнес-логики для записи заявки по значению поля
           # `type` или `nil`, если модуль бизнес логики невозможно найти
-          #
           # @param [CaseCore::Models::Case] c4s3
           #   запись заявки
-          #
           # @return [Module]
           #   модуль бизнес-логики
-          #
           # @return [NilClass]
           #   если модуль бизнес-логики невозможно найти
-          #
           # @raise [ArgumentError]
           #   если аргумент не является объектом типа {CaseCore::Models::Case}
-          #
           def logic(c4s3)
             raise ArgumentError, NOT_A_CASE unless c4s3.is_a?(Models::Case)
             result = CaseCore::Logic::Loader.logic(c4s3.type)

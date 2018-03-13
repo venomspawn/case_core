@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Requests::Find` действия
 # поиска записи межведомственного запроса по предоставленным атрибутам
-#
 
 RSpec.describe CaseCore::Actions::Requests::Find do
   describe 'the class' do

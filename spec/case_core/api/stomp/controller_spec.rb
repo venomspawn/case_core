@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::API::STOMP::Controller` контроллера STOMP
-#
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   subject 'the class' do

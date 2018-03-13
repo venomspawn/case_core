@@ -5,7 +5,6 @@ module CaseCore
     module Documents
       class Index
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           type: :object,
           properties: {

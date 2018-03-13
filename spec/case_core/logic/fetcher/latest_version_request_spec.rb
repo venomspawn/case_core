@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Fetcher::LatestVersionRequest`
 # запросов к серверу библиотек на получение информации о последней версии
 # библиотеки с заданным названием
-#
 
 RSpec.describe CaseCore::Logic::Fetcher::LatestVersionRequest do
   describe 'the class' do

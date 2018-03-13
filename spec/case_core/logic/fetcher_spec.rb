@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Fetcher` загрузчика библиотек с
 # бизнес-логикой с сервера библиотек
-#
 
 RSpec.describe CaseCore::Logic::Fetcher do
   describe 'the class' do

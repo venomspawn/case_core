@@ -5,17 +5,11 @@ require "#{$lib}/settings/configurable"
 require_relative 'filter/settings'
 
 module CaseCore
-  # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-  #
   # Пространство имён для классов, предоставляющих функции фильтрации значений
   # ключей ассоциативных массивов
-  #
   module Censorship
-    # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-    #
     # Класс, предоставляющий методы и функции фильтрации значений ключей
     # ассоциативных массивов
-    #
     class Filter
       extend CaseCore::Settings::Configurable
 
@@ -23,19 +17,15 @@ module CaseCore
 
       # Создаёт объект класса и возвращает результат вызова метода `process`
       # созданного объекта
-      #
       # @param [Object] obj
       #   аргумент
-      #
       # @return [Object]
       #   результирующий объект
-      #
       def self.process(obj)
         new.process(obj)
       end
 
       # Возвращает следующие значения в зависимости от типа аргумента:
-      #
       # *   если типом аргумента является ассоциативный массив (Hash), то
       #     возвращает новый ассоциативный массив, значения ключей которого
       #     заменены на строку, заданную в настройке `censored_message`, если
@@ -46,7 +36,6 @@ module CaseCore
       #     элементам этот же метод и возвращает новый список на основе
       #     значений операции;
       # *   если типом аргумента является строка (String), то
-      #
       #     -   пытается интерпретировать её как JSON-представление объекта и
       #         восстановить этот объект, к которому затем применяет этот же
       #         метод {process}, и возвращает JSON-представление результата
@@ -56,15 +45,11 @@ module CaseCore
       #         длину строки (настройка `string_length_limit`); если
       #         ограничение присутствует, а длина строки больше ограничения, то
       #         заменяет её строкой, заданной в настройке `too_long_message`;
-      #
       # *   во всех остальных случаях возвращает исходный объект
-      #
       # @param [Object] obj
       #   аргумент
-      #
       # @return [Object]
       #   результирующий объект
-      #
       def process(obj)
         return process_hash(obj)   if obj.is_a?(Hash)
         return process_array(obj)  if obj.is_a?(Array)
@@ -80,13 +65,10 @@ module CaseCore
       # заменены на строку, заданную в настройке `censored_message`, если эти
       # ключи должны быть отфильтрованы; значения тех ключей, которые не
       # подлежат фильтрации, заменяются на результаты вызова метода `process`
-      #
       # @param [Hash] hash
       #   исходный ассоциативный массив
-      #
       # @return [Hash]
       #   результирующий ассоциативный массив
-      #
       def process_hash(hash)
         filters = Filter.settings.filters
         hash.each_with_object({}) do |(key, value), memo|
@@ -99,13 +81,10 @@ module CaseCore
 
       # Применяет к элементам исходного списка метод {process} и возвращает
       # новый список на основе возвращённых значений
-      #
       # @param [Array] array
       #   исходный список
-      #
       # @return [Array]
       #   результирующий список
-      #
       def process_array(array)
         array.map(&method(:process))
       end
@@ -118,13 +97,10 @@ module CaseCore
       # `string_length_limit`); если ограничение присутствует, а длина строки
       # больше ограничения, то возвращает строку, заданную в настройке
       # `too_long_message`; в противном случае возвращает исходную строку.
-      #
       # @param [String] string
       #   исходная строка
-      #
       # @return [String]
       #   результирующая строка
-      #
       def process_string(string)
         process(JSON.parse(string, symbolize_names: true)).to_json
       rescue JSON::ParserError
@@ -133,42 +109,34 @@ module CaseCore
 
       # Возвращает строку с сообщением о том, что значение ключа ассоциативного
       # массива не может быть показано
-      #
       # @return [String]
       #   строка с сообщением о том, что значение ключа ассоциативного
       #   массива не может быть показано
-      #
       def censored_message
         @censored_message ||= Filter.settings.censored_message.to_s
       end
 
       # Возвращает строку с сообщением о том, что строка имеет слишком большую
       # длину
-      #
       # @return [#to_s]
       #   строка с сообщением о том, что строка имеет слишком большую длину
-      #
       def too_long_message
         @too_long_message ||= Filter.settings.too_long_message.to_s
       end
 
       # Возвращает максимальную длину строки для отображения или `nil`, если
       # нет ограничения на максимальную длину
-      #
       # @return [NilClass, Integer]
       #   максимальная длина строки для отображения или `nil`, если нет
       #   ограничения на максимальную длину
-      #
       def string_length_limit
         Filter.settings.string_length_limit
       end
 
       # Возвращает, есть ли ограничение на максимальную длину строки для
       # отображения
-      #
       # @return [Boolean]
       #   есть ли ограничение на максимальную длину строки для отображения
-      #
       def string_length_limit?
         !string_length_limit.nil?
       end
@@ -177,10 +145,8 @@ module CaseCore
       # строки для отображения в случае, если это ограничение присутствует.
       # Возвращает ложь, если ограничение на максимальную длину строки
       # отсутствует.
-      #
       # @return [Boolean]
       #   результирующее значение
-      #
       def too_long?(string)
         string_length_limit? && string_length_limit < string.length
       end

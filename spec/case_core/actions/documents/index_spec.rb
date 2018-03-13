@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Documents::Index` действия
 # получения информации о документах, прикреплённых к заявке
-#
 
 RSpec.describe CaseCore::Actions::Documents::Index do
   describe 'the class' do

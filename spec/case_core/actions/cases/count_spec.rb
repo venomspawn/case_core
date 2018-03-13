@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия получения информации о количестве заявок
-#
 
 RSpec.describe CaseCore::Actions::Cases::Count do
   describe 'the class' do

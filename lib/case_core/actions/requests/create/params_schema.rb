@@ -5,7 +5,6 @@ module CaseCore
     module Requests
       class Create
         # Схема параметров действия
-        #
         PARAMS_SCHEMA = {
           type: :object,
           properties: {

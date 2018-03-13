@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Фабрика объектов класса `Stomp::Message`, содержащих в себе информацию о
 # сообщении STOMP
-#
 
 FactoryGirl.define do
   factory :stomp_message, class: Stomp::Message do

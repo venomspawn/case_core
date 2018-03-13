@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования метода REST API, возвращающего информацию о статусе
 # обработки сообщения STOMP с заданным значением заголовка `x_message_id`
-#
 
 RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /procesisng_statuses/:message_id' do

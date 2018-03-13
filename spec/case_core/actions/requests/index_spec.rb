@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Requests::Index` действия
 # получения информации о межведомственных запросах, созданных в рамках заявки
-#
 
 RSpec.describe CaseCore::Actions::Requests::Index do
   describe 'the class' do

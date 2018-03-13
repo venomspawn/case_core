@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Censorship::Filter::Settings` настроек
 # фильтрации ключей ассоциативных массивов и строк
-#
 
 RSpec.describe CaseCore::Censorship::Filter::Settings do
   subject(:instance) { described_class.new }

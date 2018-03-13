@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Loader::Scanner` объектов,
 # сканирующих директорию с распакованными библиотеками бизнес-логики
-#
 
 RSpec.describe CaseCore::Logic::Loader::Scanner do
   before { CaseCore::Logic::Loader.settings.dir = dir }
@@ -72,7 +69,6 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     # создаётся при удалении директории, хотя если запускать тесты в домашней
     # директории (`/home/vagrant`), то событие корректно создаётся и
     # обрабатывается.
-    #
     # context 'when the directory is deleted' do
     #   before { FileUtils.cp_r(dir, temp_dir) }
 

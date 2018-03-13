@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса
 # `CaseCore::API::STOMP::Controller::Processors::Incoming`
 # обработчиков сообщений STOMP, вызывающих действия
-#
 
 RSpec.describe CaseCore::API::STOMP::Controller::Processors::Incoming do
   describe 'the class' do
