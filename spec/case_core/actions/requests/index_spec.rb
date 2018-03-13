@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Actions::Requests::Index` действия
 # получения информации о межведомственных запросах, созданных в рамках заявки
-#
 
 RSpec.describe CaseCore::Actions::Requests::Index do
   describe 'the class' do
@@ -140,7 +137,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
             end
 
             context 'when a value is a list' do
-              let(:filter) { { state: %w(ok error) } }
+              let(:filter) { { state: %w[ok error] } }
 
               it 'should be all infos with values from the list' do
                 expect(ids).to match_array [1, 2, 5]
@@ -214,14 +211,14 @@ RSpec.describe CaseCore::Actions::Requests::Index do
         end
 
         context 'when `fields` parameter is specified' do
-          let(:params) { { id: id, fields: %w(id state) } }
+          let(:params) { { id: id, fields: %w[id state] } }
 
           it 'should contain only specified fields' do
-            expect(result.map(&:keys).flatten.uniq).to match_array %i(id state)
+            expect(result.map(&:keys).flatten.uniq).to match_array %i[id state]
           end
 
           context 'when there is no `id` field in the value' do
-            let(:params) { { id: id, fields: %w(state) } }
+            let(:params) { { id: id, fields: %w[state] } }
 
             it 'should still contain `id` field' do
               expect(result.map(&:keys).flatten.uniq).to include :id
@@ -231,7 +228,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
 
         context 'when all supported parameters are specified' do
           let(:params) { { id: id, filter: filter, **paging, order: order } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } } ] }
+          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
           let(:paging) { { limit: limit, offset: offset } }
           let(:limit) { 2 }
           let(:offset) { 1 }

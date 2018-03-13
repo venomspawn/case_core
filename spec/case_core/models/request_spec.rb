@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели межведомственного запроса
 # `CaseCore::Models::Request`
-#
 
 RSpec.describe CaseCore::Models::Request do
   describe 'the model' do
@@ -70,7 +67,7 @@ RSpec.describe CaseCore::Models::Request do
     subject(:instance) { create(:request) }
 
     methods =
-      %i(attributes attributes_dataset case case_id created_at id update)
+      %i[attributes attributes_dataset case case_id created_at id update]
     it { is_expected.to respond_to(*methods) }
   end
 

@@ -1,14 +1,11 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Создание SQL-функции `value_is_short`
-#
 
 Sequel.migration do
   up do
     opts = {
-      args:     [%w(text value)],
+      args:     [%w[text value]],
       behavior: :immutable,
       language: :plpgsql,
       replace:  true,

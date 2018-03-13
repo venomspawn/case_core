@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модуля `CaseCore::Settings::Mixin`, который предназначен
 # для включения в классы настроек
-#
 
 RSpec.describe CaseCore::Settings::Mixin do
   subject(:settings) { Struct.new(:option).new.extend(described_class) }

@@ -1,16 +1,13 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки STOMP-контроллера
-#
 
 # Загрузка STOMP-контроллера
 require "#{$lib}/api/stomp/controller.rb"
 
 # Настройка соединения с брокером сообщений
-connection_info =
-  YAML.load(ERB.new(IO.read("#{$root}/config/stomp.yml")).result)
+intermediate = ERB.new(IO.read("#{$root}/config/stomp.yml")).result
+connection_info = YAML.safe_load(intermediate, [Symbol], [], true)
 
 # Значение переменных окружения, означающее, что необходимо передать строки,
 # созданные с помощью случайных значений

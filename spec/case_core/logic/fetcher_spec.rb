@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Fetcher` загрузчика библиотек с
 # бизнес-логикой с сервера библиотек
-#
 
 RSpec.describe CaseCore::Logic::Fetcher do
   describe 'the class' do
@@ -19,11 +16,11 @@ RSpec.describe CaseCore::Logic::Fetcher do
     describe 'result' do
       subject { result }
 
-      methods = %i(
+      methods = %i[
         gem_server_host gem_server_host=
         gem_server_port gem_server_port=
         set
-      )
+      ]
       it { is_expected.to respond_to(*methods) }
       it { is_expected.to be_a(CaseCore::Settings::Mixin) }
     end

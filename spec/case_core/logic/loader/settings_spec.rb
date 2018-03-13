@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Loader::Settings` настроек класса
 # `CaseCore::Logic::Loader::Settings`
-#
 
 RSpec.describe CaseCore::Logic::Loader::Settings do
   subject(:settings) { CaseCore::Logic::Loader.settings }

@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия обновления записи документа
-#
 
 RSpec.describe CaseCore::Actions::Documents::Update do
   describe 'the class' do

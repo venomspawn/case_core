@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели документа `CaseCore::Models::Document`
-#
 
 RSpec.describe CaseCore::Models::Document do
   describe 'the model' do
@@ -94,7 +91,7 @@ RSpec.describe CaseCore::Models::Document do
   describe 'instance of the model' do
     subject(:instance) { create(:document) }
 
-    methods = %i(
+    methods = %i[
       case
       case_id
       correct
@@ -112,7 +109,7 @@ RSpec.describe CaseCore::Models::Document do
       size
       title
       update
-    )
+    ]
     it { is_expected.to respond_to(*methods) }
   end
 

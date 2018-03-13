@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели заявок `CaseCore::Models::Case`
-#
 
 RSpec.describe CaseCore::Models::Case do
   describe 'the model' do
@@ -84,7 +81,7 @@ RSpec.describe CaseCore::Models::Case do
   describe 'instance of the model' do
     subject(:instance) { create(:case) }
 
-    methods = %i(
+    methods = %i[
       attributes
       attributes_dataset
       created_at
@@ -95,7 +92,7 @@ RSpec.describe CaseCore::Models::Case do
       requests_dataset
       type
       update
-    )
+    ]
     it { is_expected.to respond_to(*methods) }
   end
 

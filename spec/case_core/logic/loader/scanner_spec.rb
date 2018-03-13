@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Loader::Scanner` объектов,
 # сканирующих директорию с распакованными библиотеками бизнес-логики
-#
 
 RSpec.describe CaseCore::Logic::Loader::Scanner do
   before { CaseCore::Logic::Loader.settings.dir = dir }
@@ -31,7 +28,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
       describe 'keys' do
         subject { result.keys }
 
-        let(:names) { %w(mixed_case syntax_error_case test_case wrong_case) }
+        let(:names) { %w[mixed_case syntax_error_case test_case wrong_case] }
 
         it 'should be names of libraries' do
           expect(subject).to match_array(names)
@@ -41,7 +38,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
       describe 'values' do
         subject { result.values }
 
-        let(:versions) { %w(0.0.1 0.0.1 0.0.2 0.0.1) }
+        let(:versions) { %w[0.0.1 0.0.1 0.0.2 0.0.1] }
 
         it 'should be versions of libraries' do
           expect(subject).to match_array(versions)
@@ -72,13 +69,12 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     # создаётся при удалении директории, хотя если запускать тесты в домашней
     # директории (`/home/vagrant`), то событие корректно создаётся и
     # обрабатывается.
-    #
     # context 'when the directory is deleted' do
     #   before { FileUtils.cp_r(dir, temp_dir) }
 
     #   after { FileUtils.mv(temp_dir, dir) }
 
-    #   subject { FileUtils.rm_rf(dir); sleep(0.01) }
+    #   subject { FileUtils.rm_rf(dir) && sleep(0.01) }
 
     #   let(:temp_dir) { "#{dir}.tmp" }
 
@@ -96,7 +92,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when the directory is moved' do
       after { FileUtils.mv(temp_dir, dir) }
 
-      subject { FileUtils.mv(dir, temp_dir); sleep(0.01) }
+      subject { FileUtils.mv(dir, temp_dir) && sleep(0.01) }
 
       let(:temp_dir) { "#{dir}.tmp" }
 
@@ -107,14 +103,14 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
       end
 
       it 'should remove libraries information' do
-        expect { subject }.to change { instance.libs.tap { |libs| puts "libs = #{libs}" } }.to({})
+        expect { subject }.to change { instance.libs }.to({})
       end
     end
 
     context 'when a file is created in the directory' do
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.touch(filepath); sleep(0.01) }
+      subject { FileUtils.touch(filepath) && sleep(0.01) }
 
       let(:filepath) { "#{dir}/test-6.6.6" }
 
@@ -133,7 +129,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.mv(initial_filepath, filepath); sleep(0.01) }
+      subject { FileUtils.mv(initial_filepath, filepath) && sleep(0.01) }
 
       let(:initial_filepath) { "#{File.basename(dir)}/test-6.6.6" }
       let(:filepath) { "#{dir}/test-6.6.6" }
@@ -151,7 +147,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when a file is deleted in the directory' do
       before { FileUtils.touch(filepath) }
 
-      subject { FileUtils.rm_rf(filepath); sleep(0.01) }
+      subject { FileUtils.rm_rf(filepath) && sleep(0.01) }
 
       let(:filepath) { "#{dir}/test-6.6.6" }
 
@@ -170,7 +166,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.mv(initial_filepath, filepath); sleep(0.01) }
+      subject { FileUtils.mv(initial_filepath, filepath) && sleep(0.01) }
 
       let(:filepath) { "#{File.basename(dir)}/test-6.6.6" }
       let(:initial_filepath) { "#{dir}/test-6.6.6" }
@@ -191,7 +187,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
       let(:delay) { described_class::DELAY_DUE_CREATION + 0.01 }
 
       context 'when the subdirectory doesn\'t have proper name' do
-        subject { FileUtils.mkdir(dirpath); sleep(delay) }
+        subject { FileUtils.mkdir(dirpath) && sleep(delay) }
 
         let(:dirpath) { "#{dir}/testabc" }
 
@@ -207,7 +203,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       context 'when the subdirectory has proper name' do
         context 'when version is less than of loaded module' do
-          subject { FileUtils.mkdir(dirpath); sleep(delay) }
+          subject { FileUtils.mkdir(dirpath) && sleep(delay) }
 
           let(:dirpath) { "#{dir}/test_case-0.0.0" }
 
@@ -226,7 +222,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
           after { FileUtils.rm_rf(source_path) }
 
-          subject { FileUtils.cp_r(source_path, dirpath); sleep(delay) }
+          subject { FileUtils.cp_r(source_path, dirpath) || sleep(delay) }
 
           let(:name) { 'test_case' }
           let(:source_path) { "#{File.dirname(dir)}/#{name}-0.0.1" }
@@ -251,7 +247,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf([source_path, dirpath]) }
 
-      subject { FileUtils.mv(source_path, dirpath); sleep(0.1) }
+      subject { FileUtils.mv(source_path, dirpath) && sleep(0.1) }
 
       let(:name) { 'test_case' }
       let(:initial_path) { "#{dir}/#{name}-0.0.1" }
@@ -301,7 +297,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     end
 
     context 'when a subdirectory is deleted in the directory' do
-      subject { FileUtils.rm_rf(dirpath); sleep(0.01) }
+      subject { FileUtils.rm_rf(dirpath) && sleep(0.01) }
 
       context 'when the subdirectory doesn\'t have proper name' do
         before { FileUtils.mkdir(dirpath) }
@@ -379,7 +375,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     end
 
     context 'when a subdirectory is moved from the directory' do
-      subject { FileUtils.mv(dirpath, target_path); sleep(0.01) }
+      subject { FileUtils.mv(dirpath, target_path) && sleep(0.01) }
 
       let(:target_path) { "#{File.dirname(dir)}/#{File.basename(dirpath)}" }
 

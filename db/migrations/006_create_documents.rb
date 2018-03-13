@@ -1,14 +1,11 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Создание таблицы записей документов, приложенных к заявке
-#
 
 Sequel.migration do
   change do
-    create_enum :direction_type, %i(input output)
-    create_enum :provided_as_type, %i(original copy notarized_copy doc_list)
+    create_enum :direction_type, %i[input output]
+    create_enum :provided_as_type, %i[original copy notarized_copy doc_list]
 
     create_table(:documents) do
       primary_key :id, :text

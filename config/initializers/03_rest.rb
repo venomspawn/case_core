@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки REST-контроллера
-#
 
 # Загрузка REST-контроллера
 require "#{$lib}/api/rest/controller.rb"

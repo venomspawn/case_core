@@ -1,40 +1,32 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Actions
     module Requests
       class Show
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-        #
-        # Модуль, предоставляющий пространство имён для константы, в которой
-        # задаётся схема результатов действия родительского класса
-        #
-        module ResultSchema
-          # Схема результатов действия
-          #
-          RESULT_SCHEMA = {
-            type: :object,
-            properties: {
-              id: {
-                type: :integer
-              },
-              case_id: {
-                type: %i(number string boolean)
-              },
-              created_at: {
-                type: :any
-              }
+        # Схема результатов действия
+        RESULT_SCHEMA = {
+          type: :object,
+          properties: {
+            id: {
+              type: :integer
             },
-            required: %i(
-              id
-              case_id
-              created_at
-            ),
-            additionalProperties: {
-              type: %i(number string boolean null)
+            case_id: {
+              type: %i[number string boolean]
+            },
+            created_at: {
+              type: :any
             }
+          },
+          required: %i[
+            id
+            case_id
+            created_at
+          ],
+          additionalProperties: {
+            type: %i[number string boolean null]
           }
-        end
+        }.freeze
       end
     end
   end

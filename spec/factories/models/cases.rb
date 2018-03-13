@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Фабрика записей заявок
-#
 
 FactoryGirl.define do
   factory :case, class: CaseCore::Models::Case do
@@ -14,8 +11,8 @@ FactoryGirl.define do
 
   factory :many_cases, class: Array do
     count { 10_000 }
-    types { %w(kilo_case kibi_case mega_case mibi_case giga_case gibi_case) }
-    names { %w(state status creator_id killer_id closed_at exported_at) }
+    types { %w[kilo_case kibi_case mega_case mibi_case giga_case gibi_case] }
+    names { %w[state status creator_id killer_id closed_at exported_at] }
 
     skip_create
     initialize_with do

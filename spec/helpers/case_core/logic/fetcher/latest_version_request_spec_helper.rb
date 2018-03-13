@@ -1,13 +1,10 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Logic
     class Fetcher
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Вспомогательный модуль, подключаемый к тестам класса
       # {CaseCore::Logic::Fetcher::LatestVersionRequest}
-      #
       module LatestVersionRequestSpecHelper
         def create_spec_body(*args)
           spec_data = args.map do |(name, version)|

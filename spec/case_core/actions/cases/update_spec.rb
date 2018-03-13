@@ -1,9 +1,6 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса действия обновления атрибутов заявки
-#
 
 RSpec.describe CaseCore::Actions::Cases::Update do
   describe 'the class' do
@@ -120,10 +117,12 @@ RSpec.describe CaseCore::Actions::Cases::Update do
         end
 
         it 'shouldn\'t update attributes of the cases' do
-          expect { subject rescue nil }
-            .not_to change { show[id: id3][name.to_sym] }
-          expect { subject rescue nil }
-            .not_to change { show[id: id4][name.to_sym] }
+          expect { subject }
+            .to raise_error(Sequel::ForeignKeyConstraintViolation)
+            .and not_change { show[id: id3][name.to_sym] }
+          expect { subject }
+            .to raise_error(Sequel::ForeignKeyConstraintViolation)
+            .and not_change { show[id: id4][name.to_sym] }
         end
       end
     end

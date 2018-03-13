@@ -1,11 +1,8 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования класса `CaseCore::Logic::Fetcher::GemRequest` запросов к
 # серверу библиотек на получение тела файла библиотеки с заданными названием и
 # версией
-#
 
 RSpec.describe CaseCore::Logic::Fetcher::GemRequest do
   describe 'the class' do

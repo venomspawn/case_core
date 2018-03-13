@@ -1,16 +1,12 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки Sequel
-#
 
 require 'sequel'
 require 'erb'
 require 'yaml'
 
 # Подключение расширений Sequel
-#
 # Подключение поддержки миграций
 Sequel.extension :migration
 # Подключаем расширения базовых классов
@@ -19,7 +15,6 @@ Sequel.extension :core_extensions
 Sequel.extension :pg_array_ops
 
 # Инициализация подключения к базе данных
-#
 # Загрузка настройки базы данных
 intermediate = ERB.new(IO.read("#{$root}/config/database.yml")).result
 database_options = YAML.safe_load(intermediate, [], [], true)
@@ -41,7 +36,6 @@ db.extension :pg_enum
 db.extension :split_array_nil
 
 # Настройка моделей
-#
 # Установка базу данных для моделей. Через свойство Sequel::Model.db в
 # дальнейшем можно обращаться к базе данных.
 Sequel::Model.db = db
@@ -55,7 +49,7 @@ Sequel::Model.plugin :string_stripper
 Dir["#{$lib}/models/**/*.rb"].each do |filename|
   begin
     require filename
-  rescue
+  rescue StandardError
     nil
   end
 end

@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования обновления записи документа с помощью обработчика сообщений
 # STOMP в контроллере класса `CaseCore::API::STOMP::Controller`
-#
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   describe 'update of document' do

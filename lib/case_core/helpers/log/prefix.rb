@@ -1,26 +1,19 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 module CaseCore
   module Helpers
     module Log
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Вспомогательный класс, объекты которого формируют префикс с
       # дополнительной информацией для строки с сообщением в журнале событий
-      #
       class Prefix
         # Контекст, из которого извлекается информация
-        #
         # @return [Binding]
         #   контекст, из которого извлекается информация
-        #
         attr_reader :context
 
         # Инициализирует объект класса
-        #
         # @param [Binding] context
         #   контекст, из которого извлекается информация
-        #
         def initialize(context)
           @context = context
         end
@@ -34,13 +27,10 @@ module CaseCore
         # объектом класса `Binding`. Если контекст не является объектом класса
         # `Binding`, то эта информация опускается. Кроме того, опускаются блоки
         # с пустыми строками.
-        #
         # @param [Array<#to_s>] tags
         #   список дополнительных блоков с информацией
-        #
         # @return [String]
         #   строка с префиксом
-        #
         def prefix(*tags)
           tags
             .concat(eval_strings)
@@ -52,14 +42,11 @@ module CaseCore
         private
 
         # Список строк, вычисляемых в контексте
-        #
-        EVAL_STRINGS = ['self.class', '__method__', '__LINE__']
+        EVAL_STRINGS = ['self.class', '__method__', '__LINE__'].freeze
 
         # Возвращает список с информацией, которая извлекается из контекста
-        #
         # @return [Array]
         #   список с информацией
-        #
         def eval_strings
           return [] unless context.is_a?(Binding)
           EVAL_STRINGS.map(&context.method(:eval))

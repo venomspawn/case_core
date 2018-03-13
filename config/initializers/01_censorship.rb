@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл настройки фильтрации ключей ассоциативных массивов при выводе их
 # значений
-#
 
 require "#{$lib}/censorship/filter"
 

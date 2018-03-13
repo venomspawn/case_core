@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модуля `CaseCore::Settings::Configurable`, который
 # предоставляет методы для конфигурирования объектов
-#
 
 RSpec.describe CaseCore::Settings::Configurable do
   subject(:obj) { Object.new.extend(described_class) }
@@ -43,7 +40,7 @@ RSpec.describe CaseCore::Settings::Configurable do
   describe '#settings_names' do
     subject(:result) { obj.send(:settings_names, *args) }
 
-    let(:args) { %w(option setting) }
+    let(:args) { %w[option setting] }
 
     describe 'result' do
       subject { result }

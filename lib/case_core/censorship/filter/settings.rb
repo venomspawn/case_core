@@ -1,40 +1,31 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require "#{$lib}/settings/mixin"
 
 module CaseCore
   module Censorship
     class Filter
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Класс настроек фильтрации ключей ассоциативных массивов и строк
-      #
       class Settings
         include CaseCore::Settings::Mixin
 
         # Строка с сообщением о том, что значение ключа ассоциативного массива
         # не может быть показано
-        #
         # @return [#to_s]
         #   строка с сообщением о том, что значение ключа ассоциативного
         #   массива не может быть показано
-        #
         attr_accessor :censored_message
 
         # Строка с сообщением о том, что строка имеет слишком большую длину
-        #
         # @return [#to_s]
         #   строка с сообщением о том, что строка имеет слишком большую длину
-        #
         attr_accessor :too_long_message
 
         # Максимальная длина строки для отображения или `nil`, если нет
         # ограничения на максимальную длину
-        #
         # @return [NilClass, Integer]
         #   максимальная длина строки для отображения или `nil`, если нет
         #   ограничения на максимальную длину
-        #
         attr_reader :string_length_limit
 
         # Устанавливает или снимает ограничение на максимальную длину строки
@@ -43,16 +34,12 @@ module CaseCore
         # вызов метода `#to_int` для числовых типов, либо через приведение к
         # строке через метод `#to_s` и приведение к натуральному числу через
         # метод `#to_i`.
-        #
         # @param [Object] limit
         #   аргумент
-        #
         # @return [NilClass]
         #   если ограничение на максимальную длину строки снято
-        #
         # @return [Object]
         #   аргумент
-        #
         def string_length_limit=(limit)
           if limit.nil?
             @string_length_limit = nil
@@ -65,28 +52,22 @@ module CaseCore
         end
 
         # Возвращает список фильтруемых ключей
-        #
         # @return [Array<Symbol>]
         #   список фильтруемых ключей
-        #
         def filters
           @filters ||= []
         end
 
         # Устанавливает список фильтруемых ключей
-        #
         # @param [Enumerable<#to_sym>] filters
         #   коллекция фильтруемых ключей
-        #
         def filters=(filters)
           @filters = filters.map(&:to_sym)
         end
 
         # Добавляет аргументы в список фильтруемых ключей
-        #
         # @param [Array<#to_sym>] args
         #   список аргументов
-        #
         def filter(*args)
           args.each { |arg| filters << arg.to_sym }
         end

@@ -1,11 +1,8 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования вызова метода модуля бизнес-логики с записью заявки в
 # качестве аргумента с помощью обработчика сообщений STOMP в контроллере класса
 # `CaseCore::API::STOMP::Controller`
-#
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   describe 'call of logic function with a case record as an argument' do

@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования модели `CaseCore::Models::ProcessingStatus` статусов
 # обработки сообщений STOMP
-#
 
 RSpec.describe CaseCore::Models::ProcessingStatus do
   describe 'the model' do
@@ -87,7 +84,7 @@ RSpec.describe CaseCore::Models::ProcessingStatus do
   describe 'instance of the model' do
     subject(:instance) { create(:processing_status) }
 
-    methods = %i(
+    methods = %i[
       id
       message_id
       status
@@ -95,7 +92,7 @@ RSpec.describe CaseCore::Models::ProcessingStatus do
       error_class
       error_text
       update
-    )
+    ]
     it { is_expected.to respond_to(*methods) }
   end
 

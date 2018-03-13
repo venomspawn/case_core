@@ -1,10 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-# @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-#
 # Файл тестирования подключаемого модуля
 # `CaseCore::Requests::Mixins::Consulted`
-#
 
 require "#{$lib}/requests/get"
 require "#{$lib}/requests/mixins/consulted"

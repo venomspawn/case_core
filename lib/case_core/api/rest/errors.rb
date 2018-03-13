@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'json'
 require 'json-schema'
@@ -10,32 +10,22 @@ require "#{$lib}/helpers/log"
 module CaseCore
   module API
     module REST
-      # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-      #
       # Обработка ошибок
-      #
       module Errors
         include CaseCore::Helpers::Log
 
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-        #
         # Модуль вспомогательных методов
-        #
         module Helpers
           # Возвращает объект, связанный с ошибкой
-          #
           # @return [Exception]
           #   объект-исключение
-          #
           def error
             env['sinatra.error']
           end
 
           # Возвращает сообщение об ошибке
-          #
           # @return [String]
           #   сообщение об ошибке
-          #
           def error_message
             need_processing = error.is_a?(RestClient::ExceptionWithResponse)
             return error.message unless need_processing
@@ -45,13 +35,10 @@ module CaseCore
 
           # Возвращает сообщение, закодированное в JSON-формате в теле ответа,
           # или `nil`, если это невозможно
-          #
           # @return [String]
           #   сообщение
-          #
           # @return [NilClass]
           #   если невозможно декодировать сообщение
-          #
           def error_json_message(source)
             JSON.parse(source)
           rescue JSON::ParserError
@@ -60,7 +47,6 @@ module CaseCore
         end
 
         # Отображение классов ошибок в коды ошибок
-        #
         ERRORS_MAP = {
           ArgumentError                       => 422,
           JSON::ParserError                   => 422,
@@ -78,40 +64,41 @@ module CaseCore
           Sequel::UniqueConstraintViolation   => 422
         }.freeze
 
-        # @author Александр Ильчуков <a.s.ilchukov@cit.rkomi.ru>
-        #
-        # Регистрация в контроллере обработчиков ошибок
-        #
+        # Регистрирует обработчик ошибки
         # @param [CaseCore::API::REST::Controller] controller
         #   контроллер
-        #
-        def self.registered(controller)
-          controller.helpers Helpers
+        # @param [Class] error_class
+        #   класс ошибки
+        # @param [Integer] error_code
+        #   код ошибки
+        def self.define_error_handler(controller, error_class, error_code)
+          controller.error error_class do
+            message = error_message
+            log_error { <<~LOG }
+              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE #{message}
+            LOG
 
-          # Регистрирация обработчиков ошибок
-          #
-          ERRORS_MAP.each do |error_class, error_code|
-            controller.error error_class do
-              message = error_message
-              log_error { <<~LOG }
-                #{app_name_upcase} ERROR #{error.class} WITH MESSAGE #{message}
-              LOG
-
-              status error_code
-              content = { message: message, error: error.class }
-              body content.to_json
-            end
+            status error_code
+            content = { message: message, error: error.class }
+            body content.to_json
           end
+        end
 
-          # Обработчик всех остальных ошибок
-          #
-          # @return [Status]
-          #   код ошибки
-          #
-          # @return [Hash]
-          #   ассоциативный массив, структура которого описана в
-          #   {file:docs/schemas/errors/500_schema.md JSON-схеме}
-          #
+        # Регистрирует обработчики ошибок, классы которых определены в
+        # {ERRORS_MAP}
+        # @param [CaseCore::API::REST::Controller] controller
+        #   контроллер
+        def self.define_error_handlers(controller)
+          ERRORS_MAP.each do |error_class, error_code|
+            define_error_handler(controller, error_class, error_code)
+          end
+        end
+
+        # Регистрирует обработчик ошибок, классы которых не определены в
+        # {ERRORS_MAP}
+        # @param [CaseCore::API::REST::Controller] controller
+        #   контроллер
+        def self.define_500_handler(controller)
           controller.error 500 do
             log_error { <<~LOG }
               #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
@@ -122,6 +109,15 @@ module CaseCore
             content = { message: error.message, error: error.class }
             body content.to_json
           end
+        end
+
+        # Регистрация в контроллере обработчиков ошибок
+        # @param [CaseCore::API::REST::Controller] controller
+        #   контроллер
+        def self.registered(controller)
+          controller.helpers Helpers
+          define_error_handlers(controller)
+          define_500_handler(controller)
         end
       end
 
