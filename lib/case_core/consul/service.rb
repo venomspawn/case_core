@@ -18,7 +18,7 @@ module CaseCore
     def self.service(name)
       args = [name, :first]
       args << { tag: settings.tag } unless settings.tag.blank?
-      Diplomat::Service.get(*args)
+      Diplomat::Service.get(*args) # nodoc
     end
   end
 end

@@ -102,7 +102,7 @@ module CaseCore
           result &= fields if fields?
           result.push(:id).uniq!
           return result unless result.include?(:created_at)
-          result.delete(:created_at)
+          result.delete(:created_at) # nodoc
           result << CREATED_AT
         end
 

@@ -23,7 +23,8 @@ module CaseCore
           reload_libs_info
         end
 
-        # Выполняет следующие действия.
+        # Выполняет действия по перезагрузке модулей бизнес-логике.
+        #
         # 1.  Выгружает все загруженные модули бизнес-логики.
         # 2.  Заново сканирует директорию с библиотеками бизнес-логики и
         #     извлекает информацию о названиях и версиях библиотек.
@@ -208,7 +209,7 @@ module CaseCore
           return unless libs[lib_name] == lib_version
           # Выгрузка модуля библиотеки
           Loader.unload(lib_name)
-          libs.delete(lib_name)
+          libs.delete(lib_name) # nodoc
           # Поиск библиотек с таким же названий
           pattern = "#{dir}/#{lib_name}-*"
           Dir[pattern].each_with_object(libs, &method(:add_lib_info))

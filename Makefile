@@ -12,7 +12,6 @@ test:
 
 .PHONY: doc
 doc:
-	bin/json_schemas_to_md
 	bundle exec yard doc --quiet
 
 .PHONY: doc_stats

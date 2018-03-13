@@ -27,7 +27,7 @@ module CaseCore
             # подписался на очередь
             # @param [Hash] _parms
             #   параметры подключения
-            # @headers [Hash] headers
+            # @param [Hash] headers
             #   заголовки
             def on_subscribe(_parms, headers)
               log_info { "Subscribed to `#{headers[:destination]}`" }
@@ -52,7 +52,7 @@ module CaseCore
             #   параметры подключения
             # @param [Object] message
             #   сообщение
-            # @headers [Hash] headers
+            # @param [Hash] headers
             #   заголовки
             def on_publish(parms, message, headers)
               log_debug { <<-LOG }

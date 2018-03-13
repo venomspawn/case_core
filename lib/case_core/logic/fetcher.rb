@@ -135,7 +135,7 @@ module CaseCore
       BANNED_DIRS = %w[test spec].freeze
 
       # Проверяет, нужно ли распаковать содержимое потока
-      # @param [Gem::Package::TarReader::Entry]
+      # @param [Gem::Package::TarReader::Entry] entry
       #   поток в формате TAR
       # @return [Boolean]
       #   нужно ли распаковать содержимое потока
@@ -144,7 +144,7 @@ module CaseCore
       end
 
       # Распаковывает содержимое потока
-      # @param [Gem::Package::TarReader::Entry]
+      # @param [Gem::Package::TarReader::Entry] entry
       #   поток в формате TAR
       def extract_entry(entry)
         if entry.file?
@@ -155,7 +155,7 @@ module CaseCore
       end
 
       # Создаёт директорию
-      # @param [Gem::Package::TarReader::Entry]
+      # @param [Gem::Package::TarReader::Entry] entry
       #   поток в формате TAR
       def extract_drectory(entry)
         entry_filepath = "#{gem_dir}/#{entry.full_name}"
@@ -163,7 +163,7 @@ module CaseCore
       end
 
       # Распаковывает содержимое потока в файл
-      # @param [Gem::Package::TarReader::Entry]
+      # @param [Gem::Package::TarReader::Entry] entry
       #   поток в формате TAR
       def extract_file(entry)
         entry_filepath = "#{gem_dir}/#{entry.full_name}"
