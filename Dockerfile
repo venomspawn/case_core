@@ -6,7 +6,7 @@ RUN apk update && \
 	vim && \
     rm -f /var/cache/apk/*
 
-RUN echo "export TERM=xterm" >> /root/.bashrc && echo "export PS1=\"[\d \A]\u:\w$ \"" >> /root/.bashrc
+RUN echo "export TERM=xterm" >> /root/.bashrc && echo "export PS1=\"[\d \A]\u:\w$ \"" >> /root/.bashrc && echo "export COLUMNS=100" && echo "export LINES=100"
 
 WORKDIR /usr/src/app
 
