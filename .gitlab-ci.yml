@@ -2,6 +2,7 @@ image: docker:latest
 
 before_script:
     - docker login -u repo -p $REPO_PASS $REPO_URL
+    - docker login -u admin -p admin123 registry.it.vm:6000  
 
 build_with_tag:
   stage: build
