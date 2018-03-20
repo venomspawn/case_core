@@ -27,9 +27,24 @@ response_queues = response_queues.split(',').map do |queue|
   format('case_core.response-%03d.queue', rand(1..999))
 end
 
+# Функция получения правильного значения количества слушателей
+natural = proc do |value|
+  value &&= Integer(value)
+  value ||= 1
+  value < 1 ? 1 : value
+end
+
+# Настройка количества слушателей очереди управляющих сообщений
+incoming_listeners = natural[ENV['CC_STOMP_INCOMING_LISTENERS']]
+
+# Настройка количества слушателей каждой очереди ответных сообщений СМЭВ
+response_listeners = natural[ENV['CC_STOMP_RESPONSE_LISTENERS']]
+
 # Установка конфигурации STOMP-контроллера
 CaseCore::API::STOMP::Controller.configure do |settings|
-  settings.set :connection_info, connection_info
-  settings.set :incoming_queue,  incoming_queue
-  settings.set :response_queues, response_queues
+  settings.set :connection_info,     connection_info
+  settings.set :incoming_queue,      incoming_queue
+  settings.set :incoming_listeners,  incoming_listeners
+  settings.set :response_queues,     response_queues
+  settings.set :response_listeners,  response_listeners
 end
