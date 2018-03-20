@@ -226,10 +226,54 @@ RSpec.describe CaseCore::Actions::Cases do
       subject { result }
 
       let!(:c4s3) { create(:case) }
+      let!(:case_attribute) { create(:case_attribute, *args) }
+      let(:args) { [case_id: c4s3.id, name: 'attr', value: 'value'] }
       let(:id) { c4s3.id }
       let(:schema) { described_class::Show::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
+
+      context 'when names parameter is absent' do
+        let(:params) { { id: id } }
+
+        it 'should contain all attributes' do
+          expect(result.keys).to match_array %i[id type created_at attr]
+        end
+      end
+
+      context 'when names parameter is nil' do
+        let(:params) { { id: id, names: nil } }
+
+        it 'should contain all attributes' do
+          expect(result.keys).to match_array %i[id type created_at attr]
+        end
+      end
+
+      context 'when names parameter is a list' do
+        context 'when the list is empty' do
+          let(:params) { { id: id, names: [] } }
+
+          it 'should contain only case fields' do
+            expect(result.keys).to match_array %i[id type created_at]
+          end
+        end
+
+        context 'when the list contains case attribute name' do
+          let(:params) { { id: id, names: %w[attr] } }
+
+          it 'should contain the attribute' do
+            expect(result.keys).to match_array %i[id type created_at attr]
+          end
+        end
+
+        context 'when the list contains unknown name' do
+          let(:params) { { id: id, names: %w[unknown] } }
+
+          it 'should be a\'ight' do
+            expect(result.keys).to match_array %i[id type created_at]
+          end
+        end
+      end
     end
 
     context 'when argument is not of Hash type' do
