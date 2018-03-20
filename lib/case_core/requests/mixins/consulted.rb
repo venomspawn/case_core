@@ -21,7 +21,7 @@ module CaseCore
         # @return [#to_s]
         #   название сервиса
         def service_name
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
 
         # Возвращает информацию о сервисе, предоставленную Consul, или `nil`,
@@ -60,7 +60,7 @@ module CaseCore
         # @return [#to_s]
         #   адрес сервера
         def default_host
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
 
         # Возвращает порт сервера, на который происходит REST-запрос, по
@@ -68,7 +68,7 @@ module CaseCore
         # @return [#to_s]
         #   порт сервера
         def default_port
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
       end
     end
