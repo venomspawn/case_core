@@ -93,25 +93,30 @@ module CaseCore
           end
         end
 
+        # Список с названиями полей, импортируемых в таблицу атрибутов заявок
+        IMPORT_FIELDS = %i[case_id name value].freeze
+
         # Создаёт записи атрибутов заявки
         # @param [CaseCore::Models::Case] c4s3
         #   запись заявки
         def create_attributes(c4s3)
-          attributes_attrs.each do |(name, value)|
-            Models::CaseAttribute.create(name: name, value: value, case: c4s3)
+          import_values = attributes_attrs.map do |(name, value)|
+            [c4s3.id, name.to_s, value&.to_s]
           end
+          Models::CaseAttribute.import(IMPORT_FIELDS, import_values)
         end
 
         # Создаёт записи документов заявки
         # @param [CaseCore::Models::Case] c4s3
         #   запись заявки
         def create_documents(c4s3)
-          documents_attrs.each do |document_attrs|
-            Models::Document.create(document_attrs) do |document|
-              document.id ||= SecureRandom.uuid
-              document.case = c4s3
-            end
+          return if documents_attrs.empty?
+          import_fields = documents_attrs.first.keys
+          import_values = documents_attrs.map do |document_attrs|
+            document_attrs.values_at(*import_fields).push(c4s3.id)
           end
+          import_fields.push(:case_id)
+          Models::Document.import(import_fields, import_values)
         end
 
         # Находит модуль бизнес-логики по значению поля `type` записи заявки
