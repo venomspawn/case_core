@@ -23,9 +23,8 @@ rspec:
   stage: test
   only:
     - master
-    - develop
+    - develop2
   tags:
     - repo
   script:
     - ls -l
-    
