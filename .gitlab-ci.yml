@@ -19,15 +19,22 @@ push_image:
     - repo
   script:
     - docker push $REPO_URL/$APP_NAME:${TAG}
-    
-Test:
+
+test:
   stage: rspec
   image: 
-    name: $REPO_URL/$APP_NAME:${TAG}
+    name: $REPO_URL/$APP_NAME:01fd1c46
   only:
     - master
     - develop2
   tags:
     - test
+  variables:
+    CC_LOG_LEVEL: unknown
+    CC_DB_NAME: case_core
+    CC_DB_HOST: localhost
+    CC_DB_USER: rkis
+    CC_DB_PASS: 123456
   script:
-    - bundle --version
+    - env
+
