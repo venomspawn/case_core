@@ -1,6 +1,7 @@
 stages:
   - build
-  - test
+  - rspec
+  - rubocop
 
 before_script:
   - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
@@ -12,19 +13,21 @@ build_image:
   script:
     - docker build -t $REPO_URL/$APP_NAME:${TAG} .
 
-puch_image:
+push_image:
   stage: build
   tags:
     - repo
   script:
     - docker push $REPO_URL/$APP_NAME:${TAG}
     
-rspec:
-  stage: test
+Test:
+  stage: rspec
+  image: $REPO_URL/$APP_NAME:${TAG}
   only:
     - master
     - develop2
   tags:
     - repo
   script:
-    - ls -l
+    - bundle --version
+
