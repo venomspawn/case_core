@@ -31,6 +31,10 @@ docker_run_variables:
 
   BUILD_ENV: '{{ app_env }}'
 
+  # Настройки для автоматической генерации DNS
+  VIRTUAL_HOST: case-core.test.it2.vm
+  VIRTUAL_PORT: 8095
+
 docker_run_labels:
   app_name: '{{ app_name }}'
   app_env: '{{ app_env }}'
