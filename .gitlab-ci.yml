@@ -1,22 +1,35 @@
 stages:
-  
+  - build
+  - test
 
-build_with_tag:
+before_script:
+  - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
+
+build_image:
   stage: build
   only:
     - tags
   tags:
-  - repo
+    - repo
   script:
-    - docker build -t $REPO_URL/$APP_NAME:${CI_COMMIT_TAG} .
-    - docker push $REPO_URL/$APP_NAME:${CI_COMMIT_TAG}
+    - docker build -t $REPO_URL/$APP_NAME:${TAG} .
 
-build_without_tag:
+puch_image:
   stage: build
   except:
     - tags
   tags:
     - repo
   script:
-    - docker build -t $REPO_URL/$APP_NAME:${CI_COMMIT_SHA:0:8} .
-    - docker push $REPO_URL/$APP_NAME:${CI_COMMIT_SHA:0:8}
+    - docker push $REPO_URL/$APP_NAME:${TAG}
+    
+rspec:
+  stage: test
+  only:
+    - master
+    - develop
+  tags:
+    - repo
+  script:
+    - ls -l
+    
