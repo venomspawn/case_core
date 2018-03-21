@@ -22,12 +22,12 @@ push_image:
     
 Test:
   stage: rspec
-  image: $REPO_URL/$APP_NAME:${TAG}
+  image: 
+    name: $REPO_URL/$APP_NAME:${TAG}
   only:
     - master
     - develop2
   tags:
-    - repo
+    - test
   script:
     - bundle --version
-
