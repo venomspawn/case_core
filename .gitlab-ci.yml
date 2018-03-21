@@ -7,8 +7,6 @@ before_script:
 
 build_image:
   stage: build
-  only:
-    - tags
   tags:
     - repo
   script:
@@ -16,8 +14,6 @@ build_image:
 
 puch_image:
   stage: build
-  except:
-    - tags
   tags:
     - repo
   script:
