@@ -1,40 +1,56 @@
+##Стадии сборки
 stages:
   - build
   - rspec
   - rubocop
-
+##Назначаем таг для контейнера(либо TAG, либо SHA)
 before_script:
   - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
-
-build_image:
+##Формируем название образа контейнера
+variables:
+  IMAGE_NAME: $REPO_URL/$APP_NAME
+##Сборка образа
+1.build_image:
   stage: build
   tags:
     - repo
   script:
-    - docker build -t $REPO_URL/$APP_NAME:${TAG} .
-
-push_image:
+    - docker build -t $IMAGE_NAME:${TAG} .
+##Публикация образа 
+2.push_image:
   stage: build
   tags:
     - repo
   script:
-    - docker push $REPO_URL/$APP_NAME:${TAG}
-
-test:
+    - docker push $IMAGE_NAME:${TAG}
+  when: on_success
+##При пуше в master или develop назначем метку latest
+3.build_latest_image:
+  stage: build
+  tags: 
+    - repo
+  only:
+    - master
+    - develop2
+  script:
+    - docker image tag $IMAGE_NAME:${TAG} $IMAGE_NAME:latest
+  when: on_success
+##Тестирование rspec  
+1.test:
   stage: rspec
+  variables:
+    CC_LOG_LEVEL: debug
+    CC_DB_NAME: case_core
+    CC_DB_HOST: 192.168.1.1
+    CC_DB_USER: rkis
+    CC_DB_PASS: 123456
   image: 
-    name: $REPO_URL/$APP_NAME:01fd1c46
+    name: $IMAGE_NAME:latest
   only:
     - master
     - develop2
   tags:
     - test
-  variables:
-    CC_LOG_LEVEL: unknown
-    CC_DB_NAME: case_core
-    CC_DB_HOST: localhost
-    CC_DB_USER: rkis
-    CC_DB_PASS: 123456
   script:
-    - env
+    - bundle exec rubocop
 
