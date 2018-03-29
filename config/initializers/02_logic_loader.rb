@@ -7,5 +7,5 @@ require "#{$lib}/logic/loader"
 
 # Установка конфигурации загрузчика бизнес-логики
 CaseCore::Logic::Loader.configure do |settings|
-  settings.set :dir, "#{$root}/logic"
+  settings.set :dir, "#{$root}/#{ENV['CC_LOGIC_DIR']}"
 end

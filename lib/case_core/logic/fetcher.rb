@@ -18,7 +18,7 @@ module CaseCore
       include Helpers
       extend  Settings::Configurable
 
-      settings_names :gem_server_host, :gem_server_port
+      settings_names :gem_server_host, :gem_server_port, :logic_dir
 
       # Загружает и распаковывает указанную или последнюю версию библиотеки с
       # данным названием. Возвращает, успешно ли прошёл процесс загрузки и
@@ -87,7 +87,7 @@ module CaseCore
       # @return [String]
       #   путь к директории с библиотеками
       def gems_dir
-        Loader.settings.dir
+        Fetcher.settings.logic_dir
       end
 
       # Возвращает путь к директории с библиотекой
