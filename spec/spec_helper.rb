@@ -4,9 +4,19 @@
 
 require 'rspec'
 
+show_delay_info = -> { $logger.unknown { <<-MESSAGE.squish } }
+  Выставлена задержка #{RSpec.configuration.delay} при тестировании
+  многопоточных конструкций
+MESSAGE
+
 RSpec.configure do |config|
-  # Убираем поддержку конструкций describe без префикса RSpec.
+  # Исключение поддержки конструкций describe без префикса RSpec.
   config.expose_dsl_globally = false
+  # Настройка задержек при тестировании многопоточных конструкций
+  config.add_setting :delay, default: 0.1
+
+  config.before(:suite) { show_delay_info.call }
+  config.after(:suite) { show_delay_info.call }
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change
