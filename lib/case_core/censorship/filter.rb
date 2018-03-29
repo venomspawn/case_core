@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 require "#{$lib}/settings/configurable"
 
 require_relative 'filter/settings'

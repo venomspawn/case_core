@@ -19,6 +19,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
       methods = %i[
         gem_server_host gem_server_host=
         gem_server_port gem_server_port=
+        logic_dir logic_dir=
         set
       ]
       it { is_expected.to respond_to(*methods) }
@@ -38,8 +39,8 @@ RSpec.describe CaseCore::Logic::Fetcher do
     include CaseCore::Logic::FetcherSpecHelper
 
     before do
-      CaseCore::Logic::Loader.configure do |settings|
-        settings.set :dir, dir
+      described_class.configure do |settings|
+        settings.set :logic_dir, dir
       end
     end
 
@@ -291,8 +292,8 @@ RSpec.describe CaseCore::Logic::Fetcher do
     include CaseCore::Logic::FetcherSpecHelper
 
     before do
-      CaseCore::Logic::Loader.configure do |settings|
-        settings.set :dir, dir
+      described_class.configure do |settings|
+        settings.set :logic_dir, dir
       end
     end
 
@@ -449,7 +450,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
       end
 
       context 'when no errors appear' do
-        it 'shouldn extract logic files' do
+        it 'shouldn\'t extract logic files' do
           expect { subject }.to extract_logic_file(lib_file)
         end
 

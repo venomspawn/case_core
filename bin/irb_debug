@@ -4,6 +4,8 @@
 # Скрипт, запускающий IRB
 
 require_relative '../config/app_init.rb'
+CaseCore::Init.run!
+
 require 'irb'
 require 'irb/completion'
 
