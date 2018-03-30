@@ -62,6 +62,11 @@ RSpec.describe CaseCore::Actions::Requests::Index do
       let!(:c4s3) { create(:case) }
       let(:id) { c4s3.id }
       let!(:requests) { create_requests(c4s3) }
+      let(:id1) { requests[0].id }
+      let(:id2) { requests[1].id }
+      let(:id3) { requests[2].id }
+      let(:id4) { requests[3].id }
+      let(:id5) { requests[4].id }
 
       it { is_expected.to match_json_schema(described_class::RESULT_SCHEMA) }
 
@@ -69,7 +74,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
         subject(:ids) { result.map { |hash| hash[:id] } }
 
         it 'should contain info of requests' do
-          expect(ids).to match_array [1, 2, 3, 4, 5]
+          expect(ids).to match_array [id1, id2, id3, id4, id5]
         end
 
         context 'when `filter` parameter is specified' do
@@ -81,7 +86,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
                 let(:filter) { { rguid: { exclude: '101' } } }
 
                 it 'should be all infos but selected by `exclude` value' do
-                  expect(ids).to match_array [2, 3, 4, 5]
+                  expect(ids).to match_array [id2, id3, id4, id5]
                 end
               end
 
@@ -89,7 +94,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
                 let(:filter) { { rguid: { like: '%000%' } } }
 
                 it 'should be all infos with likely value' do
-                  expect(ids).to match_array [3, 4, 5]
+                  expect(ids).to match_array [id3, id4, id5]
                 end
               end
 
@@ -97,7 +102,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
                 let(:filter) { { state: { min: 'error' } } }
 
                 it 'should be all infos with values no less than value' do
-                  expect(ids).to match_array [1, 2, 4, 5]
+                  expect(ids).to match_array [id1, id2, id4, id5]
                 end
               end
 
@@ -105,7 +110,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
                 let(:filter) { { state: { max: 'error' } } }
 
                 it 'should be all infos with values no more than value' do
-                  expect(ids).to match_array [2, 3]
+                  expect(ids).to match_array [id2, id3]
                 end
               end
 
@@ -113,7 +118,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
                 let(:filter) { { state: { min: 'error', exclude: 'ok' } } }
 
                 it 'should be all infos selected by all filters together' do
-                  expect(ids).to match_array [2, 4]
+                  expect(ids).to match_array [id2, id4]
                 end
               end
 
@@ -140,7 +145,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
               let(:filter) { { state: %w[ok error] } }
 
               it 'should be all infos with values from the list' do
-                expect(ids).to match_array [1, 2, 5]
+                expect(ids).to match_array [id1, id2, id5]
               end
             end
 
@@ -148,7 +153,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
               let(:filter) { { state: 'ok' } }
 
               it 'should be all infos with the value' do
-                expect(ids).to match_array [1, 5]
+                expect(ids).to match_array [id1, id5]
               end
             end
           end
@@ -158,7 +163,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
               let(:filter) { [] }
 
               it 'should be all infos' do
-                expect(ids).to match_array [1, 2, 3, 4, 5]
+                expect(ids).to match_array [id1, id2, id3, id4, id5]
               end
             end
 
@@ -166,7 +171,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
               let(:filter) { [{ state: 'ok' }, { op_id: '2abc' }] }
 
               it 'should be selected by at least one filter' do
-                expect(ids).to match_array [1, 2, 5]
+                expect(ids).to match_array [id1, id2, id5]
               end
             end
           end
@@ -182,7 +187,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == [1, 2]
+              expect(ids).to be == [id1, id2]
             end
           end
         end
@@ -192,12 +197,12 @@ RSpec.describe CaseCore::Actions::Requests::Index do
           let(:offset) { 2 }
 
           it 'should be shifted by offset' do
-            expect(ids).to match_array [3, 4, 5]
+            expect(ids).to match_array [id3, id4, id5]
           end
 
           context 'when `order` parameter isn\'t specified' do
             it 'should be ordered by `id` field' do
-              expect(ids).to be == [3, 4, 5]
+              expect(ids).to be == [id3, id4, id5]
             end
           end
         end
@@ -206,7 +211,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
           let(:params) { { id: id, order: { id: :desc } } }
 
           it 'should be ordered by specified fields and directions' do
-            expect(ids).to be == [5, 4, 3, 2, 1]
+            expect(ids).to be == [id5, id4, id3, id2, id1]
           end
         end
 
@@ -235,7 +240,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
           let(:order) { { id: :desc } }
 
           it 'should be properly extracted infos' do
-            expect(ids).to be == [4, 3]
+            expect(ids).to be == [id4, id3]
           end
         end
 
@@ -248,7 +253,7 @@ RSpec.describe CaseCore::Actions::Requests::Index do
           let(:filter) { { state: 'ok' } }
 
           it 'should be infos of the case only' do
-            expect(ids).to be == [1, 5]
+            expect(ids).to be == [id1, id5]
           end
         end
       end
