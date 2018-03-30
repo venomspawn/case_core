@@ -1,0 +1,21 @@
+build_with_tag:
+  stage: build
+  only:
+    - tags
+  tags:
+  - repo
+  script:
+    - export TAG=${CI_COMMIT_TAG}
+    - docker build -t $REPO_URL/$APP_NAME:$TAG .
+    - docker push $REPO_URL/$APP_NAME:$TAG
+
+build_without_tag:
+  stage: build
+  except:
+    - tags
+  tags:
+    - repo
+  script:
+    - export TAG=${CI_COMMIT_SHA:0:8}
+    - docker build -t $REPO_URL/$APP_NAME:$TAG .
+    - docker push $REPO_URL/$APP_NAME:$TAG

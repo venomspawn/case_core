@@ -5,6 +5,8 @@ namespace :case_core do
   task :migrate, [:to, :from] do |_task, args|
     require_relative 'config/app_init'
 
+    CaseCore::Init.run!(only: %w[class_ext logger sequel])
+
     require "#{$lib}/tasks/migration"
 
     to = args[:to]
@@ -18,6 +20,8 @@ namespace :case_core do
   task :fetch_logic, [:name, :version] do |_task, args|
     require_relative 'config/app_init'
 
+    CaseCore::Init.run!(only: %w[censorship class_ext logger logic_fetcher])
+
     name = args[:name]
     version = args[:version]
     CaseCore::Logic::Fetcher.fetch(name, version)
@@ -27,12 +31,16 @@ namespace :case_core do
   task :run_rest_controller do
     require_relative 'config/app_init'
 
+    CaseCore::Init.run!(only: %w[class_ext logger oj sequel rest])
+
     CaseCore::API::REST::Controller.run!
   end
 
-  desc 'Запускает контроллер REST API'
+  desc 'Запускает контроллер STOMP API'
   task :run_stomp_controller do
     require_relative 'config/app_init'
+
+    CaseCore::Init.run!(except: %w[logic_fetcher rest])
 
     CaseCore::API::STOMP::Controller.run!
   end

@@ -1,6 +1,7 @@
 .dockerignore
 .git
 .gitignore
+.gitlab-ci.yml
 cm
 Vagrantfile
 Dockerfile

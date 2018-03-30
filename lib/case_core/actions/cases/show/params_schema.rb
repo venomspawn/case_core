@@ -9,7 +9,16 @@ module CaseCore
           type: :object,
           properties: {
             id: {
-              type: %i[string number boolean]
+              type: :string
+            },
+            names: {
+              type: %i[null array],
+              items: {
+                type: :string,
+                not: {
+                  enum: %w[id type created_at]
+                }
+              }
             }
           },
           required: %i[

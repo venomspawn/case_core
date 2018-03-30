@@ -27,9 +27,16 @@ docker_run_variables:
   CC_CONSUL_HOST: 10.33.96.33
   CC_CONSUL_PORT: 8500
 
+  # Директория с модулями бизнес-логики
+  CC_LOGIC_DIR: logic
+
   SERVICE_CHECK_HTTP: '/version'
 
   BUILD_ENV: '{{ app_env }}'
+
+  # Настройки для автоматической генерации DNS
+  VIRTUAL_HOST: case-core.test.it2.vm
+  VIRTUAL_PORT: 8095
 
 docker_run_labels:
   app_name: '{{ app_name }}'

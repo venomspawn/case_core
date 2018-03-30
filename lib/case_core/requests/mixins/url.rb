@@ -34,21 +34,21 @@ module CaseCore
         # @return [#to_s]
         #   адрес сервера
         def host
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
 
         # Возвращает порт сервера, на который происходит REST-запрос
         # @return [#to_s]
         #   порт сервера
         def port
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
 
         # Возвращает путь до REST-метода, подставляемый в URL
         # @return [#to_s]
         #   путь
         def path
-          raise 'Метод не реализован'
+          raise "Метод `#{__method__}` не реализован"
         end
       end
     end

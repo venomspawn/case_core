@@ -21,6 +21,7 @@ module CaseCore
         include Singleton
 
         settings_names :connection_info, :incoming_queue, :response_queues
+        settings_names :incoming_listeners, :response_listeners
 
         # Публикует сообщение STOMP в очереди с данным названием
         # @param [#to_s] queue
@@ -115,16 +116,20 @@ module CaseCore
         # осуществляется вызов действий
         def subscribe_on_incoming
           incoming_queue = Controller.settings.incoming_queue
+          listeners = Controller.settings.incoming_listeners
           block = Processors::Incoming.method(:process)
-          subscribe(incoming_queue, false, &block)
+          listeners.times { subscribe(incoming_queue, false, &block) }
         end
 
         # Осуществляет подписку на очереди ответных сообщений
         def subscribe_on_responses
           response_queues = Controller.settings.response_queues
+          listeners = Controller.settings.response_listeners
           block = Processors::Response.method(:process)
-          response_queues.each do |response_queue|
-            subscribe(response_queue, false, &block)
+          listeners.times do
+            response_queues.each do |response_queue|
+              subscribe(response_queue, false, &block)
+            end
           end
         end
 

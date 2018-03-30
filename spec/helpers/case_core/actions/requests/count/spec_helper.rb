@@ -11,36 +11,26 @@ module CaseCore
           # импортируемых значений
           DATA = [
             {
-              id:         1,
-              created_at: Time.now,
               op_id:      '1abc',
               state:      'ok',
               rguid:      '101'
             },
             {
-              id:         2,
-              created_at: Time.now,
               op_id:      '2abc',
               state:      'error',
               rguid:      '1001'
             },
             {
-              id:         3,
-              created_at: Time.now,
               op_id:      '2bbc',
               state:      'closed',
               rguid:      '10001'
             },
             {
-              id:         4,
-              created_at: Time.now,
               op_id:      '2bbb',
               state:      'issue',
               rguid:      '100001'
             },
             {
-              id:         5,
-              created_at: Time.now,
               op_id:      '3abc',
               state:      'ok',
               rguid:      '1000001'
@@ -56,8 +46,14 @@ module CaseCore
           # @return [Array<CaseCore::Models::Request>]
           #   список созданных записей заявок
           def create_requests(c4s3)
-            FactoryGirl
-              .create(:imported_requests, case_id: c4s3.id, data: DATA)
+            DATA.map do |attrs|
+              FactoryGirl.create(:request, case_id: c4s3.id).tap do |request|
+                attrs.each do |name, value|
+                  args = { request_id: request.id, name: name, value: value }
+                  FactoryGirl.create(:request_attribute, args)
+                end
+              end
+            end
           end
         end
       end

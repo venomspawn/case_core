@@ -3,6 +3,8 @@
 # Файл тестирования класса `CaseCore::Logic::Loader` загрузчика бизнес-логики
 
 RSpec.describe CaseCore::Logic::Loader do
+  let(:delay) { RSpec.configuration.delay }
+
   subject 'the class' do
     subject { described_class }
 
@@ -72,7 +74,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             expect(subject).not_to be == logic
           end
@@ -91,7 +93,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             subject
           end
@@ -111,7 +113,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             subject
           end
@@ -267,7 +269,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             expect(subject).not_to be == logic
           end
@@ -286,7 +288,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             subject
           end
@@ -306,7 +308,7 @@ RSpec.describe CaseCore::Logic::Loader do
             # Задержка, необходимая для обработки события о том, что появилась
             # новая версия библиотеки (обработка выполняется в отдельном
             # потоке)
-            sleep(0.01)
+            sleep(delay)
 
             subject
           end

@@ -20,3 +20,8 @@ CaseCore::API::REST::Controller.configure do |settings|
   settings.enable :static
   settings.set    :root, $root
 end
+
+# Установка сервера Puma в продуктивном режиме
+CaseCore::API::REST::Controller.configure :production do |settings|
+  settings.set :server, :puma
+end
