@@ -8,7 +8,7 @@ before_script:
   - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
 ##Формируем название образа контейнера
 variables:
-  IMAGE_NAME: $REPO_URL/$APP_NAME
+  IMAGE_NAME: repo.it2.vm/case-core
 ##Сборка образа
 1.build_image:
   stage: build

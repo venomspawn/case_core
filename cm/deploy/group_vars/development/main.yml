@@ -24,7 +24,7 @@ docker_run_variables:
 
   # Настройки подключения к Consul
   CC_CONSUL_SCHEMA: http
-  CC_CONSUL_HOST: 10.33.96.33
+  CC_CONSUL_HOST: 10.33.101.1
   CC_CONSUL_PORT: 8500
 
   SERVICE_CHECK_HTTP: '/version'

@@ -3,25 +3,40 @@ app_env: preprod
 
 docker_run_variables:
   RACK_ENV: production
-  RCM_DB_USER: user_case_manager
-  RCM_DB_PASS: daEvfin
-  RCM_DB_HOST: pgsql.preprod.rk.local
-  RCM_DB_NAME: case_manager
-  RCM_LOG_LEVEL: info
-  RCM_BIND_HOST: 0.0.0.0
-  RCM_PORT: 7070
-  RCM_STOMP_HOST: 10.33.68.207
-  RCM_STOMP_PORT: 61613
-  RCM_STOMP_SUBSCRIBE_TO: 'smev3.response.queue'
-  RCM_STOMP_SEND_TO: 'smev3.queue'
-  RCM_STOMP_SMEV2_INPUT_QUEUE: 'smev2.response.queue'
-  RCM_STOMP_SMEV2_OUTPUT_QUEUE: 'dispatch.queue'
-  VIRTUAL_HOST: case-manager.preprod.rk.local
-  VIRTUAL_PORT: 7070
-  SMRC_HOST: smev3rc.preprod.rk.local
-  SMRC_PORT: 8066
+
+  # Настройки журнала событий
+  CC_LOG_LEVEL: debug
+
+  # Настройки подключения к базе данных
+  CC_DB_USER: user_case_core
+  CC_DB_PASS: 123456
+  CC_DB_HOST: pgsql.dev.it.vm
+  CC_DB_NAME: case_core
+
+  # Настройки REST-контроллера
+  CC_BIND: 0.0.0.0
+  CC_PORT: 8095
+
+  # Настройки подключения к ActiveMQ
+  CC_STOMP_HOST: smev.dev.it.vm
+  CC_STOMP_PORT: 61613
+  CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
+
+  # Настройки подключения к Consul
+  CC_CONSUL_SCHEMA: http
+  CC_CONSUL_HOST: 10.33.101.1
+  CC_CONSUL_PORT: 8500
+
+  SERVICE_CHECK_HTTP: '/version'
+
+  BUILD_ENV: '{{ app_env }}'
+
+  # Настройки для автоматической генерации DNS
+  VIRTUAL_HOST: case-core.dev.it2.vm
+  VIRTUAL_PORT: 8095
 
 docker_run_labels:
   app_name: '{{ app_name }}'
   app_env: '{{ app_env }}'
-  app_url: '{{ docker_run_variables["VIRTUAL_HOST"] }}'
+  SERVICE_TAGS: '{{ app_env }}'
+  SERVICE_NAME: 'case-core'
