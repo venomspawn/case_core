@@ -4,6 +4,7 @@ require "#{$lib}/actions/cases"
 require "#{$lib}/actions/documents"
 require "#{$lib}/actions/processing_statuses"
 require "#{$lib}/actions/requests"
+require "#{$lib}/actions/version"
 require "#{$lib}/helpers/log"
 
 module CaseCore
@@ -82,6 +83,15 @@ module CaseCore
         #   сообщений STOMP
         def processing_statuses
           Actions::ProcessingStatuses
+        end
+
+        # Возвращает объект, предоставляющий действия, которые возвращают
+        # информацию о версии сервиса и модулей бизнес-логики
+        # @return [#show]
+        #   объект, предоставляющий действия, которые возвращают информацию о
+        #   версии сервиса и модулей бизнес-логики
+        def version
+          Actions::Version
         end
       end
     end
