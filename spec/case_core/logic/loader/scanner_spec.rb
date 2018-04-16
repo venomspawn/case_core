@@ -6,6 +6,7 @@
 RSpec.describe CaseCore::Logic::Loader::Scanner do
   before { CaseCore::Logic::Loader.settings.dir = dir }
 
+  let(:delay) { RSpec.configuration.delay }
   let(:dir) { "#{$root}/spec/fixtures/logic" }
   let!(:instance) { CaseCore::Logic::Loader.instance.send(:scanner) }
 
@@ -74,7 +75,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
     #   after { FileUtils.mv(temp_dir, dir) }
 
-    #   subject { FileUtils.rm_rf(dir) && sleep(0.01) }
+    #   subject { FileUtils.rm_rf(dir) && sleep(delay) }
 
     #   let(:temp_dir) { "#{dir}.tmp" }
 
@@ -92,7 +93,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when the directory is moved' do
       after { FileUtils.mv(temp_dir, dir) }
 
-      subject { FileUtils.mv(dir, temp_dir) && sleep(0.01) }
+      subject { FileUtils.mv(dir, temp_dir) && sleep(delay) }
 
       let(:temp_dir) { "#{dir}.tmp" }
 
@@ -110,7 +111,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when a file is created in the directory' do
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.touch(filepath) && sleep(0.01) }
+      subject { FileUtils.touch(filepath) && sleep(delay) }
 
       let(:filepath) { "#{dir}/test-6.6.6" }
 
@@ -129,7 +130,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.mv(initial_filepath, filepath) && sleep(0.01) }
+      subject { FileUtils.mv(initial_filepath, filepath) && sleep(delay) }
 
       let(:initial_filepath) { "#{File.basename(dir)}/test-6.6.6" }
       let(:filepath) { "#{dir}/test-6.6.6" }
@@ -147,7 +148,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when a file is deleted in the directory' do
       before { FileUtils.touch(filepath) }
 
-      subject { FileUtils.rm_rf(filepath) && sleep(0.01) }
+      subject { FileUtils.rm_rf(filepath) && sleep(delay) }
 
       let(:filepath) { "#{dir}/test-6.6.6" }
 
@@ -166,7 +167,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf(filepath) }
 
-      subject { FileUtils.mv(initial_filepath, filepath) && sleep(0.01) }
+      subject { FileUtils.mv(initial_filepath, filepath) && sleep(delay) }
 
       let(:filepath) { "#{File.basename(dir)}/test-6.6.6" }
       let(:initial_filepath) { "#{dir}/test-6.6.6" }
@@ -184,7 +185,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     context 'when a subdirectory is created in the directory' do
       after { FileUtils.rm_rf(dirpath) }
 
-      let(:delay) { described_class::DELAY_DUE_CREATION + 0.01 }
+      let(:delay) { described_class::DELAY_DUE_CREATION + 0.1 }
 
       context 'when the subdirectory doesn\'t have proper name' do
         subject { FileUtils.mkdir(dirpath) && sleep(delay) }
@@ -247,7 +248,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
 
       after { FileUtils.rm_rf([source_path, dirpath]) }
 
-      subject { FileUtils.mv(source_path, dirpath) && sleep(0.1) }
+      subject { FileUtils.mv(source_path, dirpath) && sleep(delay) }
 
       let(:name) { 'test_case' }
       let(:initial_path) { "#{dir}/#{name}-0.0.1" }
@@ -297,7 +298,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     end
 
     context 'when a subdirectory is deleted in the directory' do
-      subject { FileUtils.rm_rf(dirpath) && sleep(0.01) }
+      subject { FileUtils.rm_rf(dirpath) && sleep(delay) }
 
       context 'when the subdirectory doesn\'t have proper name' do
         before { FileUtils.mkdir(dirpath) }
@@ -375,7 +376,7 @@ RSpec.describe CaseCore::Logic::Loader::Scanner do
     end
 
     context 'when a subdirectory is moved from the directory' do
-      subject { FileUtils.mv(dirpath, target_path) && sleep(0.01) }
+      subject { FileUtils.mv(dirpath, target_path) && sleep(delay) }
 
       let(:target_path) { "#{File.dirname(dir)}/#{File.basename(dirpath)}" }
 

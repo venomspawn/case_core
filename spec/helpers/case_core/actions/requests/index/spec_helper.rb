@@ -11,41 +11,34 @@ module CaseCore
           # импортируемых значений
           DATA = [
             {
-              id:         1,
-              created_at: Time.now,
               op_id:      '1abc',
               state:      'ok',
               rguid:      '101'
             },
             {
-              id:         2,
-              created_at: Time.now,
               op_id:      '2abc',
               state:      'error',
               rguid:      '1001'
             },
             {
-              id:         3,
-              created_at: Time.now,
               op_id:      '2bbc',
               state:      'closed',
               rguid:      '10001'
             },
             {
-              id:         4,
-              created_at: Time.now,
               op_id:      '2bbb',
               state:      'issue',
               rguid:      '100001'
             },
             {
-              id:         5,
-              created_at: Time.now,
               op_id:      '3abc',
               state:      'ok',
               rguid:      '1000001'
             }
           ].freeze
+
+          # Названия импортируемых полей атрибутов
+          FIELDS = %i[request_id name value]
 
           # Создаёт записи межведомственных запросов вместе с записями
           # атрибутов, после чего возвращает созданные записи межведомственных
@@ -54,10 +47,16 @@ module CaseCore
           #   запись заявки, в рамках которой создаются записи межведомственных
           #   запросов
           # @return [Array<CaseCore::Models::Request>]
-          #   список созданных записей заявок
+          #   список созданных записей межведомственных запросов
           def create_requests(c4s3)
-            FactoryGirl
-              .create(:imported_requests, case_id: c4s3.id, data: DATA)
+            args = [DATA.size, case_id: c4s3.id]
+            FactoryGirl.create_list(:request, *args).tap do |requests|
+              values = DATA.size.times.each_with_object([]) do |i, memo|
+                id = requests[i].id
+                DATA[i].each { |name, value| memo << [id, name.to_s, value] }
+              end
+              Models::RequestAttribute.import(FIELDS, values)
+            end
           end
         end
       end

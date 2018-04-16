@@ -16,8 +16,10 @@ Dotenv.load(File.absolute_path("#{$root}/.env.#{$environment}"))
 $app_name = 'case_core'
 $lib = "#{$root}/lib/#{$app_name}"
 
-# Загрузка инициализации составных частей приложения
-Dir["#{__dir__}/initializers/*.rb"].sort.each(&method(:require))
+# Загрузка системы инициализации
+require "#{$lib}/init"
 
-# Загрузка инициализации, связанной с окружением
-Dir["#{__dir__}/environments/*.rb"].sort.each(&method(:require))
+# Настройка системы инициализации
+CaseCore::Init.configure do |settings|
+  settings.set :initializers, "#{__dir__}/initializers"
+end
