@@ -12,10 +12,18 @@ module CaseCore
     module REST
       # Обработка ошибок
       module Errors
-        include CaseCore::Helpers::Log
-
         # Модуль вспомогательных методов
         module Helpers
+          include CaseCore::Helpers::Log
+
+          # Возвращает название сервиса в верхнем регистре без знаков
+          # подчёркивания и дефисов. Необходимо для журнала событий.
+          # @return [String]
+          #   преобразованное название сервиса
+          def app_name_upcase
+            $app_name.upcase.tr('-', '_')
+          end
+
           # Возвращает объект, связанный с ошибкой
           # @return [Exception]
           #   объект-исключение
@@ -48,20 +56,14 @@ module CaseCore
 
         # Отображение классов ошибок в коды ошибок
         ERRORS_MAP = {
-          ArgumentError                       => 422,
-          JSON::ParserError                   => 422,
-          JSON::Schema::ValidationError       => 422,
-          JSON::Schema::ReadFailed            => 404,
-          RestClient::BadRequest              => 400,
-          RestClient::Forbidden               => 403,
-          RestClient::NotFound                => 404,
-          RestClient::InternalServerError     => 422,
-          RestClient::Unauthorized            => 401,
-          RuntimeError                        => 422,
-          Sequel::DatabaseError               => 422,
-          Sequel::NoMatchingRow               => 404,
-          Sequel::InvalidValue                => 422,
-          Sequel::UniqueConstraintViolation   => 422
+          ArgumentError                     => 422,
+          JSON::ParserError                 => 422,
+          JSON::Schema::ValidationError     => 422,
+          RuntimeError                      => 422,
+          Sequel::DatabaseError             => 422,
+          Sequel::NoMatchingRow             => 404,
+          Sequel::InvalidValue              => 422,
+          Sequel::UniqueConstraintViolation => 422
         }.freeze
 
         # Регистрирует обработчик ошибки
