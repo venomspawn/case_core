@@ -40,7 +40,12 @@ module CaseCore
           dirs.each_with_object({}) do |dir, memo|
             dirname = File.basename(dir)
             match_data = NAME_REGEXP.match(dirname).to_a
-            memo[match_data[1]] = match_data[2] unless match_data.empty?
+            next if match_data.empty?
+            name = match_data[1]
+            version = match_data[2]
+            current = memo[name]
+            next if current.present? && current > version
+            memo[name] = version
           end
         end
       end
