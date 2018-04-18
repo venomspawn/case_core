@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-require 'oj'
 require 'sinatra/base'
 
 require_relative 'helpers'

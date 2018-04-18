@@ -31,7 +31,7 @@ namespace :case_core do
   task :run_rest_controller do
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(only: %w[class_ext logger oj sequel rest])
+    CaseCore::Init.run!(only: %w[class_ext logger oj sequel actions rest])
 
     CaseCore::API::REST::Controller.run!
   end

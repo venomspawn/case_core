@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/cases"
-require "#{$lib}/actions/documents"
-require "#{$lib}/actions/processing_statuses"
-require "#{$lib}/actions/requests"
-require "#{$lib}/actions/version"
-
 module CaseCore
   module API
     module REST
