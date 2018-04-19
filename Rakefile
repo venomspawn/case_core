@@ -44,4 +44,15 @@ namespace :case_core do
 
     CaseCore::API::STOMP::Controller.run!
   end
+
+  desc 'Запускает миграцию данных из `case_manager`'
+  task :transfer do
+    require_relative 'config/app_init'
+
+    CaseCore::Init.run!(only: %w[class_ext logger sequel])
+
+    require "#{$lib}/tasks/transfer"
+
+    CaseCore::Tasks::Transfer.launch!
+  end
 end
