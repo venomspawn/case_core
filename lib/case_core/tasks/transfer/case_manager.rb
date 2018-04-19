@@ -12,7 +12,7 @@ module CaseCore
         # @return [Array<Hash>]
         #   результирующий список
         def cases
-          @cases ||= db[:cases].select(:id, :created_at, :case_type).to_a
+          @cases ||= db[:cases].to_a
         end
 
         private
