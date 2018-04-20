@@ -13,9 +13,18 @@ module CaseCore
           # адресу места отправления реестра передаваемой корреспонденции с
           # документами заявки на обработку
           class ProcessingPlaceAddress < Base::Filler
-            def initialize(db, c4s3, memo)
+            # Инициализирует объект класса
+            # @param [CaseCore::Tasks::Transfer::OrgStruct::DB] os_db
+            #   объект, предоставляющий доступ к `org_struct`
+            # @param [CaseCore::Tasks::Transfer::MFC::DB] _mfc_db
+            #   объект, предоставляющий доступ к `mfc`
+            # @param [Hash] c4s3
+            #   ассоциативный массив с информацией о заявке
+            # @param [Hash] memo
+            #   ассоциативный массив с атрибутами заявки
+            def initialize(os_db, _mfc_db, c4s3, memo)
               office_id = c4s3['processing_place_id']
-              address = db.addresses[office_id] || {}
+              address = os_db.addresses[office_id] || {}
               super(address, memo)
             end
 

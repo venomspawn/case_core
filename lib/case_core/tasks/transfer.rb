@@ -7,6 +7,7 @@ require "#{$lib}/helpers/log"
 require_relative 'transfer/case_manager/case_attributes_extractor'
 require_relative 'transfer/case_manager/cases_extractor'
 require_relative 'transfer/case_manager/db'
+require_relative 'transfer/mfc/db'
 require_relative 'transfer/org_struct'
 
 module CaseCore
@@ -29,10 +30,18 @@ module CaseCore
 
       # Возвращает объект, предоставляющий возможность работы с базой данных
       # `case_manager`
-      # @return [CaseCore::Tasks::Transfer::CaseManager]
+      # @return [CaseCore::Tasks::Transfer::CaseManager::DB]
       #   результирующий объект
       def case_manager_db
         @case_manager_db ||= CaseManager::DB.new
+      end
+
+      # Возвращает объект, предоставляющий возможность работы с базой данных
+      # `mfc`
+      # @return [CaseCore::Tasks::Transfer::MFC::DB]
+      #   результирующий объект
+      def mfc_db
+        @mfc_db ||= MFC::DB.new
       end
 
       # Возвращает объект, предоставляющий возможность работы с базой данных
@@ -89,7 +98,7 @@ module CaseCore
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
           attributes = CaseManager::CaseAttributesExtractor.extract(c4s3)
-          OrgStruct.fill(org_struct_db, attributes, attributes)
+          OrgStruct.fill(org_struct_db, mfc_db, attributes, attributes)
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
         end

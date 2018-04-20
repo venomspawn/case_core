@@ -12,11 +12,22 @@ module CaseCore
           # Класс объектов, извлекающих атрибуты заявки, которые относятся к
           # адресу офиса МФЦ, в котором заявке выставлен статус `closed`
           class ClosedOfficeMFCAddress < Base::Filler
-            def initialize(db, c4s3, memo)
+            # Инициализирует объект класса
+            # @param [CaseCore::Tasks::Transfer::OrgStruct::DB] os_db
+            #   объект, предоставляющий доступ к `org_struct`
+            # @param [CaseCore::Tasks::Transfer::MFC::DB] mfc_db
+            #   объект, предоставляющий доступ к `mfc`
+            # @param [Hash] c4s3
+            #   ассоциативный массив с информацией о заявке
+            # @param [Hash] memo
+            #   ассоциативный массив с атрибутами заявки
+            def initialize(os_db, mfc_db, c4s3, memo)
               operator_id = c4s3['closed_operator_id']
-              employee = db.employees[operator_id] || {}
+              ecm_person = mfc_db.ecm_people[operator_id] || {}
+              org_struct_id = ecm_person[:org_struct_id]&.to_i
+              employee = os_db.employees[org_struct_id] || {}
               office_id = employee[:office_id]
-              address = db.addresses[office_id] || {}
+              address = os_db.addresses[office_id] || {}
               super(address, memo)
             end
 

@@ -12,10 +12,19 @@ module CaseCore
           # Класс объектов, извлекающих атрибуты заявки, которые относятся к
           # адресу места выдачи заявки
           class IssuePlaceAddress < Base::Filler
-            def initialize(db, c4s3, memo)
+            # Инициализирует объект класса
+            # @param [CaseCore::Tasks::Transfer::OrgStruct::DB] os_db
+            #   объект, предоставляющий доступ к `org_struct`
+            # @param [CaseCore::Tasks::Transfer::MFC::DB] _mfc_db
+            #   объект, предоставляющий доступ к `mfc`
+            # @param [Hash] c4s3
+            #   ассоциативный массив с информацией о заявке
+            # @param [Hash] memo
+            #   ассоциативный массив с атрибутами заявки
+            def initialize(os_db, _mfc_db, c4s3, memo)
               issue_method = c4s3['issue_method']
               office_id = c4s3['issue_place_id'] if issue_method == 'mfc'
-              address = db.addresses[office_id] || {}
+              address = os_db.addresses[office_id] || {}
               super(address, memo)
             end
 
