@@ -7,6 +7,7 @@ require "#{$lib}/helpers/log"
 require_relative 'transfer/case_manager/case_attributes_extractor'
 require_relative 'transfer/case_manager/cases_extractor'
 require_relative 'transfer/case_manager/db'
+require_relative 'transfer/org_struct'
 
 module CaseCore
   module Tasks
@@ -36,10 +37,10 @@ module CaseCore
 
       # Возвращает объект, предоставляющий возможность работы с базой данных
       # `org_struct`
-      # @return [CaseCore::Tasks::Transfer::OrgStruct]
+      # @return [CaseCore::Tasks::Transfer::OrgStruct::DB]
       #   результирующий объект
-      def org_struct
-        @org_struct ||= OrgStruct.new
+      def org_struct_db
+        @org_struct_db ||= OrgStruct::DB.new
       end
 
       # Названия атрибутов испортируемых записей заявок
@@ -88,6 +89,7 @@ module CaseCore
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
           attributes = CaseManager::CaseAttributesExtractor.extract(c4s3)
+          OrgStruct.fill(org_struct_db, attributes, attributes)
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
         end
