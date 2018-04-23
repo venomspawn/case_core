@@ -2,9 +2,11 @@
 
 require "#{$lib}/helpers/log"
 
-require_relative 'transfer/case_manager'
-require_relative 'transfer/mfc'
-require_relative 'transfer/org_struct'
+require_relative 'transfer/data_hub'
+require_relative 'transfer/extractors/attributes'
+require_relative 'transfer/extractors/cases'
+
+Dir["#{__dir__}/transfer/fillers/*.rb"].each(&method(:require))
 
 module CaseCore
   module Tasks
@@ -19,34 +21,16 @@ module CaseCore
 
       # Запускает миграцию данных
       def launch!
+        @hub = DataHub.new
         import_cases
       end
 
       private
 
-      # Возвращает объект, предоставляющий возможность работы с базой данных
-      # `case_manager`
-      # @return [CaseCore::Tasks::Transfer::CaseManager::DB]
-      #   результирующий объект
-      def cm_db
-        @cm_db ||= CaseManager::DB.new
-      end
-
-      # Возвращает объект, предоставляющий возможность работы с базой данных
-      # `mfc`
-      # @return [CaseCore::Tasks::Transfer::MFC::DB]
-      #   результирующий объект
-      def mfc_db
-        @mfc_db ||= MFC::DB.new
-      end
-
-      # Возвращает объект, предоставляющий возможность работы с базой данных
-      # `org_struct`
-      # @return [CaseCore::Tasks::Transfer::OrgStruct::DB]
-      #   результирующий объект
-      def os_db
-        @os_db ||= OrgStruct::DB.new
-      end
+      # Объект, предоставляющий доступ к данным
+      # @return [CaseCore::Tasks::Transfer::DataHub]
+      #   объект, предоставляющий доступ к данным
+      attr_reader :hub
 
       # Названия атрибутов испортируемых записей заявок
       CASE_ATTRS = %i[id type created_at]
@@ -57,7 +41,7 @@ module CaseCore
       # @return [Array<String>]
       #   список идентификаторов импортированных записей
       def import_cases
-        extracted_cases = CaseManager::Extractors::Cases.extract(cm_db)
+        extracted_cases = Extractors::Cases.extract(hub)
         values = extracted_cases.keys.map { |h| h.values_at(*CASE_ATTRS) }
         Models::Case.import(CASE_ATTRS, values)
         log_imported_cases(values.size, binding)
@@ -85,6 +69,12 @@ module CaseCore
         log_imported_case_attributes(values.size, binding)
       end
 
+      # Классы объектов, заполняющих атрибуты заявки
+      FILLER_CLASSES = Fillers
+                       .constants
+                       .map(&Fillers.method(:const_get))
+                       .select { |c| c.is_a?(Class) }
+
       # Возвращает список списков значений полей записей атрибутов заявок
       # @param [Array<Hash>] imported_cases
       #   список ассоциативных массивов с информацией об атрибутах
@@ -93,9 +83,8 @@ module CaseCore
       #   результирующий список
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
-          attributes = CaseManager::Extractors::Attributes.extract(c4s3)
-          MFC.fill(cm_db, mfc_db, attributes, attributes)
-          OrgStruct.fill(os_db, mfc_db, attributes, attributes)
+          attributes = Extractors::Attributes.extract(c4s3)
+          FILLER_CLASSES.each { |filler| filler.new(hub, c4s3).fill }
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
         end
