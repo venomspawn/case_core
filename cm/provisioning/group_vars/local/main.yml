@@ -1,5 +1,6 @@
 apt_packages:
   - git
+  - libmysqlclient-dev
   - libpq-dev
   - mc
   - vim

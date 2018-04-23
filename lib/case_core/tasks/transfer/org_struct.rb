@@ -17,15 +17,17 @@ module CaseCore
 
         # Заполняет ассоциативный массив атрибутами заявки, извлечённых из
         # `org_struct`
-        # @param [CaseCore::Tasks::Transfer::OrgStruct::DB] db
+        # @param [CaseCore::Tasks::Transfer::OrgStruct::DB] os_db
         #   объект, предоставляющий доступ к `org_struct`
+        # @param [CaseCore::Tasks::Transfer::MFC::DB] mfc_db
+        #   объект, предоставляющий доступ к `mfc`
         # @param [Hash] c4s3
         #   ассоциативный массив с информацией о заявке
         # @param [Hash] memo
         #   ассоциативный массив атрибутов заявки
-        def self.fill(db, c4s3, memo)
+        def self.fill(os_db, mfc_db, c4s3, memo)
           FILLER_CLASSES.each do |filler_class|
-            filler_class.new(db, c4s3, memo).fill
+            filler_class.new(os_db, mfc_db, c4s3, memo).fill
           end
         end
       end
