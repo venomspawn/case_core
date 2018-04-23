@@ -5,7 +5,7 @@
 
 RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /version' do
-    include CaseCore::API::REST::Version::Show::SpecHelper
+    include CaseCore::Actions::Version::Show::SpecHelper
 
     subject { get '/version' }
 

@@ -12,7 +12,7 @@ CaseCore::API::REST::Controller.configure do |settings|
   settings.set    :port, ENV['CC_PORT']
 
   settings.disable :show_exceptions
-  settings.enable  :dump_errors
+  settings.disable :dump_errors
   settings.enable  :raise_errors
 
   settings.use    Rack::CommonLogger, $logger
