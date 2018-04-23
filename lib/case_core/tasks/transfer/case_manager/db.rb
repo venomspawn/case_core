@@ -3,8 +3,6 @@
 module CaseCore
   module Tasks
     class Transfer
-      # Пространство имён классов объектов, оперирующих записями из базы данных
-      # `case_manager`
       module CaseManager
         # Класс объектов, предоставляющих возможность работы с базой данных
         # `case_manager`
@@ -14,6 +12,15 @@ module CaseCore
           #   результирующий список
           def cases
             @cases ||= db[:cases].to_a
+          end
+
+          # Возвращает ассоциативный массив, в котором идентификаторам записей
+          # реестров передаваемой корреспонденции соответствуют ассоциативные
+          # массивы с информацией об этих реестрах
+          # @return [Hash]
+          #   результирующий ассоциативный массив
+          def registers
+            @registers ||= db[:registers].as_hash(:id)
           end
 
           private
