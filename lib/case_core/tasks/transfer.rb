@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'ap'
 require "#{$lib}/helpers/log"
 
 require_relative 'transfer/data_hub'
@@ -13,6 +14,10 @@ module CaseCore
     # Класс объектов, осуществляющих миграцию данных из `case_manager`
     class Transfer
       include Helpers::Log
+
+      def self.stats
+        @stats ||= {}
+      end
 
       # Создаёт экземпляр класса и запускает миграцию данных
       def self.launch!
@@ -46,6 +51,7 @@ module CaseCore
         Models::Case.import(CASE_ATTRS, values)
         log_imported_cases(values.size, binding)
         import_case_attributes(extracted_cases.values)
+        ap Transfer.stats
       end
 
       # Создаёт запись в журнале событий о том, что импортированы записи заявок

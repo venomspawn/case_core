@@ -24,8 +24,10 @@ module CaseCore
             # ассоциативный массив
             def fill
               names.each do |key, name|
+                Transfer.stats[name] ||= 0
                 value = record[key]
                 c4s3[name] = value unless value.blank?
+                Transfer.stats[name] += 1 unless value.blank?
               end
             end
 

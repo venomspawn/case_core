@@ -127,11 +127,30 @@ module CaseCore
         # @param [Integer] register_id
         #   идентификатор записи реестра передаваемой корреспонденции
         # @return [Hash]
-        #   результирующий ассоциативый массив
+        #   результирующий ассоциативный массив
         def register_office_address(register_id)
           register = cm.registers[register_id] || {}
           office_id = register[:office_id]&.to_i
           mfc.ld_addresses[office_id] || {}
+        end
+
+        # Возвращает ассоциативный массив с информацией о содержимом документа,
+        # удостоверяющего личность. Если эту информацию невозможно найти,
+        # возвращает пустой ассоциативный массив.
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [Hash]
+        #   результирующий ассоциативный массив
+        def applicant_identity_doc_content(applicant_id)
+          applicant = cab.ecm_people[applicant_id] || {}
+          folder_id = applicant[:private_folder_id]
+          documents = cab.ecm_documents[folder_id] || []
+          Cabinet::IDENTITY_DOC_URNS.each do |urn|
+            documents.each do |document|
+              return document[:content] if document[:schema_urn].include?(urn)
+            end
+          end
+          {}
         end
       end
     end
