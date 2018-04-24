@@ -14,9 +14,7 @@ module CaseCore
           # @return [Hash]
           #   результирующий ассоциативный массив
           def offices
-            @offices ||= db[:offices].each_with_object({}) do |office, memo|
-              memo[office[:id]] = office
-            end
+            @offices ||= db[:offices].as_hash(:id)
           end
 
           # Возвращает ассоциативный массив, в котором идентификаторам карточек
@@ -37,9 +35,7 @@ module CaseCore
           # @return [Hash]
           #   результирующий ассоциативный массив
           def employees
-            @employees ||= db[:employees].each_with_object({}) do |e, memo|
-              memo[e[:id]] = e
-            end
+            @employees ||= db[:employees].as_hash(:id)
           end
 
           private
