@@ -1,4 +1,4 @@
-FROM repo.it2.vm/ruby2.4.3-alpine3.7:latest
+FROM repo.it2.vm/ruby2.4.4-alpine3.7pm:latest
 
 COPY Gemfile Gemfile.lock ./
 
