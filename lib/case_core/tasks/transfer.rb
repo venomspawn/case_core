@@ -84,7 +84,7 @@ module CaseCore
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
           attributes = Extractors::Attributes.extract(c4s3)
-          FILLER_CLASSES.each { |filler| filler.new(hub, c4s3).fill }
+          FILLER_CLASSES.each { |filler| filler.new(hub, attributes).fill }
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
         end

@@ -34,8 +34,8 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
-            office_id = c4s3['processing_place_id']
-            hub.os.addresses[office_id] || {}
+            operator_id = c4s3['processing_operator_id']
+            hub.operator_office_address(operator_id)
           end
         end
       end

@@ -89,7 +89,7 @@ module CaseCore
         def target_service_service(target_service_rguid)
           target_service = mfc.ld_target_services[target_service_rguid] || {}
           service_id = target_service[:service_id]
-          mfc.ld_services[:service_id] || {}
+          mfc.ld_services[service_id] || {}
         end
 
         # Возвращает ассоциативный массив с информацией о паспорте услуги, чья
@@ -102,7 +102,7 @@ module CaseCore
         def target_service_passport(target_service_rguid)
           service = target_service_service(target_service_rguid)
           passport_id = service[:passport_id]
-          mfc.ld_passports[:passport_id] || {}
+          mfc.ld_passports[passport_id] || {}
         end
 
         # Возвращает ассоциативный массив с информацией о ведомстве, в которое
@@ -130,7 +130,7 @@ module CaseCore
         #   результирующий ассоциативый массив
         def register_office_address(register_id)
           register = cm.registers[register_id] || {}
-          office_id = register[:office_id]
+          office_id = register[:office_id]&.to_i
           mfc.ld_addresses[office_id] || {}
         end
       end

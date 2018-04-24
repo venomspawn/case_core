@@ -107,8 +107,14 @@ module CaseCore
             end
           end
 
-          # Список значений атрибута `issue_method`
-          ISSUE_METHODS = %w[institution mfc email post other].freeze
+          # Ассоциативный массив значений атрибута `issue_method`
+          ISSUE_METHODS = {
+            1 => 'institution',
+            2 => 'mfc',
+            3 => 'email',
+            4 => 'post',
+            5 => 'other'
+          }.freeze
 
           # Названия атрибутов, чьи значения должны представлять дату
           ATTR_DATES = %w[

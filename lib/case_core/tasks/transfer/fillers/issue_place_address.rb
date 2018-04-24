@@ -34,7 +34,7 @@ module CaseCore
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
             issue_method = c4s3['issue_method']
-            office_id = c4s3['issue_place_id'] if issue_method == 'mfc'
+            office_id = c4s3['issue_place_id']&.to_i if issue_method == 'mfc'
             hub.os.addresses[office_id] || {}
           end
         end
