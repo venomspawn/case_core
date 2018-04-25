@@ -13,6 +13,7 @@ module CaseCore
           # соответствуют названия атрибутов заявки
           NAMES = {
             zip:        'applicant_organization_legal_index',
+            country:    'applicant_organization_legal_country_name',
             region:     'applicant_organization_legal_region_name',
             sub_region: 'applicant_organization_legal_district',
             city:       'applicant_organization_legal_city',

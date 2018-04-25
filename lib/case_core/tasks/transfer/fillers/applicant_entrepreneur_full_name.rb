@@ -6,27 +6,12 @@ module CaseCore
   module Tasks
     class Transfer
       module Fillers
-        # Класс объектов, заполняющих атрибуты заявки с информацией о
-        # заявителе, который является индивидуальным предпринимателем
-        class ApplicantEntrepreneurOrganization < Base::Filler
+        # Класс объектов, заполняющих атрибут заявки, который содержит в себе
+        # полное имя заявителя, являющегося индивидуальным предпринимателем
+        class ApplicantEntrepreneurFullName < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
-          NAMES = {
-            :full_name =>
-              'applicant_entrepreneur_business_name',
-            :ogrnip =>
-              'applicant_entrepreneur_ogrn',
-            :bankname =>
-              'applicant_entrepreneur_bank_name',
-            :bik =>
-              'applicant_entrepreneur_bik',
-            :settlement_account =>
-              'applicant_entrepreneur_checking_account',
-            :correspondent_account =>
-              'applicant_entrepreneur_correspondent_account',
-            :inn =>
-              'applicant_entrepreneur_inn'
-          }.freeze
+          NAMES = { full_name: 'applicant_entrepreneur_full_name' }.freeze
 
           private
 
@@ -40,7 +25,7 @@ module CaseCore
           def extract_record(hub, c4s3)
             applicant_id = c4s3['applicant_id']
             return {} unless hub.applicant_entrepreneur?(applicant_id)
-            hub.applicant_organization(applicant_id)
+            { full_name: hub.applicant_full_name(applicant_id) }
           end
         end
       end

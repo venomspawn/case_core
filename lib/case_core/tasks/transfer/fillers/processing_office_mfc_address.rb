@@ -14,6 +14,7 @@ module CaseCore
           # соответствуют названия атрибутов заявки
           NAMES = {
             zip:        'processing_office_mfc_index',
+            country:    'processing_office_mfc_country_name',
             region:     'processing_office_mfc_region_name',
             sub_region: 'processing_office_mfc_district',
             city:       'processing_office_mfc_city',

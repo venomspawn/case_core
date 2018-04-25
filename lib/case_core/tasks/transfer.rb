@@ -111,6 +111,9 @@ module CaseCore
         Transfer.stats.keys.sort.each do |name|
           log_debug(context) { "#{name}: #{Transfer.stats[name]}" }
         end
+        Transfer.stats.select { |_, v| v.zero? }.keys.sort.each do |name|
+          log_debug(context) { "#{name}: zero" }
+        end
       end
     end
   end

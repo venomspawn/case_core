@@ -7,22 +7,13 @@ module CaseCore
     class Transfer
       module Fillers
         # Класс объектов, извлекающих атрибуты заявки, которые относятся к
-        # адресу места выдачи заявки
-        class IssuePlaceAddress < Base::Filler
+        # месту выдачи заявки
+        class IssuePlace < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            zip:        'issue_place_index',
-            country:    'issue_place_country_name',
-            region:     'issue_place_region_name',
-            sub_region: 'issue_place_district',
-            district:   'issue_place_district',
-            city:       'issue_place_city',
-            settlement: 'issue_place_settlement',
-            street:     'issue_place_street',
-            house:      'issue_place_house',
-            building:   'issue_place_building',
-            appartment: 'issue_place_room'
+            name:  'issue_place_name',
+            title: 'issue_place_name'
           }.freeze
 
           private
@@ -35,12 +26,13 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
-            office_id = c4s3['issue_place_id']&.to_i
             case c4s3['issue_method']
             when 'mfc'
-              hub.os.addresses[office_id] || {}
+              office_id = c4s3['issue_place_id']&.to_i
+              hub.os.offices[office_id] || {}
             when 'institution'
-              hub.mfc.ld_offices[office_id] || {}
+              institution_rguid = c4s3['institution_rguid']
+              hub.mfc.ld_institutions[institution_rguid] || {}
             else
               {}
             end

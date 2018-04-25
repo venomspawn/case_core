@@ -24,6 +24,13 @@ module CaseCore
           attr_reader :ld_institutions
 
           # Ассоциативный массив, в котором идентификаторам записей офисов
+          # ведомства локального справочника `mfc` сопоставлены ассоциативные
+          # массивы с информацией об этих офисах
+          # @return [Hash]
+          #   ассоциативный массив с информацией об офисах ведомств
+          attr_reader :ld_offices
+
+          # Ассоциативный массив, в котором идентификаторам записей офисов
           # ведомств локального справочника `mfc` сопоставлены ассоциативные
           # массивы с информацией об адресах этих офисов
           # @return [Hash]
@@ -68,6 +75,7 @@ module CaseCore
           def initialize_collections
             initialize_ecm_people
             initialize_ld_institutions
+            initialize_ld_offices
             initialize_ld_addresses
             initialize_ld_passports
             initialize_ld_services
@@ -90,6 +98,16 @@ module CaseCore
           def initialize_ld_institutions
             data = db[:ld_institutions].select(*LD_INSTITUTIONS_COLUMNS)
             @ld_institutions = data.as_hash(:rguid)
+          end
+
+          # Список названий столбцов, извлекаемых из таблицы `ld_offices`
+          LD_OFFICES_COLUMNS = %i[id title]
+
+          # Инициализирует коллекцию данных об офисах ведомств локального
+          # справочника
+          def initialize_ld_offices
+            data = db[:ld_offices].select(*LD_OFFICES_COLUMNS)
+            @ld_offices = data.as_hash(:id)
           end
 
           # Инициализирует коллекцию данных об адресах офисов локального

@@ -24,7 +24,7 @@ module CaseCore
           end
 
           # Названия исключаемых атрибутов
-          EXCLUDED_NAMES = %i[id case_type created_at].freeze
+          EXCLUDED_NAMES = %i[id case_type].freeze
 
           # Возвращает ассоциативный массив атрибутов заявки
           # @return [Hash] c4s3
@@ -35,6 +35,8 @@ module CaseCore
               name = mend_name(name)
               value = mend_value(name, value)
               memo[name] = value
+              Transfer.stats[name] ||= 0
+              Transfer.stats[name] += 1
             end
           end
 
@@ -55,6 +57,7 @@ module CaseCore
           # Ассоциативный массив, сопоставляющий названиям атрибутов заявок в
           # `case_manager` новые названия
           NAMES = {
+            created_at:                   'case_creation_date',
             service_id:                   'target_service_rguid',
             issue_location_type:          'issue_method',
             issue_location_id:            'issue_place_id',
@@ -126,6 +129,7 @@ module CaseCore
 
           # Названия атрибутов, чьи значения должны представлять дату и время
           ATTR_TIMES = %w[
+            case_creation_date
             closed_date
             pending_register_sending_date
             pending_rejecting_register_sending_date

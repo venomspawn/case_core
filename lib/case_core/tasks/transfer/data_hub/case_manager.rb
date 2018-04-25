@@ -37,7 +37,45 @@ module CaseCore
 
           # Инициализирует коллекции данных
           def initialize_collections
-            @cases = db[:cases].to_a
+            initialize_cases
+            initialize_registers
+          end
+
+          # Ассоциативный массив, в котором состояниям заявок сопоставляются их
+          # статусы
+          CASE_STATUSES = {
+            'error'      => 'Ошибка',
+            'packaging'  => 'Формирование пакета документов',
+            'pending'    => 'Ожидание отправки в ведомство',
+            'processing' => 'Обработка пакета документов в ведомстве',
+            'issuance'   => 'Выдача результата оказания услуги',
+            'rejecting'  => 'Возврат невостребованного результата в ведомство',
+            'closed'     => 'Закрыта'
+          }.freeze
+
+          # Ассоциативный массив, в котором состояниям заявок сопоставляются
+          # названия атрибутов завершения этапа жизненного цикла заявки
+          PLANNED_FINISH_DATE_ATTR_NAMES = {
+            'packaging' =>  :docs_send_expected_at,
+            'pending'   =>  :docs_send_expected_at,
+            'processing' => :response_expected_at
+          }.freeze
+
+          # Инициализирует коллекцию данных заявок
+          def initialize_cases
+            @cases = db[:cases].to_a.each do |c4s3|
+              c4s3[:case_id] = c4s3[:id]
+              state = c4s3[:state]
+              case_status = CASE_STATUSES[state]
+              c4s3[:case_status] = case_status unless case_status.nil?
+              prop = PLANNED_FINISH_DATE_ATTR_NAMES[state]
+              c4s3[:planned_finish_date] = c4s3[prop] unless prop.nil?
+            end
+          end
+
+          # Инициализирует коллекцию данных реестров передаваемой
+          # корреспонденции
+          def initialize_registers
             @registers = db[:registers].as_hash(:id)
           end
         end

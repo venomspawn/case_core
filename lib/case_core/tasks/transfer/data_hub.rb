@@ -119,6 +119,21 @@ module CaseCore
           mfc.ld_institutions[institution_rguid] || {}
         end
 
+        # Возвращает ассоциативный массив с информацией об офисе ведомства, в
+        # которое отправлен реестр передаваемой корреспонденции с
+        # предоставленным идентификатором записи. Если информацию об адресе
+        # офиса ведомства невозможно найти, возвращает пустой ассоциативный
+        # массив.
+        # @param [Integer] register_id
+        #   идентификатор записи реестра передаваемой корреспонденции
+        # @return [Hash]
+        #   результирующий ассоциативный массив
+        def register_office(register_id)
+          register = cm.registers[register_id] || {}
+          office_id = register[:office_id]&.to_i
+          mfc.ld_offices[office_id] || {}
+        end
+
         # Возвращает ассоциативный массив с информацией об адресе офиса
         # ведомства, в которое отправлен реестр передаваемой корреспонденции с
         # предоставленным идентификатором записи. Если информацию об адресе
@@ -194,6 +209,17 @@ module CaseCore
         def applicant_organization?(applicant_id)
           organization = applicant_organization(applicant_id)
           organization[:type] == 'L'
+        end
+
+        # Возвращает полное имя заявителя
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [String]
+        #   полное имя заявителя
+        def applicant_full_name(applicant_id)
+          applicant = cab.ecm_people[applicant_id] || {}
+          parts = applicant.values_at(:last_name, :first_name, :middle_name)
+          parts.select(&:present?).join(' ')
         end
       end
     end
