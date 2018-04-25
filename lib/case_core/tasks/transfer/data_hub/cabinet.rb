@@ -10,6 +10,7 @@ module CaseCore
         # `cabinet`
         class Cabinet < Base::DB
           require_relative 'cabinet/ecm_documents'
+          require_relative 'cabinet/vicarious_authorities'
 
           # Префикс URN
           IDENTITY_DOC_URN_PREFIX =
@@ -151,22 +152,7 @@ module CaseCore
           # Инициализирует коллекцию данных о доверенностях
           def initialize_vicarious_authorities
             @vicarious_authorities =
-              db[:ecm_person_spokesmen].each_with_object({}) do |link, memo|
-              person_id = link[:person_id]
-              person = ecm_people[person_id] || {}
-              folder_id = person[:private_folder_id]
-              documents = ecm_documents[folder_id] || []
-              spokesman_id = link[:spokesman_id]
-              doc_id = link[:power_of_attorney_id]
-              documents.each do |doc|
-                next unless doc[:id] == doc_id
-                key = [person_id, spokesman_id]
-                current = memo[key]
-                created_at = doc[:created_at]
-                next unless current.nil? || current[:created_at] < created_at
-                memo[key] = doc
-              end
-              end
+              VicariousAuthorities.data(db, ecm_people, ecm_documents)
           end
         end
       end
