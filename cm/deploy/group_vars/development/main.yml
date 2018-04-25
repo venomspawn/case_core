@@ -22,6 +22,8 @@ docker_run_variables:
   CC_STOMP_PORT: 61613
   CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
 
+  CC_STOMP_RESPONSE_QUEUE: esia_client.queue,certificate_case_smev3.response.queue
+
   # Настройки подключения к Consul
   CC_CONSUL_SCHEMA: http
   CC_CONSUL_HOST: 10.33.101.1
