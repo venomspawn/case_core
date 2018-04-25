@@ -48,6 +48,12 @@ module CaseCore
           #   ассоциативный массив с информацией о заявителях
           attr_reader :ecm_people
 
+          # Ассоциативный массив, в котором идентификаторам записей организаций
+          # сопоставлены ассоциативные массивы с информацией об организациях
+          # @return [Hash]
+          #   ассоциативный массив с информацией об организациях
+          attr_reader :ecm_organizations
+
           # Ассоциативный массив, в котором идентификаторам записей заявителей
           # сопоставлены ассоциативные массивы с информацией о контактных
           # данных
@@ -100,6 +106,7 @@ module CaseCore
           # Инициализирует коллекции данных
           def initialize_collections
             initialize_ecm_people
+            initialize_ecm_organizations
             initialize_ecm_contacts
             initialize_ecm_documents
             initialize_ecm_addresses
@@ -125,7 +132,18 @@ module CaseCore
           # Инициализирует коллекцию данных о заявителях
           def initialize_ecm_people
             data = db[:ecm_people].select(*ECM_PEOPLE_COLUMNS)
-            @ecm_people = data.as_hash(:id)
+            @ecm_people = data.as_hash(:id).each do |_, person|
+              person[:birth_date] &&= person[:birth_date].strftime('%FT%T')
+            end
+          end
+
+          # Инициализирует коллекцию данных о заявителях
+          def initialize_ecm_organizations
+            data = db[:ecm_organizations]
+            @ecm_organizations = data.as_hash(:id).each do |_, org|
+              org[:registration_date] &&=
+                org[:registration_date].strftime('%FT%T')
+            end
           end
 
           # Инициализирует коллекцию данных о контактных данных

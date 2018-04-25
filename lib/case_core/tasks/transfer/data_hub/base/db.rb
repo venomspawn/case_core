@@ -29,7 +29,6 @@ module CaseCore
                 password: pass
               }
               @db = Sequel.connect(params)
-              db.loggers << $logger
             end
 
             private

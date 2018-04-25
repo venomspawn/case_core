@@ -7,13 +7,25 @@ module CaseCore
     class Transfer
       module Fillers
         # Класс объектов, заполняющих атрибуты заявки с информацией о
-        # контактных данных представителя
-        class AgentContacts < Base::Filler
+        # заявителе, который является индивидуальным предпринимателем
+        class ApplicantEntrepreneurOrganization < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            email: 'agent_individual_email',
-            phone: 'agent_individual_phone_number'
+            :full_name =>
+              'applicant_enterpreneur_business_name',
+            :ogrnip =>
+              'applicant_enterpreneur_ogrn',
+            :bankname =>
+              'applicant_entrepreneur_bank_name',
+            :bik =>
+              'applicant_entrepreneur_bik',
+            :settlement_account =>
+              'applicant_entrepreneur_checking_account',
+            :correspondent_account =>
+              'applicant_entrepreneur_correspondent_account',
+            :inn =>
+              'applicant_entrepreneur_inn'
           }.freeze
 
           private
@@ -26,8 +38,9 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
-            agent_id = c4s3['agent_id']
-            hub.cab.ecm_contacts[agent_id] || {}
+            applicant_id = c4s3['applicant_id']
+            return {} unless hub.applicant_entrepreneur?(applicant_id)
+            hub.applicant_organization(applicant_id)
           end
         end
       end

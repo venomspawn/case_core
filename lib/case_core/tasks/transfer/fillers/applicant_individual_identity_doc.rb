@@ -6,21 +6,19 @@ module CaseCore
   module Tasks
     class Transfer
       module Fillers
-        # Класс объектов, извлекающих атрибуты заявки, которые относятся к
-        # адресу места проживания представителя
-        class AgentIndividualResidenceAddress < Base::Filler
+        # Класс объектов, заполняющих атрибуты заявки с информацией о
+        # документе, удостоверяющем личность заявителя, который является
+        # физически лицом
+        class ApplicantIndividualIdentityDoc < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            zip:        'agent_individual_residence_index',
-            region:     'agent_individual_residence_region_name',
-            sub_region: 'agent_individual_residence_district',
-            city:       'agent_individual_residence_city',
-            settlement: 'agent_individual_residence_settlement',
-            street:     'agent_individual_residence_street',
-            house:      'agent_individual_residence_house',
-            building:   'agent_individual_residence_building',
-            appartment: 'agent_individual_residence_room'
+            'ser'     => 'applicant_individual_identity_doc_series',
+            'nom'     => 'applicant_individual_identity_doc_number',
+            'kemvid'  => 'applicant_individual_identity_doc_issued_by',
+            'datavid' => 'applicant_individual_identity_doc_issue_date',
+            'deys'    => 'applicant_individual_identity_doc_expiration_end',
+            'type'    => 'applicant_individual_identity_doc_type'
           }.freeze
 
           private
@@ -33,8 +31,9 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
-            agent_id = c4s3['agent_id']
-            hub.cab.ecm_factual_addresses[agent_id] || {}
+            applicant_id = c4s3['applicant_id']
+            return {} unless hub.applicant_individual?(applicant_id)
+            hub.applicant_identity_doc_content(applicant_id)
           end
         end
       end

@@ -152,6 +152,49 @@ module CaseCore
           end
           {}
         end
+
+        # Возвращает ассоциативный массив с информацией об организации
+        # заявителя. Если информацию об организации невозможно найти,
+        # возвращает пустой ассоциативный массив.
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [Hash]
+        #   результирующий ассоциативный массив
+        def applicant_organization(applicant_id)
+          applicant = cab.ecm_people[applicant_id] || {}
+          organization_id = applicant[:organization_id]
+          cab.ecm_organizations[organization_id] || {}
+        end
+
+        # Возвращает, является ли заявитель физическим лицом
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [Boolean]
+        #   является ли заявитель физическим лицом
+        def applicant_individual?(applicant_id)
+          applicant = cab.ecm_people[applicant_id] || {}
+          applicant[:organization_id].nil?
+        end
+
+        # Возвращает, является ли заявитель индивидуальным предпринимателем
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [Boolean]
+        #   является ли заявитель индивидуальным предпринимателем
+        def applicant_entrepreneur?(applicant_id)
+          organization = applicant_organization(applicant_id)
+          organization[:type] == 'B'
+        end
+
+        # Возвращает, является ли заявитель юридическим лицом
+        # @param [String] applicant_id
+        #   идентификатор записи заявителя
+        # @return [Boolean]
+        #   является ли заявитель юридическим лицом
+        def applicant_organization?(applicant_id)
+          organization = applicant_organization(applicant_id)
+          organization[:type] == 'L'
+        end
       end
     end
   end

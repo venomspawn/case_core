@@ -7,20 +7,20 @@ module CaseCore
     class Transfer
       module Fillers
         # Класс объектов, извлекающих атрибуты заявки, которые относятся к
-        # адресу места проживания представителя
-        class AgentIndividualResidenceAddress < Base::Filler
+        # адресу регистрации заявителя, являющегося физическим лицом
+        class ApplicantIndividualRegistrationAddress < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            zip:        'agent_individual_residence_index',
-            region:     'agent_individual_residence_region_name',
-            sub_region: 'agent_individual_residence_district',
-            city:       'agent_individual_residence_city',
-            settlement: 'agent_individual_residence_settlement',
-            street:     'agent_individual_residence_street',
-            house:      'agent_individual_residence_house',
-            building:   'agent_individual_residence_building',
-            appartment: 'agent_individual_residence_room'
+            zip:        'applicant_individual_registration_index',
+            region:     'applicant_individual_registration_region_name',
+            sub_region: 'applicant_individual_registration_district',
+            city:       'applicant_individual_registration_city',
+            settlement: 'applicant_individual_registration_settlement',
+            street:     'applicant_individual_registration_street',
+            house:      'applicant_individual_registration_house',
+            building:   'applicant_individual_registration_building',
+            appartment: 'applicant_individual_registration_room'
           }.freeze
 
           private
@@ -33,8 +33,9 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив полей записи
           def extract_record(hub, c4s3)
-            agent_id = c4s3['agent_id']
-            hub.cab.ecm_factual_addresses[agent_id] || {}
+            applicant_id = c4s3['applicant_id']
+            return {} unless hub.applicant_individual?(applicant_id)
+            hub.cab.ecm_addresses[applicant_id] || {}
           end
         end
       end

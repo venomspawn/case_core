@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ap'
 require "#{$lib}/helpers/log"
 
 require_relative 'transfer/data_hub'
@@ -15,6 +14,10 @@ module CaseCore
     class Transfer
       include Helpers::Log
 
+      # Возвращает ассоциативный массив со статистикой по импортированным
+      # атрибутам
+      # @return [Hash]
+      #   ассоциативный массив со статистикой по импортированным атрибутам
       def self.stats
         @stats ||= {}
       end
@@ -51,7 +54,6 @@ module CaseCore
         Models::Case.import(CASE_ATTRS, values)
         log_imported_cases(values.size, binding)
         import_case_attributes(extracted_cases.values)
-        ap Transfer.stats
       end
 
       # Создаёт запись в журнале событий о том, что импортированы записи заявок
@@ -106,6 +108,9 @@ module CaseCore
         log_info(context) { <<-MESSAGE }
           Импортированы атрибуты заявок в количестве #{count}
         MESSAGE
+        Transfer.stats.keys.sort.each do |name|
+          log_debug(context) { "#{name}: #{Transfer.stats[name]}" }
+        end
       end
     end
   end
