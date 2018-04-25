@@ -49,9 +49,7 @@ namespace :case_core do
   task :transfer do
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(only: %w[class_ext oj logger sequel])
-
-    require "#{$lib}/tasks/transfer"
+    CaseCore::Init.run!(only: %w[class_ext oj logger sequel transfer])
 
     CaseCore::Tasks::Transfer.launch!
   end
