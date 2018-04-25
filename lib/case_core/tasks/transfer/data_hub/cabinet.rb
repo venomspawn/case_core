@@ -14,7 +14,7 @@ module CaseCore
 
           # Префикс URN
           IDENTITY_DOC_URN_PREFIX =
-            'urn:metastore:fragments.gosuslugi.type_zayavitel.'.freeze
+            'urn:metastore:fragments.gosuslugi.type_zayavitel.'
 
           # Названия документов, удостоверяющих личность
           IDENTITY_DOC_URN_NAMES = %w[
@@ -40,7 +40,7 @@ module CaseCore
 
           # URN документа, удостоверяющего полномочия
           VICARIOUS_AUTHORITY_URN =
-            'urn:metastore:fragments.MFC.Dokument_poln_predstav'.freeze
+            'urn:metastore:fragments.MFC.Dokument_poln_predstav'
 
           # Ассоциативный массив, в котором идентификаторам записей заявителей
           # сопоставлены ассоциативные массивы с информацией о заявителях

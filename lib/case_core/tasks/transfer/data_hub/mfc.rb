@@ -101,7 +101,7 @@ module CaseCore
           end
 
           # Список названий столбцов, извлекаемых из таблицы `ld_offices`
-          LD_OFFICES_COLUMNS = %i[id title]
+          LD_OFFICES_COLUMNS = %i[id title].freeze
 
           # Инициализирует коллекцию данных об офисах ведомств локального
           # справочника
@@ -121,12 +121,33 @@ module CaseCore
           # @param [Hash] addr
           #   ассоциативный массив с информацией об адресе
           def normalize_address(addr)
+            normalize_region(addr)
+            normalize_district(addr)
+            normalize_settlement(addr)
+          end
+
+          # Дополняет ассоциативный массив с информацией об адресе атрибутом с
+          # информацией о субъекте РФ
+          # @param [Hash] addr
+          #   ассоциативный массив с информацией об адресе
+          def normalize_region(addr)
             region = addr[:okrug] || addr[:federal_subject]
             addr[:region] = region unless region.blank?
+          end
 
+          # Дополняет ассоциативный массив с информацией об адресе атрибутом с
+          # информацией о районе субъекта РФ
+          # @param [Hash] addr
+          #   ассоциативный массив с информацией об адресе
+          def normalize_district(addr)
             district = addr[:town_area] || addr[:area]
             addr[:district] = district unless district.blank?
+          end
 
+          # Дополняет ассоциативный массив с информацией об адресе атрибутом с
+          # информацией о поселении
+          # @param [Hash] addr
+          def normalize_settlement(addr)
             settlement = addr[:town] || addr[:city_area]
             addr[:settlement] = settlement unless settlement.blank?
           end
@@ -142,7 +163,7 @@ module CaseCore
           end
 
           # Список названий столбцов, извлекаемых из таблицы `ld_services`
-          LD_SERVICES_COLUMNS = %i[id rguid title passport_id]
+          LD_SERVICES_COLUMNS = %i[id rguid title passport_id].freeze
 
           # Инициализирует коллекцию данных об услугах локального справочника
           def initialize_ld_services
@@ -152,7 +173,7 @@ module CaseCore
 
           # Список названий столбцов, извлекаемых из таблицы
           # `ld_target_services`
-          LD_TARGET_SERVICES_COLUMNS = %i[rguid title service_id]
+          LD_TARGET_SERVICES_COLUMNS = %i[rguid title service_id].freeze
 
           # Инициализирует коллекцию данных о целях услуг локального
           # справочника

@@ -11,7 +11,7 @@ module CaseCore
         class PendingRegisterInstitutionOffice < Base::Filler
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
-          NAMES = { name:  'pending_register_institution_office_name' }.freeze
+          NAMES = { name: 'pending_register_institution_office_name' }.freeze
 
           private
 

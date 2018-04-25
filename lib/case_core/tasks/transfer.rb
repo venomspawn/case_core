@@ -41,7 +41,7 @@ module CaseCore
       attr_reader :hub
 
       # Названия атрибутов испортируемых записей заявок
-      CASE_ATTRS = %i[id type created_at]
+      CASE_ATTRS = %i[id type created_at].freeze
 
       # Импортирует записи заявок из `case_manager` и возвращает список
       # ассоциативных массивов с информацией об атрибутах импортированных

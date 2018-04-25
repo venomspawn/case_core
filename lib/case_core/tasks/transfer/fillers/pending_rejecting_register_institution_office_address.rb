@@ -13,25 +13,25 @@ module CaseCore
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            :zip =>
+            zip:
               'pending_rejecting_register_institution_office_index',
-            :country =>
+            country:
               'pending_rejecting_register_institution_office_country_name',
-            :region =>
+            region:
               'pending_rejecting_register_institution_office_region_name',
-            :district =>
+            district:
               'pending_rejecting_register_institution_office_district',
-            :city =>
+            city:
               'pending_rejecting_register_institution_office_city',
-            :settlement =>
+            settlement:
               'pending_rejecting_register_institution_office_settlement',
-            :street =>
+            street:
               'pending_rejecting_register_institution_office_street',
-            :house =>
+            house:
               'pending_rejecting_register_institution_office_house',
-            :building =>
+            building:
               'pending_rejecting_register_institution_office_building',
-            :appartment =>
+            appartment:
               'pending_rejecting_register_institution_office_room'
           }.freeze
 

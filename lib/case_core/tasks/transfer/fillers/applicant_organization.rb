@@ -12,25 +12,25 @@ module CaseCore
           # Ассоциативный массив, в котором названиям полей записи
           # соответствуют названия атрибутов заявки
           NAMES = {
-            :full_name =>
+            full_name:
               'applicant_organization_full_name',
-            :short_name =>
+            short_name:
               'applicant_organization_short_name',
-            :ogrn =>
+            ogrn:
               'applicant_organization_ogrn',
-            :bankname =>
+            bankname:
               'applicant_organization_bank_name',
-            :bik =>
+            bik:
               'applicant_organization_bik',
-            :settlement_account =>
+            settlement_account:
               'applicant_organization_checking_account',
-            :correspondent_account =>
+            correspondent_account:
               'applicant_organization_correspondent_account',
-            :inn =>
+            inn:
               'applicant_organization_inn',
-            :kpp =>
+            kpp:
               'applicant_organization_kpp',
-             :registration_date =>
+            registration_date:
               'applicant_organization_registry_date'
           }.freeze
 
