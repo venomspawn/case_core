@@ -14,6 +14,11 @@ module CaseCore
           #   список ассоциативных массивов с информацией о заявках
           attr_reader :cases
 
+          # Список ассоциативных массивов с информацией о документах
+          # @return [Array<Hash>]
+          #   список ассоциативных массивов с информацией о документах
+          attr_reader :documents
+
           # Ассоциативный массив, в котором идентификаторам записей реестров
           # передаваемой корреспонденции соответствуют ассоциативные массивы с
           # информацией об этих реестрах
@@ -39,6 +44,7 @@ module CaseCore
           def initialize_collections
             initialize_cases
             initialize_registers
+            initialize_documents
           end
 
           # Ассоциативный массив, в котором состояниям заявок сопоставляются их
@@ -77,6 +83,11 @@ module CaseCore
           # корреспонденции
           def initialize_registers
             @registers = db[:registers].as_hash(:id)
+          end
+
+          # Инициализирует коллекцию данных документов заявок
+          def initialize_documents
+            @documents = db[:documents].to_a
           end
         end
       end
