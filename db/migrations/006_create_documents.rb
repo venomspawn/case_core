@@ -23,10 +23,10 @@ Sequel.migration do
       column :provided_as,    :provided_as_type
       column :size,           :text
       column :last_modified,  :text
-      column :quantity,       :integer
+      column :quantity,       :integer, default: 0
       column :mime_type,      :text
       column :filename,       :text
-      column :provided,       :boolean
+      column :provided,       :boolean, default: true
       column :in_document_id, :text
       column :fs_id,          :text
       column :created_at,     :timestamp

@@ -5,6 +5,7 @@ require "#{$lib}/helpers/log"
 require_relative 'transfer/data_hub'
 require_relative 'transfer/extractors/attributes'
 require_relative 'transfer/extractors/cases'
+require_relative 'transfer/extractors/documents'
 
 Dir["#{__dir__}/transfer/fillers/*.rb"].each(&method(:require))
 
@@ -31,6 +32,7 @@ module CaseCore
       def launch!
         @hub = DataHub.new
         import_cases
+        import_documents
       end
 
       private
@@ -40,18 +42,12 @@ module CaseCore
       #   объект, предоставляющий доступ к данным
       attr_reader :hub
 
-      # Названия атрибутов испортируемых записей заявок
-      CASE_ATTRS = %i[id type created_at].freeze
-
-      # Импортирует записи заявок из `case_manager` и возвращает список
-      # ассоциативных массивов с информацией об атрибутах импортированных
-      # заявок
-      # @return [Array<String>]
-      #   список идентификаторов импортированных записей
+      # Импортирует записи заявок из `case_manager`
       def import_cases
         extracted_cases = Extractors::Cases.extract(hub)
-        values = extracted_cases.keys.map { |h| h.values_at(*CASE_ATTRS) }
-        Models::Case.import(CASE_ATTRS, values)
+        columns = Models::Case.columns
+        values = extracted_cases.keys.map { |h| h.values_at(*columns) }
+        Models::Case.import(columns, values)
         log_imported_cases(values.size, binding)
         import_case_attributes(extracted_cases.values)
       end
@@ -114,6 +110,27 @@ module CaseCore
         Transfer.stats.select { |_, v| v.zero? }.keys.sort.each do |name|
           log_debug(context) { "#{name}: zero" }
         end
+      end
+
+      # Импортирует записи заявок из `case_manager`
+      def import_documents
+        extracted_documents = Extractors::Documents.extract(hub)
+        columns = Models::Document.columns
+        values = extracted_documents.map { |h| h.values_at(*columns) }
+        Models::Document.import(columns, values)
+        log_imported_documents(values.size, binding)
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы записи
+      # документов
+      # @param [Integer] count
+      #   количество импортированных записей документов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_documents(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы записи документов в количестве #{count}
+        MESSAGE
       end
     end
   end
