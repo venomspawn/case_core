@@ -37,16 +37,25 @@ module CaseCore
         #   результирующий ассоциативный массив
         def modules
           dirs = Dir["#{$root}/#{ENV['CC_LOGIC_DIR']}/*"]
-          dirs.each_with_object({}) do |dir, memo|
-            dirname = File.basename(dir)
-            match_data = NAME_REGEXP.match(dirname).to_a
-            next if match_data.empty?
-            name = match_data[1]
-            version = match_data[2]
-            current = memo[name]
-            next if current.present? && current > version
-            memo[name] = version
-          end
+          dirs.each_with_object({}, &method(:process_dir))
+        end
+
+        # Заполняет ассоциативный массив с информацией о версиях модулей
+        # бизнес-логики на основе названия директории с библиотекой
+        # бизнес-логики
+        # @param [String] path
+        #   путь к директории с библиотекой бизнес-логики
+        # @param [Hash]
+        #   ассоциативный массив с информацией о версиях модулей бизнес-логики
+        def process_dir(path, memo)
+          dirname = File.basename(path)
+          match_data = NAME_REGEXP.match(dirname).to_a
+          return if match_data.empty?
+          name = match_data[1]
+          version = match_data[2]
+          current = memo[name]
+          return if current.present? && current > version
+          memo[name] = version
         end
       end
     end
