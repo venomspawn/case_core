@@ -27,6 +27,13 @@ module CaseCore
           #   корреспонденции
           attr_reader :registers
 
+          # Список ассоциативных массивов с информацией о межведомственных
+          # запросах
+          # @return [Array<Hash>]
+          #   список ассоциативных массивов с информацией о межведомственных
+          #   запросах
+          attr_reader :requests
+
           # Инициализирует объект класса
           def initialize
             settings = DataHub.settings
@@ -45,6 +52,7 @@ module CaseCore
             initialize_cases
             initialize_registers
             initialize_documents
+            initialize_requests
           end
 
           # Ассоциативный массив, в котором состояниям заявок сопоставляются их
@@ -88,6 +96,20 @@ module CaseCore
           # Инициализирует коллекцию данных документов заявок
           def initialize_documents
             @documents = db[:documents].to_a
+          end
+
+          # Список названий столбцов, извлекаемых из таблицы `requests`
+          REQUESTS_COLUMNS = %i[
+            id
+            case_id
+            created_at
+            response_content
+            response_signature
+          ].freeze
+
+          # Инициализирует коллекцию данных межведомственных запросов
+          def initialize_requests
+            @requests = db[:requests].select(*REQUESTS_COLUMNS).to_a
           end
         end
       end
