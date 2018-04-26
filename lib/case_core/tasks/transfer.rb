@@ -3,9 +3,11 @@
 require "#{$lib}/helpers/log"
 
 require_relative 'transfer/data_hub'
-require_relative 'transfer/extractors/attributes'
+require_relative 'transfer/extractors/case_attributes'
 require_relative 'transfer/extractors/cases'
 require_relative 'transfer/extractors/documents'
+require_relative 'transfer/extractors/request_attributes'
+require_relative 'transfer/extractors/requests'
 
 Dir["#{__dir__}/transfer/fillers/*.rb"].each(&method(:require))
 
@@ -30,9 +32,12 @@ module CaseCore
 
       # Запускает миграцию данных
       def launch!
-        @hub = DataHub.new
-        import_cases
-        import_documents
+        Sequel::Model.db.transaction do
+          @hub = DataHub.new
+          import_cases
+          import_documents
+          import_requests
+        end
       end
 
       private
@@ -87,7 +92,7 @@ module CaseCore
       #   результирующий список
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
-          attributes = Extractors::Attributes.extract(c4s3)
+          attributes = Extractors::CaseAttributes.extract(c4s3)
           FILLER_CLASSES.each { |filler| filler.new(hub, attributes).fill }
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
@@ -130,6 +135,70 @@ module CaseCore
       def log_imported_documents(count, context)
         log_info(context) { <<-MESSAGE }
           Импортированы записи документов в количестве #{count}
+        MESSAGE
+      end
+
+      # Импортирует записи межведомственных запросов из `case_manager`
+      def import_requests
+        requests = Extractors::Requests.extract(hub)
+        requests = requests.each_with_object({}) do |request, memo|
+          params = request.slice(:case_id, :created_at)
+          record = Models::Request.create(params)
+          memo[record.id] = request
+        end
+        log_imported_requests(requests.size, binding)
+        import_request_attributes(requests)
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы записи
+      # межведомственных запросов
+      # @param [Integer] count
+      #   количество импортированных записей межведомственных запросов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_requests(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы записи межведомственных запросов в количестве #{count}
+        MESSAGE
+      end
+
+      # Импортирует атрибуты междведомственных запросов
+      # @param [Hash] imported_requests
+      #   ассоциативный массив, в котором идентификаторам импортированных
+      #   записей межведомственных запросов сопоставляются ассоциативные
+      #   массивы с информацией об этих запросах
+      def import_request_attributes(imported_requests)
+        values = request_attribute_values(imported_requests)
+        Models::RequestAttribute.import(%i[request_id name value], values)
+        log_imported_request_attributes(values.size, binding)
+      end
+
+      # Возвращает список списков значений полей записей атрибутов
+      # межведомственных запросов
+      # @param [Hash] imported_requests
+      #   ассоциативный массив, в котором идентификаторам импортированных
+      #   записей межведомственных запросов сопоставляются ассоциативные
+      #   массивы с информацией об этих запросах
+      # @return [Array]
+      #   результирующий список
+      def request_attribute_values(imported_requests)
+        types = Models::Case.select(:id, :type).as_hash(:id, :type)
+        imported_requests.each_with_object([]) do |(request_id, request), memo|
+          attributes = Extractors::RequestAttributes.extract(request, types)
+          attributes.each { |name, value| memo << [request_id, name, value] }
+        end
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы атрибуты
+      # межведомственных запросов
+      # @param [Integer] count
+      #   количество импортированных атрибутов межведомственных запросов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_request_attributes(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы атрибуты межведомственных запросов в количестве
+          #{count}
         MESSAGE
       end
     end
