@@ -10,7 +10,8 @@ module CaseCore
           spec_data = args.map do |(name, version)|
             [name, Gem::Version.new(version)]
           end
-          Marshal.dump(spec_data)
+          data = Marshal.dump(spec_data)
+          Zlib.gzip(data)
         end
       end
     end

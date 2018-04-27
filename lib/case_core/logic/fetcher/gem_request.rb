@@ -85,7 +85,7 @@ module CaseCore
         #   путь к файлу с информацией о всех библиотеках, хранящихся на
         #   сервере библиотек
         def path
-          "gems/#{name}-#{version}.gem"
+          "#{Fetcher.settings.gem_server_path}/gems/#{name}-#{version}.gem"
         end
 
         # Создаёт запись в журнале событий о том, что во время загрузки файла
