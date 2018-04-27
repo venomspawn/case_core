@@ -6,7 +6,7 @@ module CaseCore
       module Extractors
         # Класс объектов, предоставляющих возможность извлечения информации
         # об атрибутах заявки для импорта
-        class Attributes
+        class CaseAttributes
           # Возвращает ассоциативный массив атрибутов заявки
           # @param [Hash] c4s3
           #   ассоциативный массив атрибутов записи заявки в `case_manager`

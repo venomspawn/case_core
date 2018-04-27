@@ -3,8 +3,11 @@
 require "#{$lib}/helpers/log"
 
 require_relative 'transfer/data_hub'
-require_relative 'transfer/extractors/attributes'
+require_relative 'transfer/extractors/case_attributes'
 require_relative 'transfer/extractors/cases'
+require_relative 'transfer/extractors/documents'
+require_relative 'transfer/extractors/request_attributes'
+require_relative 'transfer/extractors/requests'
 
 Dir["#{__dir__}/transfer/fillers/*.rb"].each(&method(:require))
 
@@ -30,7 +33,12 @@ module CaseCore
       # Запускает миграцию данных
       def launch!
         @hub = DataHub.new
-        import_cases
+        Sequel::Model.db.transaction do
+          import_cases
+          import_documents
+          import_requests
+        end
+        import_registers
       end
 
       private
@@ -40,18 +48,12 @@ module CaseCore
       #   объект, предоставляющий доступ к данным
       attr_reader :hub
 
-      # Названия атрибутов испортируемых записей заявок
-      CASE_ATTRS = %i[id type created_at].freeze
-
-      # Импортирует записи заявок из `case_manager` и возвращает список
-      # ассоциативных массивов с информацией об атрибутах импортированных
-      # заявок
-      # @return [Array<String>]
-      #   список идентификаторов импортированных записей
+      # Импортирует записи заявок из `case_manager`
       def import_cases
         extracted_cases = Extractors::Cases.extract(hub)
-        values = extracted_cases.keys.map { |h| h.values_at(*CASE_ATTRS) }
-        Models::Case.import(CASE_ATTRS, values)
+        columns = Models::Case.columns
+        values = extracted_cases.keys.map { |h| h.values_at(*columns) }
+        Models::Case.import(columns, values)
         log_imported_cases(values.size, binding)
         import_case_attributes(extracted_cases.values)
       end
@@ -91,7 +93,7 @@ module CaseCore
       #   результирующий список
       def case_attribute_values(imported_cases)
         imported_cases.each_with_object([]) do |c4s3, memo|
-          attributes = Extractors::Attributes.extract(c4s3)
+          attributes = Extractors::CaseAttributes.extract(c4s3)
           FILLER_CLASSES.each { |filler| filler.new(hub, attributes).fill }
           case_id = c4s3[:id]
           attributes.each { |name, value| memo << [case_id, name, value] }
@@ -114,6 +116,136 @@ module CaseCore
         Transfer.stats.select { |_, v| v.zero? }.keys.sort.each do |name|
           log_debug(context) { "#{name}: zero" }
         end
+      end
+
+      # Импортирует записи заявок из `case_manager`
+      def import_documents
+        extracted_documents = Extractors::Documents.extract(hub)
+        columns = Models::Document.columns
+        values = extracted_documents.map { |h| h.values_at(*columns) }
+        Models::Document.import(columns, values)
+        log_imported_documents(values.size, binding)
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы записи
+      # документов
+      # @param [Integer] count
+      #   количество импортированных записей документов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_documents(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы записи документов в количестве #{count}
+        MESSAGE
+      end
+
+      # Импортирует записи межведомственных запросов из `case_manager`
+      def import_requests
+        requests = Extractors::Requests.extract(hub)
+        requests = requests.each_with_object({}) do |request, memo|
+          params = request.slice(:case_id, :created_at)
+          record = Models::Request.create(params)
+          memo[record.id] = request
+        end
+        log_imported_requests(requests.size, binding)
+        import_request_attributes(requests)
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы записи
+      # межведомственных запросов
+      # @param [Integer] count
+      #   количество импортированных записей межведомственных запросов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_requests(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы записи межведомственных запросов в количестве #{count}
+        MESSAGE
+      end
+
+      # Импортирует атрибуты междведомственных запросов
+      # @param [Hash] imported_requests
+      #   ассоциативный массив, в котором идентификаторам импортированных
+      #   записей межведомственных запросов сопоставляются ассоциативные
+      #   массивы с информацией об этих запросах
+      def import_request_attributes(imported_requests)
+        values = request_attribute_values(imported_requests)
+        Models::RequestAttribute.import(%i[request_id name value], values)
+        log_imported_request_attributes(values.size, binding)
+      end
+
+      # Возвращает список списков значений полей записей атрибутов
+      # межведомственных запросов
+      # @param [Hash] imported_requests
+      #   ассоциативный массив, в котором идентификаторам импортированных
+      #   записей межведомственных запросов сопоставляются ассоциативные
+      #   массивы с информацией об этих запросах
+      # @return [Array]
+      #   результирующий список
+      def request_attribute_values(imported_requests)
+        types = Models::Case.select(:id, :type).as_hash(:id, :type)
+        imported_requests.each_with_object([]) do |(request_id, request), memo|
+          attributes = Extractors::RequestAttributes.extract(request, types)
+          attributes.each { |name, value| memo << [request_id, name, value] }
+        end
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы атрибуты
+      # межведомственных запросов
+      # @param [Integer] count
+      #   количество импортированных атрибутов межведомственных запросов
+      # @param [Binding] context
+      #   контекст
+      def log_imported_request_attributes(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы атрибуты межведомственных запросов в количестве
+          #{count}
+        MESSAGE
+      end
+
+      # Импортирует реестры передаваемой корреспонденции из `case_manager` в
+      # `mfc`
+      def import_registers
+        data = hub.cm.registers.each_with_object([]) do |(id, register), memo|
+          cases = hub.cm.register_cases[id]
+          memo << extract_register(register, cases) unless cases.blank?
+        end
+        hub.mfc.import_registers(data)
+        log_imported_registers(data.size, binding)
+      end
+
+      # Возвращает ассоциативный массив с импортируемой информацией о реестре
+      # передаваемой корреспонденции
+      # @param [Hash] register
+      #   ассоциативный массив атрибутов записи реестра в `case_manager`
+      # @param [Array<String>]
+      #   список идентиификаторов записей заявок, находящихся в реестре
+      # @return [Hash]
+      #   результирующий ассоциативный массив
+      def extract_register(register, cases)
+        register.slice(:institution_rguid, :back_office_id).tap do |result|
+          office_id = register[:office_id]
+          office = hub.mfc.ld_offices[office_id] || {}
+          result[:institution_office_rguid] = office[:rguid]
+
+          result[:type]    = register[:register_type]
+          result[:sent]    = register[:exported]
+          result[:sent_at] = register[:exported_at]
+          result[:cases]   = cases.to_json
+        end
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы реестры
+      # передаваемой корреспонденции
+      # @param [Integer] count
+      #   количество импортированных реестров
+      # @param [Binding] context
+      #   контекст
+      def log_imported_registers(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы реестры передаваемой корреспонденции в количестве
+          #{count}
+        MESSAGE
       end
     end
   end

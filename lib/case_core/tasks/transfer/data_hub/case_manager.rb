@@ -14,6 +14,11 @@ module CaseCore
           #   список ассоциативных массивов с информацией о заявках
           attr_reader :cases
 
+          # Список ассоциативных массивов с информацией о документах
+          # @return [Array<Hash>]
+          #   список ассоциативных массивов с информацией о документах
+          attr_reader :documents
+
           # Ассоциативный массив, в котором идентификаторам записей реестров
           # передаваемой корреспонденции соответствуют ассоциативные массивы с
           # информацией об этих реестрах
@@ -21,6 +26,21 @@ module CaseCore
           #   ассоциативный массив с информацией о реестрах передаваемой
           #   корреспонденции
           attr_reader :registers
+
+          # Список ассоциативных массивов с информацией о межведомственных
+          # запросах
+          # @return [Array<Hash>]
+          #   список ассоциативных массивов с информацией о межведомственных
+          #   запросах
+          attr_reader :requests
+
+          # Ассоциативный массив, в котором идентификаторам записей реестров
+          # передаваемой корреспонденции сопоставлены списки идентификаторов
+          # записей заявок, чьи документы находятся в этих реестрах
+          # @return [Hash]
+          #   ассоциативный массив с информацией о том, какой реестр
+          #   передаваемой корреспонденции документы каких заявок содержит
+          attr_reader :register_cases
 
           # Инициализирует объект класса
           def initialize
@@ -39,6 +59,9 @@ module CaseCore
           def initialize_collections
             initialize_cases
             initialize_registers
+            initialize_register_cases
+            initialize_documents
+            initialize_requests
           end
 
           # Ассоциативный массив, в котором состояниям заявок сопоставляются их
@@ -77,6 +100,36 @@ module CaseCore
           # корреспонденции
           def initialize_registers
             @registers = db[:registers].as_hash(:id)
+          end
+
+          # Инициализирует коллекцию данных о том, какой реестр передаваемой
+          # корреспонденции документы каких заявок содержит
+          def initialize_register_cases
+            @register_cases = cases.each_with_object({}) do |c4s3, memo|
+              register_id = c4s3[:register_id]
+              next if register_id.nil?
+              memo[register_id] ||= []
+              memo[register_id] << c4s3[:id]
+            end
+          end
+
+          # Инициализирует коллекцию данных документов заявок
+          def initialize_documents
+            @documents = db[:documents].to_a
+          end
+
+          # Список названий столбцов, извлекаемых из таблицы `requests`
+          REQUESTS_COLUMNS = %i[
+            id
+            case_id
+            created_at
+            response_content
+            response_signature
+          ].freeze
+
+          # Инициализирует коллекцию данных межведомственных запросов
+          def initialize_requests
+            @requests = db[:requests].select(*REQUESTS_COLUMNS).to_a
           end
         end
       end

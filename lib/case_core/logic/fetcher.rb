@@ -18,7 +18,8 @@ module CaseCore
       include Helpers
       extend  Settings::Configurable
 
-      settings_names :gem_server_host, :gem_server_port, :logic_dir
+      settings_names :gem_server_host, :gem_server_port, :gem_server_path
+      settings_names :logic_dir
 
       # Загружает и распаковывает указанную или последнюю версию библиотеки с
       # данным названием. Возвращает, успешно ли прошёл процесс загрузки и
