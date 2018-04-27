@@ -78,13 +78,18 @@ module CaseCore
           Fetcher.settings.gem_server_port
         end
 
+        # Путь к файлу с информацией о всех библиотеках, хранящихся на сервере
+        # библиотек
+        PATH =
+          "latest_specs.#{Marshal::MAJOR_VERSION}.#{Marshal::MINOR_VERSION}.gz"
+
         # Возвращает путь к файлу с информацией о всех библиотеках, хранящихся
         # на сервере библиотек
         # @return [String]
         #   путь к файлу с информацией о всех библиотеках, хранящихся на
         #   сервере библиотек
         def path
-          "specs.#{Marshal::MAJOR_VERSION}.#{Marshal::MINOR_VERSION}"
+          PATH
         end
 
         # Возвращает структуру данных, извлечённую из файла с информацией о
@@ -93,7 +98,7 @@ module CaseCore
         #   структура данных, извлечённую из файла с информацией о всех
         #   библиотеках, хранящихся на сервере библиотек
         def specs
-          specs_serialized = get.body
+          specs_serialized = Zlib.gunzip(get.body)
           # rubocop: disable Security/MarshalLoad
           Marshal.load(specs_serialized)
           # rubocop: enable Security/MarshalLoad
