@@ -69,6 +69,18 @@ module CaseCore
             initialize_collections
           end
 
+          # Импортирует данные о реестрах передаваемой корреспонденции в базу
+          # `mfc`
+          # @param [Array<Hash>] registers
+          #   список ассоциативных массивов с информацией о реестрах
+          #   передаваемой корреспонденции
+          def import_registers(registers)
+            return if registers.empty?
+            columns = registers.first.keys
+            values = registers.map { |hash| hash.values_at(*columns) }
+            db[:registers].import(columns, values)
+          end
+
           private
 
           # Инициализирует коллекции данных

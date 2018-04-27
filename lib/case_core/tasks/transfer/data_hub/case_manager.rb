@@ -34,6 +34,14 @@ module CaseCore
           #   запросах
           attr_reader :requests
 
+          # Ассоциативный массив, в котором идентификаторам записей реестров
+          # передаваемой корреспонденции сопоставлены списки идентификаторов
+          # записей заявок, чьи документы находятся в этих реестрах
+          # @return [Hash]
+          #   ассоциативный массив с информацией о том, какой реестр
+          #   передаваемой корреспонденции документы каких заявок содержит
+          attr_reader :register_cases
+
           # Инициализирует объект класса
           def initialize
             settings = DataHub.settings
@@ -51,6 +59,7 @@ module CaseCore
           def initialize_collections
             initialize_cases
             initialize_registers
+            initialize_register_cases
             initialize_documents
             initialize_requests
           end
@@ -91,6 +100,17 @@ module CaseCore
           # корреспонденции
           def initialize_registers
             @registers = db[:registers].as_hash(:id)
+          end
+
+          # Инициализирует коллекцию данных о том, какой реестр передаваемой
+          # корреспонденции документы каких заявок содержит
+          def initialize_register_cases
+            @register_cases = cases.each_with_object({}) do |c4s3, memo|
+              register_id = c4s3[:register_id]
+              next if register_id.nil?
+              memo[register_id] ||= []
+              memo[register_id] << c4s3[:id]
+            end
           end
 
           # Инициализирует коллекцию данных документов заявок
