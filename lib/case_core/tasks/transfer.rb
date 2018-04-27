@@ -32,12 +32,13 @@ module CaseCore
 
       # Запускает миграцию данных
       def launch!
+        @hub = DataHub.new
         Sequel::Model.db.transaction do
-          @hub = DataHub.new
           import_cases
           import_documents
           import_requests
         end
+        import_registers
       end
 
       private
@@ -198,6 +199,51 @@ module CaseCore
       def log_imported_request_attributes(count, context)
         log_info(context) { <<-MESSAGE }
           Импортированы атрибуты межведомственных запросов в количестве
+          #{count}
+        MESSAGE
+      end
+
+      # Импортирует реестры передаваемой корреспонденции из `case_manager` в
+      # `mfc`
+      def import_registers
+        data = hub.cm.registers.each_with_object([]) do |(id, register), memo|
+          cases = hub.cm.register_cases[id]
+          memo << extract_register(register, cases) unless cases.blank?
+        end
+        hub.mfc.import_registers(data)
+        log_imported_registers(data.size, binding)
+      end
+
+      # Возвращает ассоциативный массив с импортируемой информацией о реестре
+      # передаваемой корреспонденции
+      # @param [Hash] register
+      #   ассоциативный массив атрибутов записи реестра в `case_manager`
+      # @param [Array<String>]
+      #   список идентиификаторов записей заявок, находящихся в реестре
+      # @return [Hash]
+      #   результирующий ассоциативный массив
+      def extract_register(register, cases)
+        register.slice(:institution_rguid, :back_office_id).tap do |result|
+          office_id = register[:office_id]
+          office = hub.mfc.ld_offices[office_id] || {}
+          result[:institution_office_rguid] = office[:rguid]
+
+          result[:type]    = register[:register_type]
+          result[:sent]    = register[:exported]
+          result[:sent_at] = register[:exported_at]
+          result[:cases]   = cases.to_json
+        end
+      end
+
+      # Создаёт запись в журнале событий о том, что импортированы реестры
+      # передаваемой корреспонденции
+      # @param [Integer] count
+      #   количество импортированных реестров
+      # @param [Binding] context
+      #   контекст
+      def log_imported_registers(count, context)
+        log_info(context) { <<-MESSAGE }
+          Импортированы реестры передаваемой корреспонденции в количестве
           #{count}
         MESSAGE
       end
