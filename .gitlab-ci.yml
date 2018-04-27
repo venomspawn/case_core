@@ -1,8 +1,7 @@
 ##Стадии сборки
 stages:
   - build
-  - rspec
-  - rubocop
+  - test
 ##Назначаем таг для контейнера(либо TAG, либо SHA)
 before_script:
   - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
@@ -13,7 +12,7 @@ variables:
 1.build_image:
   stage: build
   tags:
-    - repo
+    - shell
   script:
     - docker build -t $IMAGE_NAME:${TAG} .
 ##Публикация образа 
@@ -28,16 +27,16 @@ variables:
 3.build_latest_image:
   stage: build
   tags: 
-    - repo
+    - shell
   only:
     - master
-    - develop2
+    - develop
   script:
     - docker image tag $IMAGE_NAME:${TAG} $IMAGE_NAME:latest
   when: on_success
-##Тестирование rspec  
-1.test:
-  stage: rspec
+##Тестирование rubocop  
+1.rubocop:
+  stage: test
   variables:
     CC_LOG_LEVEL: debug
     CC_DB_NAME: case_core
@@ -48,9 +47,26 @@ variables:
     name: $IMAGE_NAME:latest
   only:
     - master
-    - develop2
+    - develop
   tags:
-    - test
+    - docker
   script:
     - bundle exec rubocop
-
+##Тестирование rspec
+1.rspec:
+  stage: test
+  variables:
+    CC_LOG_LEVEL: unknown
+    CC_DB_NAME: case_core
+    CC_DB_HOST: 192.168.1.1
+    CC_DB_USER: rkis
+    CC_DB_PASS: 123456
+  image: 
+    name: $IMAGE_NAME:latest
+  only:
+    - master
+    - develop
+  tags:
+    - docker
+  script:
+    - bundle exec rspec --fail-fast
