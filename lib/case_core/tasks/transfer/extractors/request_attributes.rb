@@ -34,7 +34,11 @@ module CaseCore
 
           # Ассоциативный массив, в котором типу заявки сопоставляется название
           # атрибута, содержащего в себе идентификатор сообщения СМЭВ
-          MESSAGE_ID_NAME = { 'msp_case' => 'msp_message_id' }.freeze
+          MESSAGE_ID_NAME = {
+            'cik_case' => 'cik_message_id',
+            'msp_case' => 'msp_message_id',
+            'mvd_case' => 'mvd_message_id'
+          }.freeze
 
           # Возвращает ассоциативный массив атрибутов межведомственного запроса
           # @return [Hash] request
