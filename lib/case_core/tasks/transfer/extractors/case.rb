@@ -87,16 +87,13 @@ module CaseCore
           # Ассоциативный массив, сопоставляющий названия классов моделей
           # заявок в `case_manager` и типы заявок в `case_core`
           TYPES = {
-            'CaseManager::Models::NonAutomatedServiceCase' =>
-              'mfc_case',
-            'CaseManager::Models::MSPServiceCase' =>
-              'msp_case',
-            'CaseManager::Models::MVDServiceCase' =>
-              'adm_offence_drugs_case',
-            'CaseManager::Models::FSSPServiceCase' =>
-              'fssp_case',
-            'CaseManager::Models::CIKServiceCase' =>
-              'ru_rtlabs_election_3_case'
+            'CaseManager::Models::CIKServiceCase'          => 'cik_case',
+            'CaseManager::Models::SMEV2ServiceCase'        => 'esia_case',
+            'CaseManager::Models::MFCFnsServiceCase'       => 'fns_case',
+            'CaseManager::Models::FSSPServiceCase'         => 'fssp_case',
+            'CaseManager::Models::NonAutomatedServiceCase' => 'mfc_case',
+            'CaseManager::Models::MSPServiceCase'          => 'msp_case',
+            'CaseManager::Models::MVDServiceCase'          => 'mvd_case'
           }.freeze
 
           # Возвращает тип заявки или `nil`, если классу модели заявки в
