@@ -2,6 +2,8 @@
 
 # Файл поддержки тестирования
 
+$VERBOSE = nil
+
 require 'rspec'
 
 show_delay_info = -> { $logger.unknown { <<-MESSAGE.squish } }

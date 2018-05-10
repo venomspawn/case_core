@@ -682,6 +682,16 @@ RSpec.describe CaseCore::Actions::Cases do
                 .to change { CaseCore::Models::Document.count }
                 .by(2)
             end
+
+            context 'when the documents lack id value' do
+              let(:documents) { { documents: [{}] } }
+
+              it 'should create id' do
+                expect { subject }
+                  .to change { CaseCore::Models::Document.count }
+                  .by(1)
+              end
+            end
           end
         end
       end

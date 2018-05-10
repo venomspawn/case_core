@@ -94,7 +94,7 @@ module CaseCore
         end
 
         # Список с названиями полей, импортируемых в таблицу атрибутов заявок
-        IMPORT_FIELDS = %i[case_id name value].freeze
+        CASE_ATTR_IMPORT_FIELDS = %i[case_id name value].freeze
 
         # Создаёт записи атрибутов заявки
         # @param [CaseCore::Models::Case] c4s3
@@ -103,7 +103,7 @@ module CaseCore
           import_values = attributes_attrs.map do |(name, value)|
             [c4s3.id, name.to_s, value&.to_s]
           end
-          Models::CaseAttribute.import(IMPORT_FIELDS, import_values)
+          Models::CaseAttribute.import(CASE_ATTR_IMPORT_FIELDS, import_values)
         end
 
         # Создаёт записи документов заявки
@@ -111,11 +111,13 @@ module CaseCore
         #   запись заявки
         def create_documents(c4s3)
           return if documents_attrs.empty?
-          import_fields = documents_attrs.first.keys
+          import_fields = Models::Document.columns - %i[case_id id]
           import_values = documents_attrs.map do |document_attrs|
-            document_attrs.values_at(*import_fields).push(c4s3.id)
+            document_attrs
+              .values_at(*import_fields)
+              .push(c4s3.id, document_attrs[:id] || SecureRandom.uuid)
           end
-          import_fields.push(:case_id)
+          import_fields.push(:case_id, :id)
           Models::Document.import(import_fields, import_values)
         end
 
