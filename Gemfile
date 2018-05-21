@@ -3,6 +3,7 @@
 source 'http://repo.it2.vm/repository/gem-group'
 
 gem 'activesupport'
+gem 'builder'
 gem 'diplomat'
 gem 'dotenv'
 gem 'foreman'
