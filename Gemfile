@@ -15,6 +15,7 @@ gem 'pg'
 gem 'rake'
 gem 'rb-inotify'
 gem 'rest-client'
+gem 'rubocop', require: false
 gem 'rubyzip'
 gem 'rufus-scheduler'
 gem 'sequel'
