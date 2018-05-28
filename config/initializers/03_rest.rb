@@ -4,6 +4,7 @@
 
 # Загрузка REST-контроллера
 require "#{$lib}/api/rest/controller.rb"
+require "#{$lib}/api/rest/logger.rb"
 Dir["#{$lib}/api/rest/**/*.rb"].each(&method(:require))
 
 # Установка конфигурации REST-контроллера
@@ -15,7 +16,7 @@ CaseCore::API::REST::Controller.configure do |settings|
   settings.disable :dump_errors
   settings.enable  :raise_errors
 
-  settings.use    Rack::CommonLogger, $logger
+  settings.use CaseCore::API::REST::Logger
 
   settings.enable :static
   settings.set    :root, $root
