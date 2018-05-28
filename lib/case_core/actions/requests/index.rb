@@ -30,33 +30,25 @@ module CaseCore
           params[:id]
         end
 
+        # Возвращает значение атрибута `filter` ассоциативного массива
+        # параметров
+        # @return [Object]
+        #   результирующее значение
+        def filter
+          params[:filter]
+        end
+
         # Возвращает ассоциативный массив параметров создания запроса Sequel на
         # получение записей основной таблицы
         # @return [Hash]
         #   результирующий ассоциативный массив параметров
         def query_params
-          params.dup.tap { |result| result[:filter] = query_filters }
-        end
-
-        # Возвращает объект с условиями на поля записей и атрибуты
-        # межведомственных запросов
-        # @return [Array<Hash>, Hash]
-        #   результирующий объект
-        def query_filters
-          obj = params[:filter]
-          return obj.map(&method(:query_filter)) if obj.is_a?(Array)
-          query_filter(obj)
-        end
-
-        # Возвращает ассоциативный массив с условиями на поля записей и
-        # атрибуты межведомственных запросов, построенный на основе аргумента
-        # @param [NilClass, Hash] obj
-        #   исходный объект с условиями
-        # @return [Hash]
-        #   результирующий ассоциативный массив
-        def query_filter(obj)
-          { case_id: record.id }.tap do |condition|
-            condition.update(obj) if obj.is_a?(Hash)
+          params.except(filter).tap do |result|
+            result[:filter] = if filter.nil?
+                                { case_id: record.id }
+                              else
+                                { and: [filter, case_id: record.id] }
+                              end
           end
         end
 
