@@ -5,16 +5,15 @@ module CaseCore
     module REST
       # Модуль вспомогательных функций для REST-контроллера
       module Helpers
-        # Приводит значения ассоциативного массива у указанных ключей к типу
-        # целых чисел, если эти ключи присутствуют в ассоциативном массиве
-        # @param [Hash] hash
-        #   ассоциативный массив
-        # @param [Array] keys
-        #   список ключей
-        # @raise [ArgumentError]
-        #   если какое-то из значений невозможно привести к типу целых чисел
-        def make_integer(hash, *keys)
-          keys.each { |key| hash[key] &&= Integer(hash[key]) }
+        # Возвращает структуру, восстановленную из JSON-строки в теле запроса
+        # @return [Object]
+        #   результирующая структура
+        def post_params
+          body = request.body
+          body.rewind
+          Oj.load(body.read)
+        rescue StandardError
+          nil
         end
 
         # Возвращает объект, предоставляющий действия над записями заявок

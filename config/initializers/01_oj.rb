@@ -4,4 +4,4 @@
 
 require 'oj'
 
-Oj.default_options = { mode: :json }
+Oj.default_options = { mode: :json, symbol_keys: true }
