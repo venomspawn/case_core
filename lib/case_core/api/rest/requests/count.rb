@@ -21,9 +21,9 @@ module CaseCore
             # @return [Array]
             #   список, структура которого описана схемой
             #   {CaseCore::Actions::Requests::Count::RESULT_SCHEMA}
-            controller.get '/cases/:id/requests_count' do
-              make_integer(params, :limit, :offset)
-              content = requests.count(params)
+            controller.post '/cases/:id/requests_count' do |id|
+              puts "post_params = #{post_params}"
+              content = requests.count(id: id, **post_params)
               status :ok
               body Oj.dump(content)
             end

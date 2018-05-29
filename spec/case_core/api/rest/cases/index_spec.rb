@@ -4,8 +4,8 @@
 # заявках
 
 RSpec.describe CaseCore::API::REST::Controller do
-  describe 'GET /cases' do
-    subject { get '/cases', params }
+  describe 'POST /cases' do
+    subject { post '/cases', params.to_json }
 
     let!(:cases) { create_list(:case, 2) }
     let(:params) { {} }
