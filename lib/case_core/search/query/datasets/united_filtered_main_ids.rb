@@ -142,7 +142,7 @@ module CaseCore
           # @return [Sequel::Dataset]
           #   запрос Sequel, полученный пересечением исходных запросов
           def intersect(memo, dataset)
-            memo.intersect(dataset, from_self: false)
+            memo.intersect(dataset)
           end
 
           # Возвращает запрос Sequel, полученный объединением исходных запросов
@@ -153,7 +153,7 @@ module CaseCore
           # @return [Sequel::Dataset]
           #   запрос Sequel, полученный объединением исходных запросов
           def union(memo, dataset)
-            memo.union(dataset, from_self: false)
+            memo.union(dataset)
           end
 
           # Возвращает запрос Sequel на извлечение идентификаторов записей
