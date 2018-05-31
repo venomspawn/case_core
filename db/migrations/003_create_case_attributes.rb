@@ -17,15 +17,13 @@ Sequel.migration do
 
       primary_key %i[case_id name], name: :case_attributes_pk
 
-      index :value,
-            name:  :case_attributes_short_value_index,
-            where: Sequel.function(:value_is_short, :value)
+      index Sequel.function(:short_value, :value),
+            name:  :case_attributes_short_value_index
 
-      index :value,
+      index Sequel.function(:short_value, :value),
             name:    :case_attributes_short_value_trgm_index,
             type:    :gin,
-            opclass: :gin_trgm_ops,
-            where:   Sequel.function(:value_is_short, :value)
+            opclass: :gin_trgm_ops
 
       constraint :case_attributes_name_exclusions,
                  Sequel.expr(name: %w[id type created_at documents]).~

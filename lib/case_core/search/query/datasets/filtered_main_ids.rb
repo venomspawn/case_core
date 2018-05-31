@@ -101,10 +101,8 @@ module CaseCore
 
           # Составляет SQL-выражение Sequel, выставляющее условие на значение
           # поля таблицы, и возвращает его
-          # @param [#to_s] table
-          #   название таблицы
-          # @param [#to_s] field
-          #   название поля
+          # @param [Object] identifier
+          #   объект идентификатора
           # @param [Object] info
           #   объект с информацией об условии на поле. В случае, если значение
           #   не является объектом типа `Hash`, условием на поле является само
@@ -112,8 +110,17 @@ module CaseCore
           #   условие составляется на основе его ключей и значений.
           # @return [Sequel::SQL::ComplexExpression]
           #   результирующее выражение
-          def on_field(table, field, info)
-            Expressions::OnField.new(table, field, info).expression
+          def on_field(identifier, info)
+            Expressions::OnField.new(identifier, info).expression
+          end
+
+          # Возвращает полное название поля основной таблицы
+          # @param [#to_s] field
+          #   название поля
+          # @return [Object]
+          #   полное название поля основной таблицы
+          def main_identifier(field)
+            Sequel.qualify(main_model.table_name, field.to_s)
           end
 
           # Составляет SQL-выражение Sequel, выставляющее условие на значения
@@ -122,14 +129,19 @@ module CaseCore
           #   результирующее выражение
           def on_main
             expressions = main_filter.map do |field, info|
-              on_field(main_model.table_name, field, info)
+              on_field(main_identifier(field), info)
             end
             conjunction(expressions)
           end
 
-          # Выражение для SQL-функции `value_is_short`, принимающей значения на
-          # значениях атрибутов
-          VALUE_IS_SHORT = Sequel.function(:value_is_short, :value)
+          # Возвращает полное название поля таблицы атрибутов
+          # @param [#to_s] field
+          #   название поля
+          # @return [Object]
+          #   полное название поля таблицы атрибутов
+          def attr_identifier(field)
+            Sequel.qualify(attr_model.table_name, field.to_s)
+          end
 
           # Составляет SQL-выражение Sequel, выставляющее условие на значение
           # атрибута, и возвращает его
@@ -140,9 +152,12 @@ module CaseCore
           # @return [Sequel::SQL::BooleanExpression]
           #   результирующее выражение
           def on_attr(name, info)
-            on_name = on_field(attr_model.table_name, :name, name.to_s)
-            on_value = on_field(attr_model.table_name, :value, info)
-            conjunction([on_name, on_value, VALUE_IS_SHORT])
+            name_identifier = attr_identifier(:name)
+            on_name = on_field(name_identifier, name.to_s)
+            value_identifier =
+              Sequel.function(:short_value, attr_identifier(:value))
+            on_value = on_field(value_identifier, info)
+            conjunction([on_name, on_value])
           end
 
           # Создаёт запрос Sequel на извлечение идентификаторов записей

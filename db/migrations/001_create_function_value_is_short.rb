@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Создание SQL-функции `value_is_short`
+# Создание SQL-функции `short_value`
 
 Sequel.migration do
   up do
@@ -9,16 +9,16 @@ Sequel.migration do
       behavior: :immutable,
       language: :plpgsql,
       replace:  true,
-      returns:  :boolean
+      returns:  :text
     }
-    create_function(:value_is_short, <<-SQL.squish, opts)
+    create_function(:short_value, <<-SQL, opts)
       BEGIN
-        RETURN char_length(value) < 200;
+        RETURN substring(value from 1 for 200);
       END;
     SQL
   end
 
   down do
-    drop_function(:value_is_short, if_exists: true)
+    drop_function(:short_value, if_exists: true)
   end
 end
