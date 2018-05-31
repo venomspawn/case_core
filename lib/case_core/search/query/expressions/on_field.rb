@@ -13,16 +13,13 @@ module CaseCore
           include Consts
 
           # Инициализирует объект класса
-          # @param [#to_s] table
-          #   название таблицы
-          # @param [#to_s] field
-          #   название поля
+          # @param [Object] identifier
+          #   объект идентификатора
           # @param [Object] info
           #   объект с информацией об условии на поле
-          def initialize(table, field, info)
-            @table = table
-            @field = field
-            @info = info
+          def initialize(identifier, info)
+            @identifier = identifier
+            @info       = info
           end
 
           # Названия методов объекта, возвращающих условия
@@ -38,27 +35,15 @@ module CaseCore
 
           private
 
-          # Название таблицы
-          # @return [#to_s]
-          #   название таблицы
-          attr_reader :table
-
-          # Название поля
-          # @return [#to_s]
-          #   название поля
-          attr_reader :field
+          # Объект идентификатора
+          # @return [Object]
+          #   объект идентификатора
+          attr_reader :identifier
 
           # Объект с информацией об условии на поле
           # @return [Object]
           #   объект с информацией об условии на поле
           attr_reader :info
-
-          # Возвращает полное название поля таблицы
-          # @return [Sequel::SQL::QualifiedIdentifier]
-          #   полное название поля таблицы
-          def identifier
-            @identifier ||= Sequel.qualify(table.to_s, field.to_s)
-          end
 
           # Возвращает выражение, выставляющее условие на равенство
           # @return [Sequel::SQL::BooleanExpression]
@@ -71,14 +56,15 @@ module CaseCore
           # @return [Sequel::SQL::ComplexExpression]
           #   результирующее выражение
           def exclude
-            OnField.new(table, field, info[:exclude]).expression.~
+            OnField.new(identifier, info[:exclude]).expression.~
           end
 
           # Возвращает выражение, выставляющее условие на частичное совпадение
           # @return [Sequel::SQL::StringExpression]
           #   результирующее выражение
           def like
-            Sequel::SQL::StringExpression.like(identifier, info[:like])
+            Sequel::SQL::StringExpression
+              .like(identifier, info[:like], case_insensitive: true)
           end
 
           # Возвращает выражение, выставляющее условие на неравенство двух
