@@ -16,7 +16,7 @@ Sequel.migration do
       column :value, :text
 
       index Sequel.function(:short_value, :value),
-            name:  :request_attributes_short_value_index
+            name: :request_attributes_short_value_index
 
       index Sequel.function(:short_value, :value),
             name:    :request_attributes_short_value_trgm_index,
