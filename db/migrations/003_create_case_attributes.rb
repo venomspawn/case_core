@@ -18,7 +18,7 @@ Sequel.migration do
       primary_key %i[case_id name], name: :case_attributes_pk
 
       index Sequel.function(:short_value, :value),
-            name:  :case_attributes_short_value_index
+            name: :case_attributes_short_value_index
 
       index Sequel.function(:short_value, :value),
             name:    :case_attributes_short_value_trgm_index,

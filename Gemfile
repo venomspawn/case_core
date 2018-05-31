@@ -30,7 +30,7 @@ group :development, :test do
   gem 'factory_girl'
   gem 'rack-test'
   gem 'rspec'
-  gem 'rubocop', require: false
+  gem 'rubocop', '0.55.0', require: false
 end
 
 group :test do
