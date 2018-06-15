@@ -97,7 +97,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
         before do
           stub_request(:get, /spec/)
             .to_return(body: spec_body, status: spec_status)
-          stub_request(:get, /gem/)
+          stub_request(:get, /gems/)
             .to_return(body: gem_body, status: gem_status)
         end
 
@@ -210,7 +210,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
       before do
         stub_request(:get, /spec/)
           .to_return(body: spec_body, status: spec_status)
-        stub_request(:get, /gem/)
+        stub_request(:get, /gems/)
           .to_return(body: gem_body, status: gem_status)
       end
 
@@ -351,7 +351,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
         before do
           stub_request(:get, /spec/)
             .to_return(body: spec_body, status: spec_status)
-          stub_request(:get, /gem/)
+          stub_request(:get, /gems/)
             .to_return(body: gem_body, status: gem_status)
         end
 
@@ -464,7 +464,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
       before do
         stub_request(:get, /spec/)
           .to_return(body: spec_body, status: spec_status)
-        stub_request(:get, /gem/)
+        stub_request(:get, /gems/)
           .to_return(body: gem_body, status: gem_status)
       end
 
