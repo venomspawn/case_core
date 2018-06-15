@@ -2,6 +2,7 @@
 .vagrant
 cm/provisioning/
 cm/deploy/roles/
+.idea
 
 # Временные файлы
 tmp

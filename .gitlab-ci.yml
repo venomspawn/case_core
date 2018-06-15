@@ -1,72 +1,87 @@
 ##Стадии сборки
 stages:
   - build
+  - postgres
   - test
-##Назначаем таг для контейнера(либо TAG, либо SHA)
-before_script:
-  - if [[ -z ${CI_COMMIT_TAG} ]]; then export TAG=${CI_COMMIT_SHA:0:8}; else export TAG=${CI_COMMIT_TAG}; fi
+  - clean
+  - push
+
 ##Формируем название образа контейнера
 variables:
-  IMAGE_NAME: repo.it2.vm/case-core
-##Сборка образа
+  IMAGE_NAME: repo.it2.vm/microservices/case-core
+  PG_VERSION: 9.6.9
+
+##Сборка образа(commit)
 1.build_image:
   stage: build
   tags:
     - shell
   script:
-    - docker build -t $IMAGE_NAME:${TAG} .
-##Публикация образа 
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA .
+
+##Публикация образа(commit)
 2.push_image:
   stage: build
   tags:
-    - repo
+    - shell
   script:
-    - docker push $IMAGE_NAME:${TAG}
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
   when: on_success
-##При пуше в master или develop назначем метку latest
-3.build_latest_image:
-  stage: build
-  tags: 
+
+##запуск базы данных
+1.postgres_db_run:
+  stage: postgres
+  tags:
     - shell
   only:
-    - master
-    - develop
+    - tags
   script:
-    - docker image tag $IMAGE_NAME:${TAG} $IMAGE_NAME:latest
-  when: on_success
-##Тестирование rubocop  
-1.rubocop:
+    - docker run -d --name postgres_${CI_PIPELINE_ID} -l SERVICE_NAME=postgres_${CI_PIPELINE_ID} repo.it2.vm/databases/postgres_test:latest
+    - docker exec postgres_${CI_PIPELINE_ID} ./wait-for-it.sh -t 15 127.0.0.1:5432
+    - docker exec postgres_${CI_PIPELINE_ID} psql -h 127.0.0.1 -d test -U user_test --command 'create extension pg_trgm'
+
+##Тестирование rubocop
+1.rubocop_migrate_rspec:
   stage: test
   variables:
-    CC_LOG_LEVEL: debug
-    CC_DB_NAME: case_core
-    CC_DB_HOST: 192.168.1.1
-    CC_DB_USER: rkis
-    CC_DB_PASS: 123456
-  image: 
-    name: $IMAGE_NAME:latest
-  only:
-    - master
-    - develop
-  tags:
-    - docker
-  script:
-    - bundle exec rubocop
-##Тестирование rspec
-1.rspec:
-  stage: test
-  variables:
+    RACK_ENV: test
     CC_LOG_LEVEL: unknown
-    CC_DB_NAME: case_core
-    CC_DB_HOST: 192.168.1.1
-    CC_DB_USER: rkis
+    CC_DB_NAME: test
+    CC_DB_HOST: postgres_${CI_PIPELINE_ID}.service.consul
+    CC_DB_USER: user_test
     CC_DB_PASS: 123456
-  image: 
-    name: $IMAGE_NAME:latest
+  image:
+    name: $IMAGE_NAME:$CI_COMMIT_SHA
   only:
-    - master
-    - develop
+    - tags
   tags:
     - docker
   script:
+    - bundle install --with test
+    - bundle exec rubocop
+    - bundle exec rake case_core:migrate
     - bundle exec rspec --fail-fast
+
+##Удаление контейнера базы данных
+1.clean_postgres:
+  stage: clean
+  tags:
+    - shell
+  only:
+    - tags
+  script:
+    - docker stop postgres_${CI_PIPELINE_ID}
+    - docker rm postgres_${CI_PIPELINE_ID}
+  when: always
+  allow_failure: true
+
+##Сборка контейнера с тагом и публикация
+1.build_tag_and_push:
+  stage: push
+  tags:
+    - shell
+  only:
+    - tags
+  script:
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_TAG .
+    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
