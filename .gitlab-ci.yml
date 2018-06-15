@@ -44,7 +44,7 @@ variables:
 1.rubocop_migrate_rspec:
   stage: test
   variables:
-    RACK_ENV: test
+    RACK_ENV: development
     CC_LOG_LEVEL: unknown
     CC_DB_NAME: test
     CC_DB_HOST: postgres_${CI_PIPELINE_ID}.service.consul
