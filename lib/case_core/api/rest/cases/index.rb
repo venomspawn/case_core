@@ -23,9 +23,8 @@ module CaseCore
             # @return [Array]
             #   список, структура которого описана схемой
             #   {CaseCore::Actions::Cases::Index::RESULT_SCHEMA}
-            controller.get '/cases' do
-              make_integer(params, :limit, :offset)
-              content = cases.index(params)
+            controller.post '/cases' do
+              content = cases.index(post_params)
               status :ok
               body Oj.dump(content)
             end

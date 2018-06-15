@@ -20,9 +20,8 @@ module CaseCore
             # @return [Hash]
             #   ассоциативный массив, структура которого описана схемой
             #   {CaseCore::Actions::Cases::Count::RESULT_SCHEMA}
-            controller.get '/cases_count' do
-              make_integer(params, :limit, :offset)
-              content = cases.count(params)
+            controller.post '/cases_count' do
+              content = cases.count(post_params)
               status :ok
               body Oj.dump(content)
             end

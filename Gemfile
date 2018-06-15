@@ -3,15 +3,19 @@
 source 'http://repo.it2.vm/repository/gem-group'
 
 gem 'activesupport'
+gem 'builder'
 gem 'diplomat'
 gem 'dotenv'
 gem 'foreman'
 gem 'json-schema'
+gem 'mysql2'
+gem 'nokogiri'
 gem 'oj'
 gem 'pg'
 gem 'rake'
 gem 'rb-inotify'
 gem 'rest-client'
+gem 'rubyzip'
 gem 'rufus-scheduler'
 gem 'sequel'
 gem 'sequel_pg'
@@ -26,6 +30,7 @@ group :development, :test do
   gem 'factory_girl'
   gem 'rack-test'
   gem 'rspec'
+  gem 'rubocop', '0.55.0', require: false
 end
 
 group :test do

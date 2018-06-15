@@ -4,8 +4,8 @@
 # межведомственных запросов, созданных в рамках заявки
 
 RSpec.describe CaseCore::API::REST::Controller do
-  describe 'GET /cases/:id/requests_count' do
-    subject { get "/cases/#{id}/requests_count", params }
+  describe 'POST /cases/:id/requests_count' do
+    subject { post "/cases/#{id}/requests_count", params.to_json }
 
     let(:params) { {} }
     let!(:c4s3) { create(:case) }

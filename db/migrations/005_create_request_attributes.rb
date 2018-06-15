@@ -15,15 +15,13 @@ Sequel.migration do
       column :name,  :text, index: true, null: false
       column :value, :text
 
-      index :value,
-            name:  :request_attributes_short_value_index,
-            where: Sequel.function(:value_is_short, :value)
+      index Sequel.function(:short_value, :value),
+            name: :request_attributes_short_value_index
 
-      index :value,
+      index Sequel.function(:short_value, :value),
             name:    :request_attributes_short_value_trgm_index,
             type:    :gin,
-            opclass: :gin_trgm_ops,
-            where:   Sequel.function(:value_is_short, :value)
+            opclass: :gin_trgm_ops
 
       primary_key %i[request_id name], name: :request_attributes_pk
 

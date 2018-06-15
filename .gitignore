@@ -12,3 +12,7 @@ doc
 
 # История команд IRB
 .irb_history
+
+# Загруженная бизнес-логика
+!logic/.gitkeep
+logic/*

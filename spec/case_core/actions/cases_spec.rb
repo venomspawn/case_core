@@ -39,7 +39,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `like` key' do
+              context 'when there is only `like` key' do
                 let(:filter) { { rguid: { like: '%000%' } } }
 
                 it 'should be all infos with likely value' do
@@ -47,7 +47,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `min` key' do
+              context 'when there is only `min` key' do
                 let(:filter) { { state: { min: 'error' } } }
 
                 it 'should be all infos with values no less than value' do
@@ -55,7 +55,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `max` key' do
+              context 'when there is only `max` key' do
                 let(:filter) { { state: { max: 'error' } } }
 
                 it 'should be all infos with values no more than value' do
@@ -63,29 +63,11 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is more than one supported key specified' do
-                let(:filter) { { state: { min: 'error', exclude: 'ok' } } }
+              context 'when there are only `min` and `max` keys' do
+                let(:filter) { { state: { min: 'error', max: 'error' } } }
 
                 it 'should be all infos selected by all filters together' do
-                  expect(ids).to match_array %w[2 4]
-                end
-              end
-
-              context 'when there is a key but it\'s unsupported' do
-                let(:filter) { { state: { unsupported: :key } } }
-
-                it 'should raise JSON::Schema::ValidationError' do
-                  expect { subject }
-                    .to raise_error { JSON::Schema::ValidationError }
-                end
-              end
-
-              context 'when there is no any key' do
-                let(:filter) { { state: {} } }
-
-                it 'should raise JSON::Schema::ValidationError' do
-                  expect { subject }
-                    .to raise_error { JSON::Schema::ValidationError }
+                  expect(ids).to match_array %w[2]
                 end
               end
             end
@@ -105,22 +87,20 @@ RSpec.describe CaseCore::Actions::Cases do
                 expect(ids).to match_array %w[1 5]
               end
             end
-          end
 
-          context 'when the parameter value is a list' do
-            context 'when the list is empty' do
-              let(:filter) { [] }
+            context 'when there is only `or` key' do
+              let(:filter) { { or: [{ state: 'ok' }, { op_id: '2abc' }] } }
 
-              it 'should be all infos' do
-                expect(ids).to match_array %w[1 2 3 4 5]
+              it 'should be infos of cases selected by at least one filter' do
+                expect(ids).to match_array %w[1 2 5]
               end
             end
 
-            context 'when the list contains filters' do
-              let(:filter) { [{ state: 'ok' }, { op_id: '2abc' }] }
+            context 'when there is only `and` key' do
+              let(:filter) { { and: [{ state: 'ok' }, { op_id: '2abc' }] } }
 
-              it 'should be selected by at least one filter' do
-                expect(ids).to match_array %w[1 2 5]
+              it 'should be infos of cases selected by all filters' do
+                expect(ids).to match_array %w[]
               end
             end
           end
@@ -182,7 +162,8 @@ RSpec.describe CaseCore::Actions::Cases do
 
         context 'when all supported parameters are specified' do
           let(:params) { { filter: filter, **paging, order: order } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
+          let(:filter) { { or: filters } }
+          let(:filters) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
           let(:paging) { { limit: limit, offset: offset } }
           let(:limit) { 2 }
           let(:offset) { 1 }
@@ -682,6 +663,16 @@ RSpec.describe CaseCore::Actions::Cases do
                 .to change { CaseCore::Models::Document.count }
                 .by(2)
             end
+
+            context 'when the documents lack id value' do
+              let(:documents) { { documents: [{}] } }
+
+              it 'should create id' do
+                expect { subject }
+                  .to change { CaseCore::Models::Document.count }
+                  .by(1)
+              end
+            end
           end
         end
       end
@@ -888,7 +879,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
           context 'when the parameter value is a map' do
             context 'when a value of the map is a map' do
-              context 'when there is `exclude` key' do
+              context 'when there is only `exclude` key' do
                 let(:filter) { { rguid: { exclude: '101' } } }
 
                 it 'should be count of cases filtered by `exclude` value' do
@@ -896,7 +887,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `like` key' do
+              context 'when there is only `like` key' do
                 let(:filter) { { rguid: { like: '%000%' } } }
 
                 it 'should be count of cases filtered by likely value' do
@@ -904,7 +895,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `min` key' do
+              context 'when there is only `min` key' do
                 let(:filter) { { state: { min: 'error' } } }
 
                 it 'should be count of cases with values no less than value' do
@@ -912,7 +903,7 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is `max` key' do
+              context 'when there is only `max` key' do
                 let(:filter) { { state: { max: 'error' } } }
 
                 it 'should be count of cases with values no more than value' do
@@ -920,29 +911,11 @@ RSpec.describe CaseCore::Actions::Cases do
                 end
               end
 
-              context 'when there is more than one supported key specified' do
-                let(:filter) { { state: { min: 'error', exclude: 'ok' } } }
+              context 'when there are only `min` and `max` keys' do
+                let(:filter) { { state: { min: 'error', max: 'error' } } }
 
                 it 'should be count of cases filtered by filters together' do
-                  expect(subject).to be == 2
-                end
-              end
-
-              context 'when there is a key but it\'s unsupported' do
-                let(:filter) { { state: { unsupported: :key } } }
-
-                it 'should raise JSON::Schema::ValidationError' do
-                  expect { subject }
-                    .to raise_error { JSON::Schema::ValidationError }
-                end
-              end
-
-              context 'when there is no any key' do
-                let(:filter) { { state: {} } }
-
-                it 'should raise JSON::Schema::ValidationError' do
-                  expect { subject }
-                    .to raise_error { JSON::Schema::ValidationError }
+                  expect(subject).to be == 1
                 end
               end
             end
@@ -962,22 +935,20 @@ RSpec.describe CaseCore::Actions::Cases do
                 expect(subject).to be == 2
               end
             end
-          end
 
-          context 'when the parameter value is a list' do
-            context 'when the list is empty' do
-              let(:filter) { [] }
-
-              it 'should be count of all cases' do
-                expect(subject).to be == 5
-              end
-            end
-
-            context 'when the list contains filters' do
-              let(:filter) { [{ state: 'ok' }, { op_id: '2abc' }] }
+            context 'when there is only `or` key' do
+              let(:filter) { { or: [{ state: 'ok' }, { op_id: '2abc' }] } }
 
               it 'should be count of cases selected by at least one filter' do
                 expect(subject).to be == 3
+              end
+            end
+
+            context 'when there is only `and` key' do
+              let(:filter) { { and: [{ state: 'ok' }, { op_id: '2abc' }] } }
+
+              it 'should be count of cases selected by all filters' do
+                expect(subject).to be == 0
               end
             end
           end
@@ -1003,12 +974,29 @@ RSpec.describe CaseCore::Actions::Cases do
 
         context 'when all supported parameters are specified' do
           let(:params) { { filter: filter, limit: 2, offset: 1 } }
-          let(:filter) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
+          let(:filter) { { or: filters } }
+          let(:filters) { [{ state: 'ok' }, { rguid: { like: '%000%' } }] }
 
           it 'should be count of filtered cases' do
             expect(subject).to be == 2
           end
         end
+      end
+    end
+
+    context 'when argument is not of Hash type' do
+      let(:params) { 'not of Hash type' }
+
+      it 'should raise JSON::Schema::ValidationError' do
+        expect { subject }.to raise_error(JSON::Schema::ValidationError)
+      end
+    end
+
+    context 'when argument is of Hash type but of wrong structure' do
+      let(:params) { { filter: :wrong } }
+
+      it 'should raise JSON::Schema::ValidationError' do
+        expect { subject }.to raise_error(JSON::Schema::ValidationError)
       end
     end
   end

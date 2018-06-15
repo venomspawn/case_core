@@ -11,9 +11,6 @@ module CaseCore
         # Модуль с методом REST API, который возвращает информацию о версии
         # приложения
         module Show
-          # Строка с телом ответа на запрос
-          BODY = { version: VERSION }.to_json
-
           # Регистрация в контроллере необходимых путей
           # @param [CaseCore::API::REST::Controller] controller
           #   контроллер
@@ -25,8 +22,9 @@ module CaseCore
             #   ассоциативный массив с единственным полем `version`, хранящим
             #   строку с версией приложения в качестве значения
             controller.get '/version' do
+              content = version.show(params)
               status :ok
-              body BODY
+              body Oj.dump(content)
             end
           end
         end

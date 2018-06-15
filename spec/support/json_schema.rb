@@ -9,5 +9,5 @@ end
 
 RSpec::Matchers.define :have_proper_body do |schema|
   match { |response| JSON::Validator.validate(schema, response.body) }
-  description { "has body that matches JSON schema #{schema}" }
+  description { "have body that matches JSON schema #{schema}" }
 end
