@@ -1,19 +1,4 @@
 ---
-- hosts: build
-
-  roles:
-    - { role: docker-build, tags: build }
-
-- hosts: build
-
-  roles:
-    - { role: docker-test, tags: test }
-
-- hosts: build
-
-  roles:
-    - { role: docker-push, tags: push }
-
 - hosts: app_server
 
   roles:

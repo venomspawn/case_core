@@ -1,15 +1,3 @@
-- src: git+http://gitlab.it.vm/infra/docker-build
-  name: docker-build
-  version: master
-
-- src: git+http://gitlab.it.vm/infra/docker-test
-  name: docker-test
-  version: master
-
-- src: git+http://gitlab.it.vm/infra/docker-push
-  name: docker-push
-  version: master
-
 - src: git+http://gitlab.it.vm/infra/docker-run
   name: docker-run
   version: master
