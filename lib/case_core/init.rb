@@ -97,32 +97,37 @@ module CaseCore
       @initialized = true
     end
 
-    # Запускает инициализацию приложения
-    # @param [Hash{:only, :except => Array}] params
-    #   ассоциативный массив параметров инициализации
-    def load_initializers(params)
-      paths = Dir["#{Init.settings.initializers}/*.rb"]
-      names = initializer_names(paths)
-      only = Set.new(params[:only] || names.values)
-      except = Set.new(params[:except])
-      names.keep_if { |_, name| only.include?(name) && !except.include?(name) }
-      names.keys.sort.each(&method(:require))
+    # Возвращает список полных путей к файлам инициализации
+    # @return [Array<String>]
+    #   список полных путей
+    def paths
+      Dir["#{Init.settings.initializers}/*.rb"]
     end
 
     # Регулярное выражение, позволяющее извлечь название файла инициализации
     NAME_REGEXP = %r{\/.{2}_([^\/]*)\.rb$}
 
-    # Возвращает ассоциативный массив, в котором полным путям файлов
-    # инициализации сопоставляются их названия
-    # @param [Array<String>] paths
-    #   список полных путей файлов инициализации
+    # Возвращает список полных путей к файлам инициализации
+    # @param [Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации
     # @return [Hash]
     #   результирующий ассоциативный массив
-    def initializer_names(paths)
-      paths.each_with_object({}) do |path, memo|
+    def filtered_paths(params)
+      only = params[:only]
+      only &&= Set.new(only)
+      except = Set.new(params[:except])
+      paths.each_with_object([]) do |path, memo|
         name = NAME_REGEXP.match(path)&.[](1)
-        memo[path] = name unless name.nil?
+        next if name.nil? || except.include?(name)
+        memo << path if only.nil? || only.include?(name)
       end
+    end
+
+    # Запускает инициализацию приложения
+    # @param [Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации
+    def load_initializers(params)
+      filtered_paths(params).sort.each(&method(:require))
     end
   end
 end

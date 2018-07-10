@@ -42,11 +42,7 @@ module CaseCore
             raise e
           end
 
-          private :logger
-          private :log_with_level
-          private :log_info
-          private :log_debug
-          private :log_error
+          private :logger, :log_with_level, :log_info, :log_debug, :log_error
 
           private
 

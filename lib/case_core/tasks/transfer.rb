@@ -139,12 +139,20 @@ module CaseCore
       # Импортирует реестры передаваемой корреспонденции из `case_manager` в
       # `mfc`
       def import_registers
-        data = hub.cm.registers.each_with_object([]) do |(id, register), memo|
+        data = extract_registers
+        hub.mfc.import_registers(data)
+        log_imported_registers(data.size, binding)
+      end
+
+      # Возвращает список ассоциативных массивов с импортируемой информацией о
+      # реестрах передаваемой корреспонденции
+      # @return [Array<Hash>]
+      #   результирующий список
+      def extract_registers
+        hub.cm.registers.each_with_object([]) do |(id, register), memo|
           cases = hub.cm.register_cases[id]
           memo << extract_register(register, cases) unless cases.blank?
         end
-        hub.mfc.import_registers(data)
-        log_imported_registers(data.size, binding)
       end
 
       # Возвращает ассоциативный массив с импортируемой информацией о реестре
@@ -164,7 +172,7 @@ module CaseCore
           result[:type]    = register[:register_type]
           result[:sent]    = register[:exported]
           result[:sent_at] = register[:exported_at]
-          result[:cases]   = cases.to_json
+          result[:cases]   = Oj.dump(cases)
         end
       end
     end

@@ -52,6 +52,24 @@ module CaseCore
           rescue JSON::ParserError
             nil
           end
+
+          # Создаёт запись в журнале событий о том, что произошла ошибка во
+          # время обработки запроса
+          def log_unprocessable_error
+            log_error { <<~LOG }
+              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
+              #{error_message}
+            LOG
+          end
+
+          # Создаёт запись в журнале событий о том, что произошла ошибка
+          # сервера
+          def log_internal_server_error
+            log_error { <<~LOG }
+              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
+              #{error.message} AT #{error.backtrace.first(3)}
+            LOG
+          end
         end
 
         # Отображение классов ошибок в коды ошибок
@@ -75,14 +93,10 @@ module CaseCore
         #   код ошибки
         def self.define_error_handler(controller, error_class, error_code)
           controller.error error_class do
-            message = error_message
-            log_error { <<~LOG }
-              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE #{message}
-            LOG
-
+            log_unprocessable_error
             status error_code
-            content = { message: message, error: error.class }
-            body content.to_json
+            content = { message: error_message, error: error.class }
+            body Oj.dump(content)
           end
         end
 
@@ -102,11 +116,7 @@ module CaseCore
         #   контроллер
         def self.define_500_handler(controller)
           controller.error 500 do
-            log_error { <<~LOG }
-              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
-              #{error.message} AT #{error.backtrace.first(3)}
-            LOG
-
+            log_internal_server_error
             status 500
             content = { message: error.message, error: error.class }
             body content.to_json

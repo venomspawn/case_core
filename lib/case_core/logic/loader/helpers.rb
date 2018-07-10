@@ -38,7 +38,7 @@ module CaseCore
         #   если модуль не был найден
         def check_if_logic_module_is_found_by_name!(name, module_name)
           return unless module_name.empty?
-          raise Errors::LogicModule::NotFoundByName.new(name)
+          raise Errors::LogicModule::NotFoundByName, name
         end
 
         # Создаёт запись в журнале событий о том, что во время загрузки модуля
