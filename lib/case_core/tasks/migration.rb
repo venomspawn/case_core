@@ -10,7 +10,7 @@ module CaseCore
       include Helpers::Log
 
       # Запускает миграцию
-      # @param [Sequel::Database] db
+      # @param [Sequel::Database] database
       #   база данных
       # @param [Integer] to
       #   номер миграции, к которому необходимо привести базу данных. Если
@@ -21,14 +21,14 @@ module CaseCore
       #   базы данных.
       # @param [String] dir
       #   путь к директории, где будут искаться миграции
-      def self.launch!(db, to, from, dir)
-        new(db, to, from, dir).launch!
+      def self.launch!(database, to, from, dir)
+        new(database, to, from, dir).launch!
       end
 
       # База данных
       # @return [Sequel::Database]
       #   база данных
-      attr_reader :db
+      attr_reader :database
 
       # Номер миграции, к которому необходимо привести базу данных. Если равен
       # nil, то база данных приводится к последнему номеру.
@@ -49,7 +49,7 @@ module CaseCore
       attr_reader :dir
 
       # Инициализирует объект
-      # @param [Sequel::Database] db
+      # @param [Sequel::Database] database
       #   база данных
       # @param [Integer] to
       #   номер миграции, к которому необходимо привести базу данных. Если
@@ -60,8 +60,8 @@ module CaseCore
       #   базы данных.
       # @param [String] dir
       #   путь к директории, где будут искаться миграции
-      def initialize(db, to, from, dir)
-        @db = db
+      def initialize(database, to, from, dir)
+        @database = database
         @to = to
         @from = from
         @dir = dir
@@ -75,7 +75,7 @@ module CaseCore
 
         current = from.nil? ? nil : from.to_i
         target = to.nil? ? nil : to.to_i
-        Sequel::Migrator.run(db, dir, current: current, target: target)
+        Sequel::Migrator.run(database, dir, current: current, target: target)
 
         log_finish
       end
@@ -84,7 +84,7 @@ module CaseCore
       # данных и какова эта миграция
       def log_start
         log_info { <<~LOG }
-          Начинается миграция базы данных #{db.opts[:database]}
+          Начинается миграция базы данных #{database.opts[:database]}
         LOG
 
         log_info { <<~LOG }
@@ -97,7 +97,7 @@ module CaseCore
       # завершена
       def log_finish
         log_info { <<~LOG }
-          Миграция базы данных #{db.opts[:database]} завершена
+          Миграция базы данных #{database.opts[:database]} завершена
         LOG
       end
     end

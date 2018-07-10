@@ -105,15 +105,24 @@ module CaseCore
           @watcher = create_watcher
         end
 
+        # Ищет директории с библиотеками в директории {lib} по предоставленному
+        # префиксу, добавляет информацию о библиотеках в предоставленный
+        # ассоциативный массив и возвращает его
+        # @param [#to_s] prefix
+        #   префикс названий директорий
+        # @param [Hash] memo
+        #   ассоциативный массив с информацией о библиотеках
+        # @return [Hash]
+        #   заполненный ассоциативный массив
+        def add_libs_info(prefix = nil, memo = {})
+          pattern = "#{dir}/#{prefix}*"
+          Dir[pattern].each_with_object(memo, &method(:add_lib_info))
+        end
+
         # Обновляет ассоциативный массив {libs}, в котором названиям библиотек
         # соответствуют строки с последними версиями этих библиотек
         def reload_libs_info
-          @libs = if File.directory?(dir)
-                    pattern = "#{dir}/*"
-                    Dir[pattern].each_with_object({}, &method(:add_lib_info))
-                  else
-                    {}
-                  end
+          @libs = File.directory?(dir) ? add_libs_info : {}
         end
 
         # Регулярное выражение, позволяющее извлечь название и версию
@@ -210,9 +219,8 @@ module CaseCore
           # Выгрузка модуля библиотеки
           Loader.unload(lib_name)
           libs.delete(lib_name) # nodoc
-          # Поиск библиотек с таким же названий
-          pattern = "#{dir}/#{lib_name}-*"
-          Dir[pattern].each_with_object(libs, &method(:add_lib_info))
+          # Поиск библиотек с таким же названием
+          add_libs_info("#{lib_name}-", libs)
           # Загрузка модуля библиотеки в случае, если присутствует иная версия
           Loader.logic(lib_name) if libs.include?(lib_name)
         end

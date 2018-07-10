@@ -86,10 +86,10 @@ module CaseCore
         #   аргумента
         def check_case_logic!(c4s3)
           logic(c4s3).tap do |obj|
-            raise Errors::Logic::NotFound.new(c4s3) if obj.nil?
+            raise Errors::Logic::NotFound, c4s3 if obj.nil?
 
             found = obj.respond_to?(:on_case_creation)
-            raise Errors::OnCaseCreation::NotFound.new(c4s3) unless found
+            raise Errors::OnCaseCreation::NotFound, c4s3 unless found
           end
         end
 

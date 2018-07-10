@@ -32,14 +32,6 @@ module CaseCore
             @types = types
           end
 
-          # Ассоциативный массив, в котором типу заявки сопоставляется название
-          # атрибута, содержащего в себе идентификатор сообщения СМЭВ
-          MESSAGE_ID_NAME = {
-            'cik_case' => 'cik_message_id',
-            'msp_case' => 'msp_message_id',
-            'mvd_case' => 'mvd_message_id'
-          }.freeze
-
           # Возвращает ассоциативный массив атрибутов межведомственного запроса
           # @return [Hash] request
           #   результирующий ассоциативный массив
@@ -47,11 +39,8 @@ module CaseCore
             {}.tap do |result|
               result['response_content'] = request[:response_content]
               result['response_signature'] = request[:response_signature]
-              case_id = request[:case_id]
-              type = types[case_id]
-              name = MESSAGE_ID_NAME[type]
-              result[name] = request[:id]
-              result.delete_if { |k, v| k.blank? || v.blank? }
+              result[message_id_prop_name] = request[:id]
+              sanitize(result)
             end
           end
 
@@ -67,6 +56,34 @@ module CaseCore
           # @return [Hash]
           #   ассоциативный массив с информацией о типах заявок
           attr_reader :types
+
+          # Ассоциативный массив, в котором типу заявки сопоставляется название
+          # атрибута, содержащего в себе идентификатор сообщения СМЭВ
+          MESSAGE_ID_NAME = {
+            'cik_case' => 'cik_message_id',
+            'msp_case' => 'msp_message_id',
+            'mvd_case' => 'mvd_message_id'
+          }.freeze
+
+          # Возвращает название поля для идентификатора сообщения СМЭВ или
+          # `nil`, если название поля невозможно извлечь
+          # @return [String]
+          #   название поля для идентификатора сообщения СМЭВ
+          # @return [NilClass]
+          #   если название поля невозможно извлечь
+          def message_id_prop_name
+            case_id = request[:case_id]
+            type = types[case_id]
+            MESSAGE_ID_NAME[type]
+          end
+
+          # Удаляет пустые ключи и значения из предоставленного ассоциативного
+          # массива
+          # @param [Hash] hash
+          #   ассоциативный массив
+          def sanitize(hash)
+            hash.delete_if { |k, v| k.blank? || v.blank? }
+          end
         end
       end
     end
