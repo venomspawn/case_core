@@ -2,7 +2,7 @@
 
 # Фабрика записей статусов обработки сообщений STOMP
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :processing_status, class: CaseCore::Models::ProcessingStatus do
     message_id  { create(:string) }
     status      { create(:enum, values: %w[ok error]) }

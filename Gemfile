@@ -27,10 +27,10 @@ gem 'yard-sinatra', git: 'https://github.com/OwnLocal/yard-sinatra.git'
 
 group :development, :test do
   gem 'awesome_print'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'rack-test'
   gem 'rspec'
-  gem 'rubocop', '0.55.0', require: false
+  gem 'rubocop'
 end
 
 group :test do
