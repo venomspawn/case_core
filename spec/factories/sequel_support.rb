@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Поддержка Sequel в FactoryGirl
+# Поддержка Sequel в FactoryBot
 
-FactoryGirl.define do
+FactoryBot.define do
   to_create(&:save)
 end

@@ -3,7 +3,7 @@
 # Фабрика объектов класса `Stomp::Message`, содержащих в себе информацию о
 # сообщении STOMP
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :stomp_message, class: Stomp::Message do
     headers { { 'content-type' => 'text/plain' } }
     body    { 'body' }

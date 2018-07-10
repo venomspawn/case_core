@@ -2,7 +2,7 @@
 
 # Фабрика записей документов, прикреплённых к заявкам
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :document, class: CaseCore::Models::Document do
     id             { create(:string) }
     title          { create(:string) }

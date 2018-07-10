@@ -47,10 +47,10 @@ module CaseCore
           #   список созданных записей заявок
           def create_requests(c4s3)
             DATA.map do |attrs|
-              FactoryGirl.create(:request, case_id: c4s3.id).tap do |request|
+              FactoryBot.create(:request, case_id: c4s3.id).tap do |request|
                 attrs.each do |name, value|
                   args = { request_id: request.id, name: name, value: value }
-                  FactoryGirl.create(:request_attribute, args)
+                  FactoryBot.create(:request_attribute, args)
                 end
               end
             end

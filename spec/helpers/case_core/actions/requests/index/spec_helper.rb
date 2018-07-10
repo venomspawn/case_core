@@ -50,7 +50,7 @@ module CaseCore
           #   список созданных записей межведомственных запросов
           def create_requests(c4s3)
             args = [DATA.size, case_id: c4s3.id]
-            FactoryGirl.create_list(:request, *args).tap do |requests|
+            FactoryBot.create_list(:request, *args).tap do |requests|
               values = DATA.size.times.each_with_object([]) do |i, memo|
                 id = requests[i].id
                 DATA[i].each { |name, value| memo << [id, name.to_s, value] }
