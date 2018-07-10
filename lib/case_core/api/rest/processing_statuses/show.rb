@@ -26,7 +26,7 @@ module CaseCore
             #   ассоциативный массив, структура которого описана схемой
             #   {CaseCore::Actions::ProcessingStatuses::Show::RESULT_SCHEMA}
             controller.get '/processing_statuses/:message_id' do
-              content = processing_statuses.show(params)
+              content = Actions::ProcessingStatuses.show(params)
               status :ok
               body Oj.dump(content)
             end

@@ -22,7 +22,7 @@ RSpec.describe CaseCore::Actions::Version::Show do
     end
 
     context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
+      let(:params) { %w[not of Hash type] }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)

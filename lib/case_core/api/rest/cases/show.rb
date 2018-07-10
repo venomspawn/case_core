@@ -20,7 +20,7 @@ module CaseCore
             #   ассоциативный массив, структура которого описана схемой
             #   {CaseCore::Actions::Cases::Show::RESULT_SCHEMA}
             controller.get '/cases/:id' do
-              content = cases.show(params)
+              content = Actions::Cases.show(params)
               content[:created_at] = content[:created_at].strftime('%FT%T')
               status :ok
               body Oj.dump(content)

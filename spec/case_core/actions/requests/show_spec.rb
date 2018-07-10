@@ -11,10 +11,11 @@ RSpec.describe CaseCore::Actions::Requests::Show do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(params) }
+    subject(:result) { described_class.new(params, rest) }
 
     let(:params) { { id: id } }
     let(:id) { 1 }
+    let(:rest) { nil }
 
     describe 'result' do
       subject { result }
@@ -22,29 +23,9 @@ RSpec.describe CaseCore::Actions::Requests::Show do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` attribute is absent' do
-      let(:params) { { doesnt: :have_id_attribute } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when an attribute is present beside `id` attribute' do
-      let(:params) { { id: 1, an: :attribute } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 1 },
+                          wrong_structure: {}
   end
 
   describe 'instance' do

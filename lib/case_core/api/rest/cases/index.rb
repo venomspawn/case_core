@@ -24,7 +24,7 @@ module CaseCore
             #   список, структура которого описана схемой
             #   {CaseCore::Actions::Cases::Index::RESULT_SCHEMA}
             controller.post '/cases' do
-              content = cases.index(post_params)
+              content = Actions::Cases.index(request.body)
               status :ok
               body Oj.dump(content)
             end
