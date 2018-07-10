@@ -9,79 +9,99 @@ module CaseCore
 
       # Возвращает ассоциативный массив с информацией о количестве
       # межведомственных запросов, созданных в рамках заявки
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [Hash{count: Integer}]
       #   результирующий ассоциативный массив
       # @raise [Sequel::NoMatchingRow]
       #   если запись заявки не найдена
-      def self.count(params)
-        Count.new(params).count
+      def self.count(params, rest = nil)
+        Count.new(params, rest).count
       end
 
       require_relative 'requests/create'
 
       # Создаёт новую запись межведомственного запроса вместе с записями его
       # атрибутов и возвращает её
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [CaseCore::Models::Request]
       #   созданная запись межведомственного запроса
-      def self.create(params)
-        Create.new(params).create
+      def self.create(params, rest = nil)
+        Create.new(params, rest).create
       end
 
       require_relative 'requests/find'
 
       # Возвращает запись междведомственного запроса, найденную по
       # предоставленным атрибутам, или `nil`, если найти запись невозможно
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [CaseCore::Models::Request]
       #   найденная запись межведомственного запроса
       # @return [NilClass]
       #   если запись межведомственного запроса невозможно найти по
       #   предоставленным атрибутам
-      def self.find(params)
-        Find.new(params).find
+      def self.find(params, rest = nil)
+        Find.new(params, rest).find
       end
 
       require_relative 'requests/index'
 
       # Возвращает список ассоциативных массивов атрибутов межведомственных
       # запросов, созданных в рамках заявки
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [Array<Hash>]
       #   список ассоциативных массивов атрибутов межведомственных запросов,
       #   созданных в рамках заявки
-      def self.index(params)
-        Index.new(params).index
+      def self.index(params, rest = nil)
+        Index.new(params, rest).index
       end
 
       require_relative 'requests/show'
 
       # Возвращает ассоциативный массив со всеми атрибутами межведомственного
       # запроса
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [Hash]
       #   результирующий ассоциативный массив
       # @raise [Sequel::NoMatchingRow]
       #   если запись заявки не найдена
-      def self.show(params)
-        Show.new(params).show
+      def self.show(params, rest = nil)
+        Show.new(params, rest).show
       end
 
       require_relative 'requests/update'
 
       # Обновляет атрибуты межведомственного запроса с указанным
       # идентификатором записи
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @raise [Sequel::ForeignKeyConstraintViolation]
       #   если запись межведомственного запроса не найдена по предоставленному
       #   идентификатору
-      def self.update(params)
-        Update.new(params).update
+      def self.update(params, rest = nil)
+        Update.new(params, rest).update
       end
     end
   end

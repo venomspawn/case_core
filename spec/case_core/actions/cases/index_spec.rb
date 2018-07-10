@@ -10,9 +10,10 @@ RSpec.describe CaseCore::Actions::Cases::Index do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(params) }
+    subject(:result) { described_class.new(params, rest) }
 
     let(:params) { {} }
+    let(:rest) { nil }
 
     describe 'result' do
       subject { result }
@@ -20,21 +21,9 @@ RSpec.describe CaseCore::Actions::Cases::Index do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type but of wrong structure' do
-      let(:params) { { filter: :wrong } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          {},
+                          wrong_structure: { filter: :wrong }
   end
 
   describe 'instance' do

@@ -24,7 +24,7 @@ module CaseCore
             #   список, структура которого описана схемой
             #   {CaseCore::Actions::Documents::Index::RESULT_SCHEMA}
             controller.get '/cases/:id/documents' do
-              content = documents.index(params)
+              content = Actions::Documents.index(params)
               status :ok
               body Oj.dump(content)
             end

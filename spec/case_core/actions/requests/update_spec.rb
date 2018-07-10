@@ -11,9 +11,10 @@ RSpec.describe CaseCore::Actions::Requests::Update do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(params) }
+    subject(:result) { described_class.new(params, rest) }
 
     let(:params) { { id: 1, attr: 'attr' } }
+    let(:rest) { nil }
 
     describe 'result' do
       subject { result }
@@ -21,53 +22,9 @@ RSpec.describe CaseCore::Actions::Requests::Update do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` attribute is absent' do
-      let(:params) { { attr: 'attr' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when only `id` attribute is present' do
-      let(:params) { { id: 'id' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` attribute is of wrong type' do
-      let(:params) { { id: 'of wrong type', attr: 'attr' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `case_id` attribute is present' do
-      let(:params) { { id: 'id', case_id: 'case_id' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `created_at` attribute is present' do
-      let(:params) { { id: 'id', created_at: 'created_at' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 1, attr: 'attr' },
+                          wrong_structure: {}
   end
 
   describe 'instance' do
@@ -82,7 +39,7 @@ RSpec.describe CaseCore::Actions::Requests::Update do
     subject { instance.update }
 
     let(:instance) { described_class.new(params) }
-    let(:params) { { id: id, name => new_value } }
+    let(:params) { { id: id, name.to_sym => new_value } }
     let(:request) { create(:request, case: c4s3) }
     let(:c4s3) { create(:case) }
     let(:id) { request.id }

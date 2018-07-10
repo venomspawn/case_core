@@ -10,28 +10,39 @@ module CaseCore
       require_relative 'documents/update'
 
       # Создаёт запись документа и прикрепляет её к записи заявки
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
-      def self.create(params)
-        Create.new(params).create
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
+      def self.create(params, rest = nil)
+        Create.new(params, rest).create
       end
 
       # Возвращает список ассоциативных массивов атрибутов документов,
       # прикреплённых к заявке
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [Array<Hash>]
       #   список ассоциативных массивов атрибутов документов, прикреплённых к
       #   заявке
-      def self.index(params)
-        Index.new(params).index
+      def self.index(params, rest = nil)
+        Index.new(params, rest).index
       end
 
       # Обновляет запись документа
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @param [Hash] params
       #   ассоциативный массив параметров действия
-      def self.update(params)
-        Update.new(params).update
+      def self.update(params, rest = nil)
+        Update.new(params, rest).update
       end
     end
   end

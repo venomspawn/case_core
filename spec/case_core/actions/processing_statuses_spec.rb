@@ -8,9 +8,15 @@ RSpec.describe CaseCore::Actions::ProcessingStatuses do
   it { is_expected.to respond_to(:show) }
 
   describe '.show' do
-    subject(:result) { described_class.show(params) }
+    subject(:result) { described_class.show(params, rest) }
 
     let(:params) { { message_id: message_id } }
+    let(:rest) { nil }
+    let!(:processing_status) { create(:processing_status, message_id: 'id') }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { message_id: 'id' },
+                          wrong_structure: {}
 
     describe 'result' do
       subject { result }
@@ -28,24 +34,6 @@ RSpec.describe CaseCore::Actions::ProcessingStatuses do
         let(:processing_status) { create(:processing_status, status: :error) }
 
         it { is_expected.to match_json_schema(schema) }
-      end
-    end
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type' do
-      context 'when argument doesn\'t have `message_id` attribute' do
-        let(:params) { { doesnt: :have_message_id_attribute } }
-
-        it 'should raise JSON::Schema::ValidationError' do
-          expect { subject }.to raise_error(JSON::Schema::ValidationError)
-        end
       end
     end
 

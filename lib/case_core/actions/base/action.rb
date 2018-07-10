@@ -14,14 +14,16 @@ module CaseCore
         # Инициализирует объект класса
         # @param [Object] params
         #   параметры действия
+        # @param [NilClass, Hash] rest
+        #   ассоциативный массив дополнительных параметров действия или `nil`,
+        #   если дополнительные параметры отсутствуют
         # @raise [NameError]
         #   если не найдена константа `PARAMS_SCHEMA` в пространстве имён
         #   класса, наследующего от данного
         # @raise [JSON::Schema::ValidationError]
         #   если аргумент не является объектом требуемых типа и структуры
-        def initialize(params)
-          JSON::Validator.validate!(params_schema, params, parse_data: false)
-          @params = sanitize_params(params)
+        def initialize(params, rest = nil)
+          @params = process_params(params, rest)
         end
 
         private
@@ -31,20 +33,46 @@ module CaseCore
         #   параметры действия
         attr_reader :params
 
-        # Возвращает параметры действия в исправленном виде
         # @param [Object] params
-        #   исходные параметры действия
+        #   параметры действия
+        # @param [NilClass, Hash] rest
+        #   дополнительные параметры действия
         # @return [Object]
-        #   параметры действия в исправленном виде
-        def sanitize_params(params)
-          case params
-          when Hash
-            params.deep_symbolize_keys
-          when Array
-            params.map(&method(:sanitize_params))
-          else
-            params
-          end
+        #   проверенные объединённые параметры действия
+        # @raise [JSON::Schema::ValidationError]
+        #   если аргумент не является объектом требуемых типа и структуры
+        def process_params(params, rest)
+          params = load_from_json(params)   if params.is_a?(String)
+          params = load_from_stream(params) if params.respond_to?(:read)
+          params.update(rest) unless rest.nil?
+          JSON::Validator.validate!(params_schema, params, parse_data: false)
+          params
+        end
+
+        # Возвращает структуру, восстановленную из предоставленной JSON-строки
+        # @param [String] json
+        #   предоставленная JSON-строка
+        # @return [Object]
+        #   восстановленная структура
+        # @raise [Oj::ParseError]
+        #   если во время восстановления произошла ошибка
+        def load_from_json(json)
+          Oj.load(json)
+        end
+
+        # Вызывает метод `read` у предоставленного объекта и возвращает
+        # структуру, восстановленную из значения, которое вернул метод. Если
+        # объект дополнительно предоставляет метод `rewind`, то вызывает его
+        # перед вызовом `read`.
+        # @param [#read] stream
+        #   предоставленный объект
+        # @return [Object]
+        #   восстановленная структура
+        # @raise [Oj::ParseError]
+        #   если во время восстановления произошла ошибка
+        def load_from_stream(stream)
+          stream.rewind if stream.respond_to?(:rewind)
+          load_from_json(stream.read.to_s)
         end
 
         # Возвращает схему, по которой проверяется объект параметров

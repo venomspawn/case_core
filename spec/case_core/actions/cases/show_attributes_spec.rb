@@ -11,10 +11,11 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(params) }
+    subject(:result) { described_class.new(params, rest) }
 
     let(:params) { { id: id } }
     let(:id) { 'id' }
+    let(:rest) { nil }
 
     describe 'result' do
       subject { result }
@@ -22,69 +23,9 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` parameter is absent' do
-      let(:params) { {} }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter is not `nil` nor a list' do
-      let(:params) { { id: 'id', names: 'not `nil` nor a list' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains an element of wrong type' do
-      let(:params) { { id: 'id', names: [wrong: :type] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `id` string' do
-      let(:params) { { id: 'id', names: %w[attr id] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `type` string' do
-      let(:params) { { id: 'id', names: %w[attr type] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `created_at` string' do
-      let(:params) { { id: 'id', names: %w[attr created_at] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when a parameter beside `id` or `name` is present' do
-      let(:params) { { id: 'id', names: [], a: :parameter } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id' },
+                          wrong_structure: {}
   end
 
   describe 'instance' do
@@ -96,7 +37,7 @@ RSpec.describe CaseCore::Actions::Cases::ShowAttributes do
     it { is_expected.to respond_to(:show_attributes) }
   end
 
-  describe '#show' do
+  describe '#show_attributes' do
     subject(:result) { instance.show_attributes }
 
     let(:instance) { described_class.new(params) }

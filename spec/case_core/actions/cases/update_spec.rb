@@ -10,9 +10,10 @@ RSpec.describe CaseCore::Actions::Cases::Update do
   end
 
   describe '.new' do
-    subject(:result) { described_class.new(params) }
+    subject(:result) { described_class.new(params, rest) }
 
     let(:params) { { id: 'id', attr: 'attr' } }
+    let(:rest) { nil }
 
     describe 'result' do
       subject { result }
@@ -20,45 +21,9 @@ RSpec.describe CaseCore::Actions::Cases::Update do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` attribute is absent' do
-      let(:params) { { attr: 'attr' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when only `id` attribute is present' do
-      let(:params) { { id: 'id' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `type` attribute is present' do
-      let(:params) { { id: 'id', type: 'type' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `created_at` attribute is present' do
-      let(:params) { { id: 'id', created_at: 'created_at' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id', attr: 'attr' },
+                          wrong_structure: {}
   end
 
   describe 'instance' do
@@ -73,7 +38,7 @@ RSpec.describe CaseCore::Actions::Cases::Update do
     subject { instance.update }
 
     let(:instance) { described_class.new(params) }
-    let(:params) { { id: id, name => new_value } }
+    let(:params) { { id: id, name.to_sym => new_value } }
     let(:c4s3) { create(:case) }
     let(:id) { c4s3.id }
     let!(:attr) { create(:case_attribute, *attr_traits) }

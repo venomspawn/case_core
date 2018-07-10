@@ -9,13 +9,16 @@ module CaseCore
 
       # Возвращает ассоциативный массив с информацией о статусе обработки
       # сообщения STOMP
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
       # @return [Hash]
       #   ассоциативный массив с информацией о статусе обработки сообщения
       #   STOMP
-      def self.show(params)
-        Show.new(params).show
+      def self.show(params, rest = nil)
+        Show.new(params, rest).show
       end
     end
   end
