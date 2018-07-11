@@ -60,7 +60,7 @@ module CaseCore
           def initialize_addresses
             @addresses = offices.each_with_object({}) do |(id, office), memo|
               next if office[:address].blank?
-              memo[id] = JSON.parse(office[:address], symbolize_names: true)
+              memo[id] = Oj.load(office[:address])
             end
           end
 

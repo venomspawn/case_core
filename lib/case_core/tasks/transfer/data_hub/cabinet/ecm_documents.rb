@@ -80,7 +80,7 @@ module CaseCore
             # @return [Hash]
             #   результирующий ассоциативный массив
             def unpack_content(document)
-              content = JSON.parse(document[:content])
+              content = Oj.load(document[:content])
               content = [content] if content.is_a?(Hash)
               content = unpack(content)
               content = content.each_value.first
