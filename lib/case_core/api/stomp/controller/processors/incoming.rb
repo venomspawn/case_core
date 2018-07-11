@@ -110,10 +110,10 @@ module CaseCore
             # сообщения STOMP
             # @return [Object]
             #   результирующий объект
-            # @raise [JSON::ParserError]
+            # @raise [Oj::ParseError, EncodingError]
             #   если тело сообщения не является корректной JSON-строкой
             def body!
-              JSON.parse(message.body, symbolize_names: true)
+              Oj.load(message.body)
             end
 
             # Возвращает ассоциативный массив заголовков сообщения STOMP
