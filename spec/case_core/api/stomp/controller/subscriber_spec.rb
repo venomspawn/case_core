@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::API::STOMP::Controller::Subscriber`
+# Тестирование класса `CaseCore::API::STOMP::Controller::Subscriber`
 # объектов, осуществляющих подписку на сообщения STOMP
 
 RSpec.describe CaseCore::API::STOMP::Controller::Subscriber do

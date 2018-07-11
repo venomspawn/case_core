@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Файл тестирования подключаемого модуля `CaseCore::Requests::Post`
+# Тестирование подключаемого модуля `CaseCore::Requests::Post`
 
-require "#{$lib}/requests/post"
+CaseCore.need 'requests/post'
 
 RSpec.describe CaseCore::Requests::Post do
   subject(:instance) { Object.new.extend described_class }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# Файл настройки расширений классов
-
 # Загрузка расширений базовых классов из библиотеки ActiveSupport
 require 'active_support/core_ext/hash/compact.rb'
 require 'active_support/core_ext/hash/deep_merge.rb'

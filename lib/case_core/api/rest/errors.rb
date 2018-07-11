@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require 'json'
 require 'json-schema'
 require 'rest-client'
-require 'sequel'
-
-require "#{$lib}/helpers/log"
 
 module CaseCore
+  need 'helpers/log'
+
   module API
     module REST
       # Обработка ошибок
@@ -16,12 +14,15 @@ module CaseCore
         module Helpers
           include CaseCore::Helpers::Log
 
+          # Название сервиса в верхнем регистре без знаков подчёркивания
+          APP_NAME_UPCASE = CaseCore.name.upcase.tr('_', '')
+
           # Возвращает название сервиса в верхнем регистре без знаков
-          # подчёркивания и дефисов. Необходимо для журнала событий.
+          # подчёркивания для журнала событий
           # @return [String]
           #   преобразованное название сервиса
           def app_name_upcase
-            $app_name.upcase.tr('-', '_')
+            APP_NAME_UPCASE
           end
 
           # Возвращает объект, связанный с ошибкой
@@ -48,8 +49,8 @@ module CaseCore
           # @return [NilClass]
           #   если невозможно декодировать сообщение
           def error_json_message(source)
-            JSON.parse(source)
-          rescue JSON::ParserError
+            Oj.load(source)
+          rescue Oj::ParseError
             nil
           end
 
@@ -75,8 +76,9 @@ module CaseCore
         # Отображение классов ошибок в коды ошибок
         ERRORS_MAP = {
           ArgumentError                     => 422,
-          JSON::ParserError                 => 422,
+          EncodingError                     => 422,
           JSON::Schema::ValidationError     => 422,
+          Oj::ParseError                    => 422,
           RuntimeError                      => 422,
           Sequel::DatabaseError             => 422,
           Sequel::NoMatchingRow             => 404,
@@ -119,7 +121,7 @@ module CaseCore
             log_internal_server_error
             status 500
             content = { message: error.message, error: error.class }
-            body content.to_json
+            body Oj.dump(content)
           end
         end
 

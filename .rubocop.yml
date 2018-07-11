@@ -24,11 +24,3 @@ Style/AsciiComments:
 
 Style/Documentation:
   Enabled: false
-
-Style/GlobalVars:
-  AllowedVariables:
-    - $app_name
-    - $environment
-    - $lib
-    - $logger
-    - $root

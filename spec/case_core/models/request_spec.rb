@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели межведомственного запроса
+# Тестирование модели межведомственного запроса
 # `CaseCore::Models::Request`
 
 RSpec.describe CaseCore::Models::Request do

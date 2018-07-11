@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
-# Файл инициализации сервиса
+# Инициализация сервиса
 
 require 'dotenv'
 
 # Корневая директория
-$root = File.absolute_path("#{__dir__}/..")
+root = File.absolute_path("#{__dir__}/..")
 
 # Окружение
-$environment = ENV['RACK_ENV'] || 'development'
+environment = ENV['RACK_ENV'] || 'development'
 
 # Загрузка переменных окружения из .env файла
-Dotenv.load(File.absolute_path("#{$root}/.env.#{$environment}"))
+Dotenv.load("#{root}/.env.#{environment}")
 
-$app_name = 'case_core'
-$lib = "#{$root}/lib/#{$app_name}"
-
-# Загрузка системы инициализации
-require "#{$lib}/init"
+app_name = 'case_core'
+# Загрузка корневого модуля
+require "#{root}/lib/#{app_name}"
 
 # Настройка системы инициализации
 CaseCore::Init.configure do |settings|
   settings.set :initializers, "#{__dir__}/initializers"
+  settings.set :root, root
 end

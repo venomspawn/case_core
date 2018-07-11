@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл настройки библиотеки `diplomat` и поддержки сервиса Consul
+# Настройки библиотеки `diplomat` и поддержки сервиса Consul
 
 require 'diplomat'
 
@@ -14,7 +14,7 @@ Diplomat.configure do |settings|
   settings.options = { request: { timeout: 0.5 } }
 end
 
-require "#{$lib}/consul/service"
+CaseCore.need 'consul/service'
 
 # Тег, по которому будут искаться сервисы через Consul
 tag = ENV['BUILD_ENV']

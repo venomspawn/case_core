@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'version'
+
   module Actions
     module Version
       class Show < Base::Action
@@ -36,7 +37,7 @@ module CaseCore
         # @return [Hash]
         #   результирующий ассоциативный массив
         def modules
-          dirs = Dir["#{$root}/#{ENV['CC_LOGIC_DIR']}/*"]
+          dirs = Dir["#{CaseCore.root}/#{ENV['CC_LOGIC_DIR']}/*"]
           dirs.each_with_object({}, &method(:process_dir))
         end
 

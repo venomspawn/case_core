@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса
+# Тестирование класса
 # `CaseCore::API::STOMP::Controller::Processors::Response`
 # обработчиков сообщений STOMP, вызывающих действия
 
@@ -33,7 +33,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processors::Response do
     subject(:result) { described_class.process(message) }
 
     let(:message) { create(:stomp_message) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     context 'when argument is not of `Stomp::Message` type' do
       let(:message) { 'not of `Stomp::Message` type' }
@@ -108,7 +108,7 @@ RSpec.describe CaseCore::API::STOMP::Controller::Processors::Response do
 
     let(:instance) { described_class.new(message) }
     let(:message) { create(:stomp_message) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     describe 'result' do
       subject { result }

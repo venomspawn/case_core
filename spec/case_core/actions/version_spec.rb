@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования функций модуля `CaseCore::Actions::Version`
+# Тестирование функций модуля `CaseCore::Actions::Version`
 
 RSpec.describe CaseCore::Actions::Version do
   describe 'the module' do

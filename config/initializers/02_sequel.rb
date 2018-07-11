@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл настройки Sequel
+# Настройки Sequel
 
 require 'sequel'
 require 'erb'
@@ -16,15 +16,11 @@ Sequel.extension :pg_array_ops
 
 # Инициализация подключения к базе данных
 # Загрузка настройки базы данных
-intermediate = ERB.new(IO.read("#{$root}/config/database.yml")).result
-database_options = YAML.safe_load(intermediate, [], [], true)
+erb = IO.read("#{CaseCore.root}/config/database.yml")
+yaml = ERB.new(erb).result
+options = YAML.safe_load(yaml, [], [], true)
 # Осуществление подключения
-db = Sequel.connect(database_options[$environment])
-# Добавление журнала событий
-db.loggers << $logger unless $environment == 'production'
-# Установка того, на каком уровне журнала событий происходит отображение
-# SQL-запросов
-db.sql_log_level = :debug
+db = Sequel.connect(options[CaseCore.env])
 # Подключение поддержки списков Postgres
 db.extension :pg_array
 # Подключение поддержки типов Postgres JSON и JSONB
@@ -45,17 +41,14 @@ Sequel::Model.raise_on_typecast_failure = true
 # Подключение общих плагинов
 Sequel::Model.plugin :string_stripper
 
-# Загрузка моделей
-Dir["#{$lib}/models/**/*.rb"].each do |filename|
-  begin
-    require filename
-  rescue StandardError
-    nil
-  end
-end
-
 # Отключение, необходимое для использования Puma. Без отключения процессы Puma
 # используют одно и то же подключение, определённое в родительском процессе,
 # что приводит к странным ошибкам. После отключения Sequel автоматически
 # подключается к базе данных индивидуально для каждого дочернего процесса.
 db.disconnect
+
+# Журнал событий
+db.loggers << CaseCore.logger unless CaseCore.production?
+# Установка того, на каком уровне журнала событий происходит отображение
+# SQL-запросов
+db.sql_log_level = CaseCore.production? ? :unknown : :debug

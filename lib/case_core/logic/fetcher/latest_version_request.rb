@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-require "#{$lib}/requests/get"
-require "#{$lib}/requests/mixins/url"
-
 module CaseCore
+  need 'helpers/log'
+  need 'requests/get'
+  need 'requests/mixins/url'
+
   module Logic
     class Fetcher
       # Класс запросов к серверу библиотек, который предоставляет функцию

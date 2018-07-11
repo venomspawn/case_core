@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия создания записи документа
+# Тестирование класса действия создания записи документа
 
 RSpec.describe CaseCore::Actions::Documents::Create do
   describe 'the class' do

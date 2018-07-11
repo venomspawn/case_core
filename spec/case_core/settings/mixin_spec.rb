@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модуля `CaseCore::Settings::Mixin`, который предназначен
+# Тестирование модуля `CaseCore::Settings::Mixin`, который предназначен
 # для включения в классы настроек
 
 RSpec.describe CaseCore::Settings::Mixin do

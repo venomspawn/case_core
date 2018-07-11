@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия получения информации о заявке
+# Тестирование класса действия получения информации о заявке
 
 RSpec.describe CaseCore::Actions::Cases::Show do
   describe 'the class' do

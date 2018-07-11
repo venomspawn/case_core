@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/search/query"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'search/query'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющий

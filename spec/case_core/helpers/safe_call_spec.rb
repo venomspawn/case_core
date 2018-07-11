@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Файл тестирования модуля `CaseCore::Helpers::SafeCall`, подключаемого для
+# Тестирование модуля `CaseCore::Helpers::SafeCall`, подключаемого для
 # получения поддержки безопасного вызова методов
 
-require "#{$lib}/helpers/safe_call"
+CaseCore.need 'helpers/safe_call'
 
 RSpec.describe CaseCore::Helpers::SafeCall do
   let(:instance) { Object.new.extend described_class }

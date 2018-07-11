@@ -2,14 +2,14 @@
 
 require 'securerandom'
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/actions/base/mixins/transactional"
-require "#{$lib}/helpers/log"
-require "#{$lib}/helpers/safe_call"
-
 require_relative 'mixins/logic'
 
 module CaseCore
+  need 'actions/base/action'
+  need 'actions/base/mixins/transactional'
+  need 'helpers/log'
+  need 'helpers/safe_call'
+
   module Actions
     module Cases
       # Класс действий над записями заявок, предоставляющих метод `create`,

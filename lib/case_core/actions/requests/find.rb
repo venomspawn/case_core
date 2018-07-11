@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющих
@@ -24,26 +24,24 @@ module CaseCore
 
         private
 
+        # Запрос Sequel на извлечение записей запросов
+        REQUEST_DATASET = Models::Request.order_by(:created_at.desc)
+
+        # Запрос Sequel на извлечение записей запросов, отфильтрованных по
+        # значениям атрибутов
+        JOIN_DATASET =
+          Models::Request
+          .join(:request_attributes, request_id: :id)
+          .select(Sequel[:requests].*)
+          .order_by(Sequel[:requests][:created_at].desc)
+
         # Возвращает запрос Sequel на получение записей межведомственных
         # запросов
         # @return [Sequel::Dataset]
         #   результирующий запрос
         def find_dataset
-          return Models::Request.order_by(:created_at.desc) if params.empty?
-
-          join_request_attributes_dataset
-            .select(Sequel[:requests].*)
-            .where(request_attributes_conditions)
-            .order_by(Sequel[:requests][:created_at].desc)
-        end
-
-        # Возвращает запрос Sequel на внутреннее соединение таблицы записей
-        # межведомственных запросов и таблицы запией атрибутов межведомственных
-        # запросов
-        # @return [Sequel::Dataset]
-        #   результирующий запрос
-        def join_request_attributes_dataset
-          Models::Request.join(:request_attributes, request_id: :id)
+          return REQUEST_DATASET if params.empty?
+          JOIN_DATASET.where(request_attributes_conditions)
         end
 
         # Возвращает ассоциативный массив условий, по которым осуществляется

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
+CaseCore.need 1
 
 module CaseCore
   module Tasks

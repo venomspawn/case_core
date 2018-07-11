@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Файл тестирования подключаемого модуля `CaseCore::Requests::Get`
+# Тестирование подключаемого модуля `CaseCore::Requests::Get`
 
-require "#{$lib}/requests/get"
+CaseCore.need 'requests/get'
 
 RSpec.describe CaseCore::Requests::Get do
   subject(:instance) { Object.new.extend described_class }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия создания записи заявки
+# Тестирование класса действия создания записи заявки
 
 RSpec.describe CaseCore::Actions::Cases::Create do
   describe 'the class' do
@@ -40,7 +40,7 @@ RSpec.describe CaseCore::Actions::Cases::Create do
     subject { instance.create }
 
     let(:instance) { described_class.new(params) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:params) { { type: type, **attrs, **documents } }
     let(:attrs) { {} }
     let(:documents) { {} }

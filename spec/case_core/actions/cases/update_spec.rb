@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия обновления атрибутов заявки
+# Тестирование класса действия обновления атрибутов заявки
 
 RSpec.describe CaseCore::Actions::Cases::Update do
   describe 'the class' do

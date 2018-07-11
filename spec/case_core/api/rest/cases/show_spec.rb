@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования метода REST API, возвращающего информацию о заявке
+# Тестирование метода REST API, возвращающего информацию о заявке
 
 RSpec.describe CaseCore::API::REST::Controller do
   describe 'GET /cases/:id' do

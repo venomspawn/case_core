@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/search/definitions"
-
 module CaseCore
+  need 'search/definitions'
+
   module Actions
     module Cases
       class Count

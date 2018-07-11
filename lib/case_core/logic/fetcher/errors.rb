@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-
-require_relative 'errors'
-
 module CaseCore
   module Logic
     class Fetcher

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::Requests::Count` действия
+# Тестирование класса `CaseCore::Actions::Requests::Count` действия
 # получения информации о количестве межведомственных запросах, созданных в
 # рамках заявки
 

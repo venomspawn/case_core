@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module ProcessingStatuses
       # Класс действий над записями статусов обработки сообщений STOMP,
@@ -13,12 +13,15 @@ module CaseCore
         require_relative 'show/params_schema'
         require_relative 'show/result_schema'
 
+        # Статус успешной обработки
+        OK = 'ok'
+
         # Возвращает ассоциативный массив с информацией о статусе обработки
         # сообщения STOMP с данным значением заголовка `x_message_id`
         # @return [Hash]
         #   результирующий ассоциативный массив
         def show
-          record.status == 'ok' ? record.values.slice(:status) : record.values
+          record.status == OK ? record.values.slice(:status) : record.values
         end
 
         private

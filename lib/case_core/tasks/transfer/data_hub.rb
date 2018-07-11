@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "#{$lib}/settings/configurable"
+CaseCore.need 1
 
 require_relative 'data_hub/cabinet'
 require_relative 'data_hub/case_manager'

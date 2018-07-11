@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл поддержки тестирования контроллера Sinatra
+# Поддержка тестирования контроллера Sinatra
 
 require 'rack/test'
 

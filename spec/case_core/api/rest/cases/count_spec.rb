@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования метода REST API, возвращающего информацию о количестве
+# Тестирование метода REST API, возвращающего информацию о количестве
 # заявок
 
 RSpec.describe CaseCore::API::REST::Controller do

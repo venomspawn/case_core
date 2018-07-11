@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели заявок `CaseCore::Models::Case`
+# Тестирование модели заявок `CaseCore::Models::Case`
 
 RSpec.describe CaseCore::Models::Case do
   describe 'the model' do

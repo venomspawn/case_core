@@ -2,7 +2,7 @@
 
 require 'stomp/null_logger'
 
-require "#{$lib}/helpers/log"
+CaseCore.need 1
 
 module CaseCore
   module API

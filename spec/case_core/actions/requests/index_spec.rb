@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::Requests::Index` действия
+# Тестирование класса `CaseCore::Actions::Requests::Index` действия
 # получения информации о межведомственных запросах, созданных в рамках заявки
 
 RSpec.describe CaseCore::Actions::Requests::Index do

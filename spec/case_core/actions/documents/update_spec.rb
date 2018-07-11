@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия обновления записи документа
+# Тестирование класса действия обновления записи документа
 
 RSpec.describe CaseCore::Actions::Documents::Update do
   describe 'the class' do

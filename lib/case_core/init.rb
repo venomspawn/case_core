@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
 require 'singleton'
 
 require_relative 'settings/configurable'
@@ -49,7 +48,7 @@ module CaseCore
     extend  Settings::Configurable
     include Singleton
 
-    settings_names :initializers
+    settings_names :initializers, :root, :logger
 
     # Инициализирует экземпляр класса
     def initialize
@@ -58,16 +57,18 @@ module CaseCore
 
     # Запускает инициализацию приложения, если инициализация ещё не была
     # запущена
-    # @param [Hash{:only, :except => Array}] params
-    #   ассоциативный массив параметров инициализации
-    def self.run!(params = {})
+    # @param [NilClass, Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации или `nil`, если параметры
+    #   инициализации отсутствуют
+    def self.run!(params = nil)
       instance.run!(params)
     end
 
     # Запускает инициализацию приложения, если инициализация ещё не была
     # запущена
-    # @param [Hash{:only, :except => Array}] params
-    #   ассоциативный массив параметров инициализации
+    # @param [NilClass, Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации или `nil`, если параметры
+    #   инициализации отсутствуют
     def run!(params)
       return if initialized?
       mutex.synchronize do
@@ -113,12 +114,10 @@ module CaseCore
     # @return [Hash]
     #   результирующий ассоциативный массив
     def filtered_paths(params)
-      only = params[:only]
-      only &&= Set.new(only)
-      except = Set.new(params[:except])
+      only, except = params&.values_at(:only, :except)
       paths.each_with_object([]) do |path, memo|
         name = NAME_REGEXP.match(path)&.[](1)
-        next if name.nil? || except.include?(name)
+        next if name.nil? || except&.include?(name)
         memo << path if only.nil? || only.include?(name)
       end
     end

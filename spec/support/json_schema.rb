@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл поддержки проверки типов и структур объектов на соответствие JSON-схеме
+# Добавление проверки типов и структур объектов на соответствие JSON-схеме
 
 RSpec::Matchers.define :match_json_schema do |schema|
   match { |object| JSON::Validator.validate(schema, object) }

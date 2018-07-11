@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Search::Query`
+# Тестирование класса `CaseCore::Search::Query`
 
-require "#{$lib}/search/query"
+CaseCore.need 1
 
 RSpec.describe CaseCore::Search::Query do
   describe 'the class' do

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-require "#{$lib}/helpers/safe_call"
-
 require_relative 'errors'
 
 module CaseCore
+  need 'helpers/log'
+  need 'helpers/safe_call'
+
   module Logic
     class Loader
       # Вспомогательный модуль, предназначенный для включения в содержащий

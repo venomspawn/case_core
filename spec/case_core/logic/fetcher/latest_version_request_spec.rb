@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Fetcher::LatestVersionRequest`
+# Тестирование класса `CaseCore::Logic::Fetcher::LatestVersionRequest`
 # запросов к серверу библиотек на получение информации о последней версии
 # библиотеки с заданным названием
 

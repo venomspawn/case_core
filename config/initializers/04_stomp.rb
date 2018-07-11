@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-# Файл настройки STOMP-контроллера
+# Настройки STOMP-контроллера
 
 # Загрузка STOMP-контроллера
-require "#{$lib}/api/stomp/controller.rb"
+CaseCore.need 'api/stomp/controller'
 
 # Настройка соединения с брокером сообщений
-intermediate = ERB.new(IO.read("#{$root}/config/stomp.yml")).result
-connection_info = YAML.safe_load(intermediate, [Symbol], [], true)
+erb = IO.read("#{CaseCore.root}/config/stomp.yml")
+yaml = ERB.new(erb).result
+connection_info = YAML.safe_load(yaml, [Symbol], [], true)
 
 # Значение переменных окружения, означающее, что необходимо передать строки,
 # созданные с помощью случайных значений
@@ -42,9 +43,9 @@ response_listeners = natural[ENV['CC_STOMP_RESPONSE_LISTENERS']]
 
 # Установка конфигурации STOMP-контроллера
 CaseCore::API::STOMP::Controller.configure do |settings|
-  settings.set :connection_info,     connection_info
-  settings.set :incoming_queue,      incoming_queue
-  settings.set :incoming_listeners,  incoming_listeners
-  settings.set :response_queues,     response_queues
-  settings.set :response_listeners,  response_listeners
+  settings.set :connection_info,    connection_info
+  settings.set :incoming_queue,     incoming_queue
+  settings.set :incoming_listeners, incoming_listeners
+  settings.set :response_queues,    response_queues
+  settings.set :response_listeners, response_listeners
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Loader` загрузчика бизнес-логики
+# Тестирование класса `CaseCore::Logic::Loader` загрузчика бизнес-логики
 
 RSpec.describe CaseCore::Logic::Loader do
   let(:delay) { RSpec.configuration.delay }
@@ -46,7 +46,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     subject(:result) { described_class.logic(name) }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:name) { 'test_case' }
     let(:version) { '0.0.2' }
 
@@ -153,7 +153,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     subject(:result) { described_class.loaded_logics }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     describe 'result' do
       subject { result }
@@ -173,7 +173,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     let(:instance) { described_class.instance }
     let(:scanner) { instance.send(:scanner) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     it 'should reload modules' do
       expect { subject }
@@ -190,7 +190,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     subject(:result) { described_class.unload(logic) }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     describe 'result' do
       subject { result }
@@ -241,7 +241,7 @@ RSpec.describe CaseCore::Logic::Loader do
     subject(:result) { instance.logic(name) }
 
     let(:instance) { described_class.instance }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:name) { 'test_case' }
     let(:version) { '0.0.2' }
 
@@ -349,7 +349,7 @@ RSpec.describe CaseCore::Logic::Loader do
     subject(:result) { instance.loaded_logics }
 
     let(:instance) { described_class.instance }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     describe 'result' do
       subject { result }
@@ -369,7 +369,7 @@ RSpec.describe CaseCore::Logic::Loader do
 
     let(:instance) { described_class.instance }
     let(:scanner) { instance.send(:scanner) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     it 'should reload modules' do
       expect { subject }.to change { instance.logic('test_case').object_id }
@@ -386,7 +386,7 @@ RSpec.describe CaseCore::Logic::Loader do
     subject(:result) { instance.unload(logic) }
 
     let(:instance) { described_class.instance }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
     describe 'result' do
       subject { result }

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Loader::Scanner` объектов,
+# Тестирование класса `CaseCore::Logic::Loader::Scanner` объектов,
 # сканирующих директорию с распакованными библиотеками бизнес-логики
 
 RSpec.describe CaseCore::Logic::Loader::Scanner do
   before { CaseCore::Logic::Loader.settings.dir = dir }
 
   let(:delay) { RSpec.configuration.delay }
-  let(:dir) { "#{$root}/spec/fixtures/logic" }
+  let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
   let!(:instance) { CaseCore::Logic::Loader.instance.send(:scanner) }
 
   describe 'instance' do

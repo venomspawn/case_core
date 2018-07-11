@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# Файл тестирования подключаемого модуля
+# Тестирование подключаемого модуля
 # `CaseCore::Requests::Mixins::Consulted`
 
-require "#{$lib}/requests/get"
-require "#{$lib}/requests/mixins/consulted"
+CaseCore.need 'requests/get'
+CaseCore.need 'requests/mixins/consulted'
 
 RSpec.describe CaseCore::Requests::Mixins::Consulted do
   before do
