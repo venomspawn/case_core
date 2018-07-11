@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Censorship::Filter::Settings` настроек
+# Тестирование класса `CaseCore::Censorship::Filter::Settings` настроек
 # фильтрации ключей ассоциативных массивов и строк
 
 RSpec.describe CaseCore::Censorship::Filter::Settings do

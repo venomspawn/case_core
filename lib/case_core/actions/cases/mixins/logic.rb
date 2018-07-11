@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-
 module CaseCore
+  need 'helpers/log'
+
   module Actions
     module Cases
       # Пространство имён для подключаемых модулей

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "#{$lib}/version"
-
 module CaseCore
   module API
     module REST

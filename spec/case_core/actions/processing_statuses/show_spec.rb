@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::ProcessingStatuses::Show`
+# Тестирование класса `CaseCore::Actions::ProcessingStatuses::Show`
 # действий получения информации о статусе обработки сообщения STOMP
 
 RSpec.describe CaseCore::Actions::ProcessingStatuses::Show do

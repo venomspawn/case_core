@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели атрибутов заявок
+# Тестирование модели атрибутов заявок
 # `CaseCore::Models::RequestAttribute`
 
 RSpec.describe CaseCore::Models::RequestAttribute do

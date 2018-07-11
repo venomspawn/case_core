@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модуля `CaseCore::Actions::Cases::Mixins::Logic`,
+# Тестирование модуля `CaseCore::Actions::Cases::Mixins::Logic`,
 # предоставляющего поддержку извлечения модуля бизнес-логики по типу заявки
 
 RSpec.describe CaseCore::Actions::Cases::Mixins::Logic do
@@ -37,7 +37,7 @@ RSpec.describe CaseCore::Actions::Cases::Mixins::Logic do
 
       let(:c4s3) { create(:case, type: type) }
       let(:type) { 'test_case' }
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
       it { is_expected.to be_a(Module) }
     end

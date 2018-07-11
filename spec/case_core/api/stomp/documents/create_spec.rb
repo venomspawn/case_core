@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования создания записи документа с помощью обработчика сообщений
+# Тестирование создания записи документа с помощью обработчика сообщений
 # STOMP в контроллере класса `CaseCore::API::STOMP::Controller`
 
 RSpec.describe CaseCore::API::STOMP::Controller do

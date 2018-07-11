@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования метода REST API, возвращающего информацию о статусе
+# Тестирование метода REST API, возвращающего информацию о статусе
 # обработки сообщения STOMP с заданным значением заголовка `x_message_id`
 
 RSpec.describe CaseCore::API::REST::Controller do

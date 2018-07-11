@@ -3,7 +3,7 @@
 require 'singleton'
 require 'stomp'
 
-require "#{$lib}/settings/configurable"
+CaseCore.need 1
 
 require_relative 'controller/processors/incoming'
 require_relative 'controller/processors/response'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модуля `CaseCore::Settings::Configurable`, который
+# Тестирование модуля `CaseCore::Settings::Configurable`, который
 # предоставляет методы для конфигурирования объектов
 
 RSpec.describe CaseCore::Settings::Configurable do

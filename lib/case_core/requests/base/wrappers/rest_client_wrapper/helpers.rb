@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/censorship/filter"
-require "#{$lib}/helpers/log"
-
 module CaseCore
+  need 'censorship/filter'
+  need 'helpers/log'
+
   module Requests
     module Base
       module Wrappers

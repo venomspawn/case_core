@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::Requests::Find` действия
+# Тестирование класса `CaseCore::Actions::Requests::Find` действия
 # поиска записи межведомственного запроса по предоставленным атрибутам
 
 RSpec.describe CaseCore::Actions::Requests::Find do

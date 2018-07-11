@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Documents
       # Класс действий над записями документов, предоставляющий метод `index`,

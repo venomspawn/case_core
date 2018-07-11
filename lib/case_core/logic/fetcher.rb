@@ -3,14 +3,14 @@
 require 'fileutils'
 require 'rubygems/package'
 
-require "#{$lib}/settings/configurable"
-
 require_relative 'fetcher/helpers'
 require_relative 'fetcher/gem_request'
 require_relative 'fetcher/latest_version_request'
 require_relative 'loader'
 
 module CaseCore
+  need 'settings/configurable'
+
   module Logic
     # Класс, предоставляющий функцию `fetch`, которая загружает и распаковывает
     # указанную или последнюю версию библиотеки с данным названием

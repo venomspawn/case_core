@@ -6,7 +6,7 @@ $VERBOSE = nil
 
 require 'rspec'
 
-show_delay_info = -> { $logger.unknown { <<-MESSAGE.squish } }
+show_delay_info = -> { CaseCore.logger.unknown { <<-MESSAGE.squish } }
   Выставлена задержка #{RSpec.configuration.delay} при тестировании
   многопоточных конструкций
 MESSAGE

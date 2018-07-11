@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::API::STOMP::Controller` контроллера STOMP
+# Тестирование класса `CaseCore::API::STOMP::Controller` контроллера STOMP
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   subject 'the class' do
@@ -315,7 +315,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       end
 
       let(:message) { create(:stomp_message) }
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:processor) { described_class::Processors::Response }
 
       context 'when no logic has the handler' do
@@ -693,7 +693,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       end
 
       let(:message) { create(:stomp_message) }
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:processor) { described_class::Processors::Response }
 
       context 'when no logic has the handler' do

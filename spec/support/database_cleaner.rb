@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл поддержки библиотеки database_cleaner
+# Настройка библиотеки database_cleaner
 
 require 'database_cleaner'
 

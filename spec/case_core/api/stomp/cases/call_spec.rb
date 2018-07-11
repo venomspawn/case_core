@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования вызова метода модуля бизнес-логики с записью заявки в
+# Тестирование вызова метода модуля бизнес-логики с записью заявки в
 # качестве аргумента с помощью обработчика сообщений STOMP в контроллере класса
 # `CaseCore::API::STOMP::Controller`
 
@@ -34,7 +34,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     let(:c4s3) { create(:case, type: type) }
     let(:type) { 'test_case' }
     let(:method_name) { 'a_method' }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:logic) { CaseCore::Logic::Loader.logic(type) }
     let(:status_records) { CaseCore::Models::ProcessingStatus }
     let(:status_record) { status_records.where(message_id: message_id).last }

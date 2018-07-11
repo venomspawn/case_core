@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::Cases::Call` действия вызова
+# Тестирование класса `CaseCore::Actions::Cases::Call` действия вызова
 # метода модуля бизнес-логики с записью заявки в качестве аргумента
 
 RSpec.describe CaseCore::Actions::Cases::Call do
@@ -64,7 +64,7 @@ RSpec.describe CaseCore::Actions::Cases::Call do
     context 'when method is absent' do
       before { CaseCore::Logic::Loader.settings.dir = dir }
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
       it 'should raise NoMethodError' do
         expect { subject }.to raise_error(NoMethodError)
@@ -77,7 +77,7 @@ RSpec.describe CaseCore::Actions::Cases::Call do
         allow(logic).to receive(method_name).and_raise('')
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 
       it 'should raise the error' do
@@ -91,7 +91,7 @@ RSpec.describe CaseCore::Actions::Cases::Call do
         allow(logic).to receive(method_name)
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 
       it 'should call the method' do

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "#{$lib}/search/query"
-
 require_relative 'action'
 
 module CaseCore
+  need 'search/query'
+
   module Actions
     module Base
       # Абстрактный базовый класс действия извлечения информации о записях

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования функций модуля `CaseCore::Actions::Cases`
+# Тестирование функций модуля `CaseCore::Actions::Cases`
 
 RSpec.describe CaseCore::Actions::Cases do
   subject { described_class }
@@ -337,7 +337,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
     subject { described_class.create(params, rest) }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:params) { { type: type, **attrs, **documents } }
     let(:attrs) { {} }
     let(:documents) { {} }
@@ -616,7 +616,7 @@ RSpec.describe CaseCore::Actions::Cases do
       before { CaseCore::Logic::Loader.settings.dir = dir }
 
       let(:type) { 'test_case' }
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
       it 'should raise NoMethodError' do
         expect { subject }.to raise_error(NoMethodError)
@@ -629,7 +629,7 @@ RSpec.describe CaseCore::Actions::Cases do
         allow(logic).to receive(method_name).and_raise('')
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:type) { 'test_case' }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 
@@ -644,7 +644,7 @@ RSpec.describe CaseCore::Actions::Cases do
         allow(logic).to receive(method_name)
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
       let(:type) { 'test_case' }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 

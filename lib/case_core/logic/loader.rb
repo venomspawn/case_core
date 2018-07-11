@@ -2,14 +2,14 @@
 
 require 'singleton'
 
-require "#{$lib}/settings/configurable"
-
 require_relative 'loader/helpers'
 require_relative 'loader/module_info'
 require_relative 'loader/scanner'
 require_relative 'loader/settings'
 
 module CaseCore
+  need 'settings/configurable'
+
   # Пространство имён для классов, отвечающих за загрузку и поддержку
   # бизнес-логики из внешних библиотек
   module Logic

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса
+# Тестирование класса
 # `CaseCore::API::STOMP::Controller::Processors::Incoming`
 # обработчиков сообщений STOMP, вызывающих действия
 

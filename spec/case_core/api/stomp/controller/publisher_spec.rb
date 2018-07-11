@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::API::STOMP::Controller::Publisher`
+# Тестирование класса `CaseCore::API::STOMP::Controller::Publisher`
 # объектов, публикующих сообщения STOMP
 
 RSpec.describe CaseCore::API::STOMP::Controller::Publisher do

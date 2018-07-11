@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Fetcher` загрузчика библиотек с
+# Тестирование класса `CaseCore::Logic::Fetcher` загрузчика библиотек с
 # бизнес-логикой с сервера библиотек
 
 RSpec.describe CaseCore::Logic::Fetcher do
@@ -46,7 +46,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
 
     subject(:result) { described_class.fetch(name, version) }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:name) { 'test' }
     let(:version) { '0.0.1' }
 
@@ -300,7 +300,7 @@ RSpec.describe CaseCore::Logic::Fetcher do
     subject(:result) { instance.fetch }
 
     let(:instance) { described_class.new(name, version) }
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:name) { 'test' }
     let(:version) { '0.0.1' }
 

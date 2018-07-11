@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/settings/configurable"
-
 module CaseCore
+  need 'settings/configurable'
+
   # Модуль интеграции с сервисом Consul, представляющий собой обёртку над
   # библиотекой `diplomat`
   module Consul

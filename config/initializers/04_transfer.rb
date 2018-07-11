@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Файл загрузки и настройки переноса данных
+# Загрузка и настройка переноса данных
 
-require "#{$lib}/tasks/transfer"
+CaseCore.need 'tasks/transfer'
 
 CaseCore::Tasks::Transfer::DataHub.configure do |settings|
   # Cabinet

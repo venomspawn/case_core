@@ -7,13 +7,11 @@ namespace :case_core do
 
     CaseCore::Init.run!(only: %w[class_ext logger sequel])
 
-    require "#{$lib}/tasks/migration"
+    CaseCore.need 'tasks/migrate'
 
     to = args[:to]
     from = args[:from]
-    dir = "#{$root}/db/migrations"
-    db = Sequel::Model.db
-    CaseCore::Tasks::Migration.launch!(db, to, from, dir)
+    CaseCore::Tasks::Migration.launch!(to, from)
   end
 
   desc 'Загружает и распаковывает библиотеку с бизнес-логикой'
@@ -31,7 +29,8 @@ namespace :case_core do
   task :run_rest_controller do
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(only: %w[class_ext logger oj sequel actions rest])
+    CaseCore::Init
+      .run!(only: %w[class_ext logger oj sequel models actions rest])
 
     CaseCore::API::REST::Controller.run!
   end
@@ -40,7 +39,7 @@ namespace :case_core do
   task :run_stomp_controller do
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(except: %w[logic_fetcher rest])
+    CaseCore::Init.run!(except: %w[logic_fetcher rest transfer])
 
     CaseCore::API::STOMP::Controller.run!
   end
@@ -49,7 +48,7 @@ namespace :case_core do
   task :transfer do
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(only: %w[class_ext oj logger sequel transfer])
+    CaseCore::Init.run!(only: %w[class_ext oj logger sequel models transfer])
 
     CaseCore::Tasks::Transfer.launch!
   end

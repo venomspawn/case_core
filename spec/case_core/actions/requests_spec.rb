@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования функций модуля `CaseCore::Actions::Requests`
+# Тестирование функций модуля `CaseCore::Actions::Requests`
 
 RSpec.describe CaseCore::Actions::Requests do
   subject { described_class }

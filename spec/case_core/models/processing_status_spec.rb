@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели `CaseCore::Models::ProcessingStatus` статусов
+# Тестирование модели `CaseCore::Models::ProcessingStatus` статусов
 # обработки сообщений STOMP
 
 RSpec.describe CaseCore::Models::ProcessingStatus do

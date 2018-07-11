@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-require "#{$lib}/helpers/safe_call"
+CaseCore.need 1
+CaseCore.need 1
 
 module CaseCore
   module API

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса действия создания записи межведомственного запроса
+# Тестирование класса действия создания записи межведомственного запроса
 
 RSpec.describe CaseCore::Actions::Requests::Create do
   describe 'the class' do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Actions::Documents::Index` действия
+# Тестирование класса `CaseCore::Actions::Documents::Index` действия
 # получения информации о документах, прикреплённых к заявке
 
 RSpec.describe CaseCore::Actions::Documents::Index do

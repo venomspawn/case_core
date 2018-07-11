@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-
 require_relative 'errors'
 
 module CaseCore
+  need 'helpers/log'
+
   module Logic
     class Fetcher
       # Вспомогательный модуль, предназначенный для включения в содержащий
