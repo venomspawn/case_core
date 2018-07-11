@@ -95,7 +95,7 @@ module CaseCore
         #   код ошибки
         def self.define_error_handler(controller, error_class, error_code)
           controller.error error_class do
-            log_unprocessable_error
+            log_unprocessable_error if error_code == 422
             status error_code
             content = { message: error_message, error: error.class }
             body Oj.dump(content)
