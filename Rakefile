@@ -7,7 +7,7 @@ namespace :case_core do
 
     CaseCore::Init.run!(only: %w[class_ext logger sequel])
 
-    CaseCore.need 'tasks/migrate'
+    CaseCore.need 'tasks/migration'
 
     to = args[:to]
     from = args[:from]

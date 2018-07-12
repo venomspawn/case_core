@@ -127,4 +127,13 @@ FactoryBot.define do
     skip_create
     initialize_with { Base64.encode64(create(:string)) }
   end
+
+  # UUID
+  factory :uuid, class: String do
+    skip_create
+    initialize_with do
+      s = create(:hex, length: 32)
+      "#{s[0..7]}-#{s[8..11]}-#{s[12..15]}-#{s[16..19]}-#{s[20..31]}"
+    end
+  end
 end

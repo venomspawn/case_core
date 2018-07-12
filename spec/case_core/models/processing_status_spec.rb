@@ -10,7 +10,7 @@ RSpec.describe CaseCore::Models::ProcessingStatus do
     it { is_expected.to respond_to(:create) }
   end
 
-  describe 'create' do
+  describe '.create' do
     subject(:result) { described_class.create(params) }
 
     let(:params) { attributes_for(:processing_status) }
