@@ -134,7 +134,7 @@ RSpec.describe CaseCore::Models::File do
       it { is_expected.to be_a(String) }
 
       it 'should be an UUID' do
-        hex = '[0-9a-zA-Z]'
+        hex = '[0-9a-fA-F]'
         expect(subject)
           .to match(/^#{hex}{8}-#{hex}{4}-#{hex}{4}-#{hex}{4}-#{hex}{12}$/)
       end

@@ -133,6 +133,6 @@ module CaseCore
   def self.require_file(path, skip = EMPTY)
     require path.to_s
   rescue StandardError => error
-    raise error unless skip.include?(error.class)
+    raise error if error.class.ancestors.find(&skip.method(:include?)).nil?
   end
 end
