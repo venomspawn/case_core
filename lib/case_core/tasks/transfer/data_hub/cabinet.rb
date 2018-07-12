@@ -90,7 +90,6 @@ module CaseCore
           attr_reader :vicarious_authorities
 
           # Инициализирует объект класса
-          # Инициализирует объект класса
           def initialize
             settings = DataHub.settings
             host = settings.cab_host

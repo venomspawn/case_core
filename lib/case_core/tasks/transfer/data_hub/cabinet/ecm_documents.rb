@@ -48,13 +48,8 @@ module CaseCore
             attr_reader :database
 
             # Список названий столбцов, извлекаемых из таблицы `ecm_documents`
-            ECM_DOCUMENTS_COLUMNS = %i[
-              id
-              content
-              created_at
-              folder_id
-              schema_urn
-            ].freeze
+            ECM_DOCUMENTS_COLUMNS =
+              %i[id attachments content created_at folder_id schema_urn].freeze
 
             # Возвращает запрос Sequel на получение записей документов
             # @return [Sequel::Dataset]

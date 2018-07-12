@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-CaseCore.need 1
-
 require_relative 'data_hub/cabinet'
 require_relative 'data_hub/case_manager'
 require_relative 'data_hub/mfc'
 require_relative 'data_hub/org_struct'
 
 module CaseCore
+  need 'settings/configurable'
+
   module Tasks
     class Transfer
       # Класс объектов, предоставляющих доступ к данным
