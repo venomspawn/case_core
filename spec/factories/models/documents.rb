@@ -16,7 +16,7 @@ FactoryBot.define do
     filename       { create(:string) }
     provided       { create(:boolean) }
     in_document_id { create(:string) }
-    fs_id          { create(:string) }
+    fs_id          { create(:file).id }
     created_at     { Time.now }
 
     association :case

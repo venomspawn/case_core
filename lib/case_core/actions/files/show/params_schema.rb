@@ -5,7 +5,7 @@ module CaseCore
     module Files
       class Show
         # Выражение для шестнадцатеричной цифры
-        HEX = '[a-zA-Z0-9]'
+        HEX = '[a-fA-F0-9]'
 
         # Регулярное выражение для проверки на формат UUID
         UUID_FORMAT = /^#{HEX}{8}-#{HEX}{4}-#{HEX}{4}-#{HEX}{4}-#{HEX}{12}$/
