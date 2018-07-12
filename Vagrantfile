@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
     guest_port = 8095
 
     dev.vm.provider 'virtualbox' do |machine|
-      machine.memory = 1024
+      machine.memory = 4096
       machine.cpus = 1
     end
 
