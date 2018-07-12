@@ -6,7 +6,7 @@ RSpec.describe CaseCore::Actions::Files do
   describe 'the module' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:create, :show) }
   end
 
   describe '.create' do
@@ -57,6 +57,39 @@ RSpec.describe CaseCore::Actions::Files do
 
       it 'should use `content` as the file content' do
         expect(file.content).to be == content
+      end
+    end
+  end
+
+  describe '.show' do
+    subject(:result) { described_class.show(params, rest) }
+
+    file_id = '12345678-1234-1234-1234-123456789012'
+
+    let(:params) { { id: id } }
+    let(:id) { file.id }
+    let!(:file) { create(:file, id: file_id) }
+    let(:rest) { nil }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: file_id },
+                          wrong_structure: { id: '123' }
+
+    describe 'result' do
+      subject { result }
+
+      it { is_expected.to be_a(String) }
+
+      it 'should coincide with file content' do
+        expect(subject).to be == file.content
+      end
+    end
+
+    context 'when file record isn\'t found' do
+      let(:id) { create(:uuid) }
+
+      it 'should raise `Sequel::NoMatchingRow' do
+        expect { subject }.to raise_error(Sequel::NoMatchingRow)
       end
     end
   end

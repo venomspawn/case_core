@@ -16,6 +16,22 @@ module CaseCore
       def self.create(content)
         Create.new(content).create
       end
+
+      require_relative 'files/show'
+
+      # Возвращает содержимое файла
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
+      # @return [String]
+      #   содержимое файла
+      # @raise [Sequel::NoMatchingRow]
+      #   если запись файла не найдена по предоставленному идентификатору
+      def self.show(params, rest = nil)
+        Show.new(params, rest).show
+      end
     end
   end
 end
