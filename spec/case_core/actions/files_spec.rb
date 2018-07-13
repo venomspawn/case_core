@@ -93,4 +93,59 @@ RSpec.describe CaseCore::Actions::Files do
       end
     end
   end
+
+  describe '.update' do
+    subject { described_class.update(params, rest) }
+
+    file_id = '12345678-1234-1234-1234-123456789012'
+
+    let(:params) { { id: id, content: content } }
+    let(:content) { 'content' }
+    let(:id) { file.id }
+    let!(:file) { create(:file, id: file_id) }
+    let(:rest) { nil }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: file_id, content: '' },
+                          wrong_structure: { id: '123' }
+
+    context 'when `content` responds to #read' do
+      let(:content) { StringIO.new(str) }
+      let(:str) { create(:string) }
+
+      it 'should call #read of `content`' do
+        expect(content).to receive(:read)
+        subject
+      end
+
+      it 'should use result of calling #read as the file content' do
+        subject
+        expect(file.reload.content.to_s).to be == str
+      end
+
+      context 'when `content` responds to #rewind' do
+        it 'should call #rewind of `content`' do
+          expect(content).to receive(:rewind)
+          subject
+        end
+      end
+    end
+
+    context 'when `content` does not respond to #read' do
+      let(:content) { create(:string) }
+
+      it 'should use `content` as the file content' do
+        subject
+        expect(file.reload.content.to_s).to be == content
+      end
+    end
+
+    context 'when file record isn\'t found' do
+      let(:id) { create(:uuid) }
+
+      it 'should raise `Sequel::NoMatchingRow' do
+        expect { subject }.to raise_error(Sequel::NoMatchingRow)
+      end
+    end
+  end
 end
