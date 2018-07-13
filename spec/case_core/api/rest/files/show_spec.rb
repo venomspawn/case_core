@@ -20,7 +20,12 @@ RSpec.describe CaseCore::API::REST::Files::Show do
       it { is_expected.to be_ok }
 
       it 'should contain file content as the body' do
-        expect(subject.body) == file.content
+        expect(subject.body).to be == file.content.to_s
+      end
+
+      it 'should return `application/octet-stream` in `Content-Type` header' do
+        expect(subject.headers['Content-Type'])
+          .to be == 'application/octet-stream'
       end
 
       context 'when id is not an UUID' do
