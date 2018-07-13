@@ -32,6 +32,20 @@ module CaseCore
       def self.show(params, rest = nil)
         Show.new(params, rest).show
       end
+
+      require_relative 'files/update'
+
+      # Обновляет содержимое файла
+      # @param [Object] params
+      #   параметры действия
+      # @param [NilClass, Hash] rest
+      #   ассоциативный массив дополнительных параметров действия или `nil`,
+      #   если дополнительные параметры отсутствуют
+      # @raise [Sequel::NoMatchingRow]
+      #   если запись файла не найдена по предоставленному идентификатору
+      def self.update(params, rest = nil)
+        Update.new(params, rest).update
+      end
     end
   end
 end
