@@ -6,6 +6,9 @@ module CaseCore
       module Files
         # Модуль с методом REST API, который возвращает содержимое файла
         module Show
+          # Содержимое результата запроса
+          CONTENT_TYPE = 'application/octet-stream'
+
           # Регистрация в контроллере необходимых путей
           # @param [CaseCore::API::REST::Controller] controller
           #   контроллер
@@ -18,6 +21,7 @@ module CaseCore
             controller.get '/files/:id' do |id|
               content = Actions::Files.show(id: id)
               status :ok
+              content_type CONTENT_TYPE
               body content
             end
           end
