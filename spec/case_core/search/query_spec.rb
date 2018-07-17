@@ -2,7 +2,7 @@
 
 # Тестирование класса `CaseCore::Search::Query`
 
-CaseCore.need 1
+CaseCore.need 'search/query'
 
 RSpec.describe CaseCore::Search::Query do
   describe 'the class' do
