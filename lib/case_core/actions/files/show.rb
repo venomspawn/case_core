@@ -12,18 +12,24 @@ module CaseCore
         require_relative 'show/errors'
         require_relative 'show/params_schema'
 
-        # Параметры операции `COPY`
-        COPY_PARAMS = { format: :binary }.freeze
-
         # Возвращает содержимое файла
         # @return [String]
         #   содержимое файла
         # @raise [Sequel::NoMatchingRow]
         #   если запись файла не найдена
         def show
-          content = Sequel::Model.db.copy_table(copy_dataset, COPY_PARAMS)
-          check_content!(content)
-          extract_content(content)
+          # Извлечение соединения с базой данных
+          Sequel::Model.db.synchronize do |conn|
+            conn.execute(copy_sql)
+            # Метод `get_copy_data` соединения извлекает данные построчно.
+            # Поскольку извлекается только одна строка, то её содержимое и есть
+            # то, что необходимо.
+            content = loop { (data = conn.get_copy_data) && (break data) }
+            # Пропуск оставшихся данных, включая метку окончания
+            loop { break unless conn.get_copy_data }
+            check_content!(content)
+            extract_content(content)
+          end
         end
 
         private
@@ -35,14 +41,17 @@ module CaseCore
           params[:id]
         end
 
-        # Запрос Sequel на извлечение содержимого файла
-        COPY_DATASET = Models::File.select(:content).limit(1)
+        # Шаблон SQL-запроса на извлечение содержимого файла
+        COPY_SQL_TEMPLATE = <<-SQL.squish.freeze
+          COPY (SELECT content FROM files WHERE "id" = '%s' LIMIT 1) TO STDOUT
+          (FORMAT BINARY)
+        SQL
 
-        # Возвращает запрос Sequel на извлечение содержимого файла
-        # @return [Sequel::Dataset]
-        #   результирующий запрос Sequel
-        def copy_dataset
-          COPY_DATASET.where(id: id)
+        # Возвращает строку с SQL-запросом на извлечение содержимого файла
+        # @return [String]
+        #   результирующая строка
+        def copy_sql
+          format(COPY_SQL_TEMPLATE, id)
         end
 
         # Метка начала результата выполнения команды `COPY` в двоичном формате
@@ -98,24 +107,7 @@ module CaseCore
         #   исходная строка с результатом выполнения команды `COPY` в двоичном
         #   формате
         def extract_content(content)
-          truncate_content(content)
           content[CONTENT_PREFIX_SIZE, content.size - CONTENT_PREFIX_SIZE]
-        end
-
-        # Удаляет метку окончания результата выполнения команды `COPY` в
-        # двочином формате
-        # @param [String] content
-        #   исходная строка с результатом выполнения команды `COPY` в двоичном
-        #   формате
-        def truncate_content(content)
-          # Среди методов объектов класса String нет такого, с помощью которого
-          # можно было бы убрать символы в конце строки без её копирования.
-          # Такой метод `truncate` тем не менее присутствует в экземпляре
-          # класса `StringIO`.
-          io = StringIO.new(content)
-          # Удаление метки окончания результата выполнения команды `COPY` в
-          # двоичном формате
-          io.truncate(content.size - TRAILER.size)
         end
       end
     end
