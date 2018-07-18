@@ -207,7 +207,7 @@ module CaseCore
       # @return [NilClass]
       #   если модуль невозможно найти
       def find_module(name)
-        regexp = /^#{name.tr('_', '')}$/i
+        regexp = /\A#{name.tr('_', '')}\z/i
         module_name = Object.constants.find(&regexp.method(:match))
         module_name && Object.const_get(module_name)
       end
