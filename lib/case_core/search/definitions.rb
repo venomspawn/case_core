@@ -59,6 +59,18 @@ module CaseCore
           ],
           additionalProperties: false
         },
+        present: {
+          type: :object,
+          properties: {
+            present: {
+              type: :boolean
+            }
+          },
+          required: %i[
+            present
+          ],
+          additionalProperties: false
+        },
         simple: {
           type: :object,
           additionalProperties: {
@@ -74,6 +86,9 @@ module CaseCore
               },
               {
                 '$ref': '#/definitions/exclude'
+              },
+              {
+                '$ref': '#/definitions/present'
               }
             ]
           },

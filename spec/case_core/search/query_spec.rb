@@ -78,6 +78,26 @@ RSpec.describe CaseCore::Search::Query do
                 end
               end
 
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be all records with the attribute present' do
+                    expect(ids).to match_array %w[1 2 3 4 5]
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be all records with the attribute absent' do
+                    expect(ids).to match_array %w[]
+                  end
+                end
+              end
+
               context 'when there is none of supported keys' do
                 let(:filter) { { state: { unsupported: :key } } }
 

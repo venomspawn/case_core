@@ -84,7 +84,7 @@ module CaseCore
         LENGTH_UUID = "\x00\x00\x00\x10".b.freeze
 
         # Список строк, передаваемых до значения поля `uuid`
-        PREFIX = [SIGNATURE, FLAGS, EXT, COUNT, LENGTH_UUID]
+        PREFIX = [SIGNATURE, FLAGS, EXT, COUNT, LENGTH_UUID].freeze
 
         # Поле с количеством байт в импортируемом значении поля `created_at` в
         # строке с данными для команды `COPY` в двоичном формате
