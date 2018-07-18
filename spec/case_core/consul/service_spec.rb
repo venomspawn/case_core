@@ -3,7 +3,7 @@
 # Тестирование функции `service` модуля `CaseCore::Consul`, возвращающей
 # информацию о сервисе с заданным именем
 
-CaseCore.need 1
+CaseCore.need 'consule/service'
 
 RSpec.describe CaseCore::Consul do
   describe 'the module' do

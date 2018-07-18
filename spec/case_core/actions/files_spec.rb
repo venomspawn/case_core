@@ -31,28 +31,28 @@ RSpec.describe CaseCore::Actions::Files do
       it { is_expected.to match_json_schema(schema) }
     end
 
-    context 'when `content` responds to #read' do
+    context 'when `content` responds to #each' do
       let(:content) { StringIO.new(str) }
       let(:str) { create(:string) }
 
-      it 'should call #read of `content`' do
-        expect(content).to receive(:read)
+      it 'should call #each of `content`' do
+        expect(content).to receive(:each).and_call_original
         subject
       end
 
-      it 'should use result of calling #read as the file content' do
+      it 'should use result of calling #each as the file content' do
         expect(file.content).to be == str
       end
 
       context 'when `content` responds to #rewind' do
         it 'should call #rewind of `content`' do
-          expect(content).to receive(:rewind)
+          expect(content).to receive(:rewind).and_call_original
           subject
         end
       end
     end
 
-    context 'when `content` does not respond to #read' do
+    context 'when `content` does not respond to #each' do
       let(:content) { create(:string) }
 
       it 'should use `content` as the file content' do
