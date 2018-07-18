@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../expressions/consts'
-require_relative '../expressions/on_field'
-
 module CaseCore
+  need 'search/query/expressions/*'
+
   module Search
     class Query
       module Datasets
@@ -183,7 +182,22 @@ module CaseCore
           #   результирующий запрос Sequel
           def attr_foreign_keys_dataset(name, info)
             expression = on_attr(name, info)
-            attr_model.where(expression).select(attr_foreign_key)
+            keys_dataset =
+              attr_model.where(expression).select(attr_foreign_key)
+            return keys_dataset unless exclude_attr_dataset?(info)
+            attr_model
+              .select(attr_foreign_key)
+              .exclude(attr_foreign_key => keys_dataset)
+          end
+
+          # Возвращает, нужно ли исключить записи заявок по информации об
+          # атрибуте
+          # @param [Object] info
+          #   объект с информацией об условии на атрибут
+          # @return [Boolean]
+          #   нужно ли исключить записи заявок по информации об атрибуте
+          def exclude_attr_dataset?(info)
+            info.is_a?(Hash) && info[:present].is_a?(FalseClass)
           end
         end
       end
