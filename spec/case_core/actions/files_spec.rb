@@ -36,7 +36,7 @@ RSpec.describe CaseCore::Actions::Files do
       let(:str) { create(:string) }
 
       it 'should call #each of `content`' do
-        expect(content).to receive(:each)
+        expect(content).to receive(:each).and_call_original
         subject
       end
 
@@ -46,7 +46,7 @@ RSpec.describe CaseCore::Actions::Files do
 
       context 'when `content` responds to #rewind' do
         it 'should call #rewind of `content`' do
-          expect(content).to receive(:rewind)
+          expect(content).to receive(:rewind).and_call_original
           subject
         end
       end

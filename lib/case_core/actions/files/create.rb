@@ -102,7 +102,7 @@ module CaseCore
             PREFIX,
             uuid,
             content.size,
-            content.respond_to?(:read) ? content : content.to_s,
+            content.respond_to?(:each) ? content : content.to_s,
             LENGTH_CREATED_AT,
             Time.now,
             TRAILER
