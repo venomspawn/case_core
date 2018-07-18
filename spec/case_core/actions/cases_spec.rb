@@ -78,6 +78,26 @@ RSpec.describe CaseCore::Actions::Cases do
                   expect(ids).to match_array %w[2]
                 end
               end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be all infos with the attribute present' do
+                    expect(ids).to match_array %w[1 2 3 4 5]
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be all infos with the attribute absent' do
+                    expect(ids).to match_array %w[]
+                  end
+                end
+              end
             end
 
             context 'when a value is a list' do
@@ -765,6 +785,26 @@ RSpec.describe CaseCore::Actions::Cases do
 
                 it 'should be count of cases filtered by filters together' do
                   expect(subject).to be == 1
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be count of cases with the attribute present' do
+                    expect(subject).to be == 5
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be count of cases with the attribute absent' do
+                    expect(subject).to be == 0
+                  end
                 end
               end
             end

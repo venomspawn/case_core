@@ -77,8 +77,28 @@ RSpec.describe CaseCore::Actions::Requests do
               context 'when there are only `min` and `max` keys' do
                 let(:filter) { { state: { min: 'error', max: 'error' } } }
 
-                it 'should be count of cases filtered by filters together' do
+                it 'should be count of requests filtered by both filters' do
                   expect(subject).to be == 1
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be count of requests with the attribute' do
+                    expect(subject).to be == 5
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be count of requests with the attribute absent' do
+                    expect(subject).to be == 0
+                  end
                 end
               end
             end
@@ -384,6 +404,26 @@ RSpec.describe CaseCore::Actions::Requests do
 
                 it 'should be all infos selected by all filters together' do
                   expect(ids).to match_array [id2]
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be all infos with the attribute present' do
+                    expect(ids).to match_array [id1, id2, id3, id4, id5]
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be all infos with the attribute absent' do
+                    expect(ids).to match_array []
+                  end
                 end
               end
             end
