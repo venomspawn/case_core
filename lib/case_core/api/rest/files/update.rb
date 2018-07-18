@@ -14,7 +14,7 @@ module CaseCore
             # @return [Status]
             #   204
             controller.put '/files/:id' do |id|
-              content = Actions::Files.update(id: id, content: request.body)
+              Actions::Files.update(id: id, content: request.body)
               status :no_content
             end
           end

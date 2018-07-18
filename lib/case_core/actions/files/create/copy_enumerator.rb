@@ -44,7 +44,7 @@ module CaseCore
 
           # Максимальное количество байт, одновременно передаваемых в `COPY` из
           # потока
-          CHUNK_SIZE = 32768
+          CHUNK_SIZE = 32_768
 
           # Использует предоставленную процедуру, вызывая её в зависимости от
           # типа аргумент с различными аргументами
@@ -53,15 +53,29 @@ module CaseCore
           # @param [Proc] push_proc
           #   предоставленная процедура
           def push_thingie(thingie, push_proc)
+            case thingie
             # Передача всех строк массива
-            return thingie.each(&push_proc) if thingie.is_a?(Array)
+            when Array then thingie.each(&push_proc)
             # Передача строки
-            return push_proc[thingie] if thingie.is_a?(String)
+            when String then push_proc[thingie]
             # Передача четырёхбайтной строки с представлением целого числа
-            return push_proc[int_byte_str(thingie)] if thingie.is_a?(Integer)
+            when Integer then push_proc[int_byte_str(thingie)]
             # Передача восьмибайтной строки с представлением времени
-            return push_proc[time_byte_str(thingie)] if thingie.is_a?(Time)
+            when Time then push_proc[time_byte_str(thingie)]
+            # Передача потока
+            else push_stream(thingie, push_proc)
+            end
+          end
+
+          # Передаёт части потока с помощью предоставленной процедуры, если
+          # аргумент предоставляет интерфейс потока
+          # @param [Object] thingie
+          #   аргумент
+          # @param [Proc] push_proc
+          #   предоставленная процедура
+          def push_stream(thingie, push_proc)
             return unless thingie.respond_to?(:each)
+            # Перемотка потока в начало, если он поддерживает такую операцию
             thingie.rewind if thingie.respond_to?(:rewind)
             # Передача частей потока
             thingie.each(CHUNK_SIZE, &push_proc)
@@ -90,7 +104,7 @@ module CaseCore
 
           # Разница в количестве микросекунд, вызванная тем, что PostgreSQL
           # отсчитывает время не от Epoch (1970-01-01), а от 2000-01-01
-          POSTGRESQL_SHIFT = 946684800000000
+          POSTGRESQL_SHIFT = 946_684_800_000_000
 
           # Разница в количестве микросекунд, вызванная временной зоной
           TIMEZONE_SHIFT = 60 * 60 * 3 * 1_000_000
