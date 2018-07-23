@@ -30,7 +30,9 @@ module CaseCore
       #   созданная запись модели
       def self.create(values)
         unrestrict_primary_key
-        super.tap { restrict_primary_key }
+        super
+      ensure
+        restrict_primary_key
       end
 
       # Обновляет запись модели

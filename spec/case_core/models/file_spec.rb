@@ -120,7 +120,8 @@ RSpec.describe CaseCore::Models::File do
   describe 'instance of the model' do
     subject(:instance) { create(:file) }
 
-    it { is_expected.to respond_to(:id, :content, :created_at) }
+    methods = %i[id content created_at update destroy]
+    it { is_expected.to respond_to(*methods) }
   end
 
   describe '#id' do
@@ -238,6 +239,27 @@ RSpec.describe CaseCore::Models::File do
         it 'should raise Sequel::InvalidValue' do
           expect { subject }.to raise_error(Sequel::InvalidValue)
         end
+      end
+    end
+  end
+
+  describe '#destroy' do
+    subject { instance.destroy }
+
+    let!(:instance) { create(:file) }
+
+    it 'should destroy the record' do
+      subject
+      expect(CaseCore::Models::File[instance.id]).to be_nil
+    end
+
+    context 'when the file is a document\'s file' do
+      let(:document) { create(:document) }
+      let(:instance) { CaseCore::Models::File[document.fs_id] }
+
+      it 'should raise Sequel::ForeignKeyConstraintViolation' do
+        expect { subject }
+          .to raise_error(Sequel::ForeignKeyConstraintViolation)
       end
     end
   end

@@ -6,7 +6,27 @@ RSpec.describe CaseCore::Models::Document do
   describe 'the model' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:new, :create) }
+  end
+
+  describe '.new' do
+    subject(:result) { described_class.new(params) }
+
+    describe 'result' do
+      subject { result }
+
+      let(:params) { {} }
+
+      it { is_expected.to be_an_instance_of(described_class) }
+    end
+
+    context 'when id is specified' do
+      let(:params) { { id: :id } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
   end
 
   describe '.create' do
@@ -47,7 +67,7 @@ RSpec.describe CaseCore::Models::Document do
       end
     end
 
-    context 'when case or case id are not specified' do
+    context 'when both case and case id are not specified' do
       let(:params) { { id: id } }
 
       it 'should raise Sequel::NotNullConstraintViolation' do
@@ -55,7 +75,7 @@ RSpec.describe CaseCore::Models::Document do
       end
     end
 
-    context 'when case is nil' do
+    context 'when case is nil and case id is not specified' do
       let(:params) { { id: id, case: nil } }
 
       it 'should raise Sequel::InvalidValue' do
@@ -63,7 +83,7 @@ RSpec.describe CaseCore::Models::Document do
       end
     end
 
-    context 'when case_id is nil' do
+    context 'when case_id is nil and case is not specified' do
       let(:params) { { id: id, case_id: nil } }
 
       it 'should raise Sequel::InvalidValue' do
@@ -84,6 +104,26 @@ RSpec.describe CaseCore::Models::Document do
 
       it 'should raise Sequel::DatabaseError' do
         expect { subject }.to raise_error(Sequel::DatabaseError)
+      end
+    end
+
+    context 'when quantity can\'t be cast to integer' do
+      let(:params) { { id: id, case: c4s3, quantity: quantity } }
+      let(:quantity) { 'can\'t be cast to integer' }
+
+      it 'should raise Sequel::InvalidValue' do
+        expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { id: :id, case: c4s3, created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end
@@ -467,6 +507,26 @@ RSpec.describe CaseCore::Models::Document do
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when quantity can\'t be cast to integer' do
+      let(:params) { { quantity: quantity } }
+      let(:quantity) { 'can\'t be cast to integer' }
+
+      it 'should raise Sequel::InvalidValue' do
+        expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end

@@ -6,7 +6,27 @@ RSpec.describe CaseCore::Models::Case do
   describe 'the model' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:new, :create) }
+  end
+
+  describe '.new' do
+    subject(:result) { described_class.new(params) }
+
+    describe 'result' do
+      subject { result }
+
+      let(:params) { { type: :type, created_at: Time.now } }
+
+      it { is_expected.to be_an_instance_of(described_class) }
+    end
+
+    context 'when case id is specified' do
+      let(:params) { { id: :id, type: :type, created_at: Time.now } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
   end
 
   describe '.create' do
@@ -74,6 +94,17 @@ RSpec.describe CaseCore::Models::Case do
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { id: :id, type: :type, created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end
@@ -275,6 +306,17 @@ RSpec.describe CaseCore::Models::Case do
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end

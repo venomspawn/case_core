@@ -10,7 +10,7 @@ Sequel.migration do
 
       add_foreign_key [:fs_id], :files,
                       name:      :documents_fs_id_fkey,
-                      on_delete: :cascade,
+                      on_delete: :restrict,
                       on_update: :cascade
     end
   end
