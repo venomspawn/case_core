@@ -6,6 +6,8 @@ module CaseCore
 
   module Actions
     module Version
+      # Класс действий, извлекающих информацию о версии приложения и модулей
+      # бизнес-логики
       class Show < Base::Action
         require_relative 'show/params_schema'
 
@@ -46,7 +48,7 @@ module CaseCore
         # бизнес-логики
         # @param [String] path
         #   путь к директории с библиотекой бизнес-логики
-        # @param [Hash]
+        # @param [Hash] memo
         #   ассоциативный массив с информацией о версиях модулей бизнес-логики
         def process_dir(path, memo)
           dirname = File.basename(path)
