@@ -1,32 +1,14 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/version/show/result_schema'
+
   module Actions
     module Version
       class Show
         # Вспомогательный модуль, предназначенный для включения в тесты
         # содержащего класса действия
         module SpecHelper
-          # JSON-схема результата действия
-          RESULT_SCHEMA = {
-            type: :object,
-            properties: {
-              version: {
-                type: :string
-              },
-              modules: {
-                type: :object,
-                additionalProperties: {
-                  type: :string
-                }
-              }
-            },
-            required: %i[
-              version
-            ],
-            additionalProperties: false
-          }.freeze
-
           # Возвращает JSON-схему результата действия
           # @return [Object]
           #   JSON-схема результата действия
