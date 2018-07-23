@@ -185,7 +185,7 @@ module CaseCore
       # передаваемой корреспонденции
       # @param [Hash] register
       #   ассоциативный массив атрибутов записи реестра в `case_manager`
-      # @param [Array<String>]
+      # @param [Array<String>] cases
       #   список идентиификаторов записей заявок, находящихся в реестре
       # @return [Hash]
       #   результирующий ассоциативный массив

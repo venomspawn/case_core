@@ -39,8 +39,6 @@ module CaseCore
       # @param [NilClass, Hash] rest
       #   ассоциативный массив дополнительных параметров действия или `nil`,
       #   если дополнительные параметры отсутствуют
-      # @param [Hash] params
-      #   ассоциативный массив параметров действия
       def self.update(params, rest = nil)
         Update.new(params, rest).update
       end
