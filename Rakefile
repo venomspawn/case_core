@@ -18,7 +18,7 @@ namespace :case_core do
   task :fetch_logic, [:name, :version] do |_task, args|
     require_relative 'config/app_init'
 
-    CaseCore::Init.run!(only: %w[censorship class_ext logger logic_fetcher])
+    CaseCore::Init.run!(only: %w[oj censorship class_ext logger logic_fetcher])
 
     name = args[:name]
     version = args[:version]

@@ -1,5 +1,10 @@
 # Журнал изменений
 
+## [2.0.1] — 24.07.2018
+
+-   Исправлена загрузка библиотеки `oj` при запуске Rake-задачи
+    `case_core:fetch_logic` (#123)
+
 ## [2.0.0] — 24.07.2018
 
 -   Переработано и расширено журналирование аспектов работы приложения (#101)
@@ -84,6 +89,7 @@
 
 -   Создана базовая инфраструктура сервиса (#1)
 
+[2.0.1]: http://gitlab.it.vm/microservices/case_core/compare/2.0.0...2.0.1
 [2.0.0]: http://gitlab.it.vm/microservices/case_core/compare/1.0.1...2.0.0
 [1.0.1]: http://gitlab.it.vm/microservices/case_core/compare/1.0.0...1.0.1
 [1.0.0]: http://gitlab.it.vm/microservices/case_core/compare/0.2.0...1.0.0
