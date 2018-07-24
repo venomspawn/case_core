@@ -75,6 +75,7 @@ module CaseCore
               message_id = message_id!
               module!.send(action!, body!)
               create_ok_processing_status
+              log_processing_success(binding)
 
               true
             rescue StandardError => err
@@ -239,6 +240,18 @@ module CaseCore
               log_error(context) { <<-LOG }
                 Во время обработки сообщения STOMP с заголовками `#{headers}`
                 произошла ошибка `#{err.class}`: `#{err.message}`
+              LOG
+            end
+
+            # Создаёт запись в журнале событий о том, что обработкa сообщения
+            # STOMP успешно завершена
+            # @param [Binding] context
+            #   контекст
+            def log_processing_success(context)
+              log_info(context) { <<-LOG }
+                Успешно обработано сообщение STOMP со следующими заголовками:
+                x_message_id: `#{message_id}`, x_entities: `#{entities}`,
+                x_action: `#{action}
               LOG
             end
           end
