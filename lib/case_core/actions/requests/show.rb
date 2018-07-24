@@ -9,7 +9,6 @@ module CaseCore
       # метод `show`, который возвращает информацию о межведомственном запросе
       class Show < Base::Action
         require_relative 'show/params_schema'
-        require_relative 'show/result_schema'
 
         # Возвращает ассоциативный массив со всеми атрибутами межведомственного
         # запроса

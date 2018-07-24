@@ -6,7 +6,7 @@ RSpec.describe CaseCore::Actions::Files do
   describe 'the module' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create, :show) }
+    it { is_expected.to respond_to(:create, :show, :update) }
   end
 
   describe '.create' do

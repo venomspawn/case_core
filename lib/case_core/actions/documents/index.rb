@@ -10,7 +10,6 @@ module CaseCore
       # прикреплённых к заявке
       class Index < Base::Action
         require_relative 'index/params_schema'
-        require_relative 'index/result_schema'
 
         # Возвращает список ассоциативных массивов атрибутов документов,
         # прикреплённых к заявке

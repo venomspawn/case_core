@@ -11,7 +11,6 @@ module CaseCore
       # межведомственных запросов, созданных в рамках заявки
       class Count < Base::Action
         require_relative 'count/params_schema'
-        require_relative 'count/result_schema'
 
         # Возвращает ассоциативный массив с информацией о количестве
         # межведомственных запросов, созданных в рамках заявки

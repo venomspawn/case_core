@@ -5,7 +5,8 @@
 RSpec.describe CaseCore::Actions::Cases do
   subject { described_class }
 
-  it { is_expected.to respond_to(:index) }
+  functions = %i[index count show show_attributes create call update]
+  it { is_expected.to respond_to(*functions) }
 
   describe '.index' do
     include described_class::Index::SpecHelper
@@ -22,8 +23,6 @@ RSpec.describe CaseCore::Actions::Cases do
 
     describe 'result' do
       subject { result }
-
-      let(:schema) { described_class::Index::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -208,6 +207,8 @@ RSpec.describe CaseCore::Actions::Cases do
   it { is_expected.to respond_to(:show) }
 
   describe '.show' do
+    include described_class::Show::SpecHelper
+
     subject(:result) { described_class.show(params, rest) }
 
     let!(:c4s3) { create(:case, id: 'id') }
@@ -225,7 +226,6 @@ RSpec.describe CaseCore::Actions::Cases do
       let!(:case_attribute) { create(:case_attribute, *args) }
       let(:args) { [case_id: c4s3.id, name: 'attr', value: 'value'] }
       let(:id) { c4s3.id }
-      let(:schema) { described_class::Show::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -276,6 +276,8 @@ RSpec.describe CaseCore::Actions::Cases do
   it { is_expected.to respond_to(:show_attributes) }
 
   describe '.show_attributes' do
+    include described_class::ShowAttributes::SpecHelper
+
     subject(:result) { described_class.show_attributes(params, rest) }
 
     let(:params) { { id: id } }
@@ -297,7 +299,6 @@ RSpec.describe CaseCore::Actions::Cases do
       let(:name2) { attribute2.name.to_sym }
       let(:value1) { attribute1.value }
       let(:value2) { attribute2.value }
-      let(:schema) { described_class::ShowAttributes::RESULT_SCHEMA }
 
       it { is_expected.to be_a(Hash) }
       it { is_expected.to match_json_schema(schema) }
@@ -355,7 +356,7 @@ RSpec.describe CaseCore::Actions::Cases do
   describe '.create' do
     before { CaseCore::Logic::Loader.settings.dir = dir }
 
-    subject { described_class.create(params, rest) }
+    subject(:result) { described_class.create(params, rest) }
 
     let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:params) { { type: type, **attrs, **documents } }
@@ -366,6 +367,14 @@ RSpec.describe CaseCore::Actions::Cases do
     it_should_behave_like 'an action parameters receiver',
                           params:          { type: :mixed_case },
                           wrong_structure: { type: { wrong: :structure } }
+
+    describe 'result' do
+      subject { result }
+
+      let(:type) { 'mixed_case' }
+
+      it { is_expected.to be_a(CaseCore::Models::Case) }
+    end
 
     context 'when there is no module of business logic for the case' do
       let(:type) { 'no module for the case' }
@@ -716,6 +725,8 @@ RSpec.describe CaseCore::Actions::Cases do
   it { is_expected.to respond_to(:count) }
 
   describe '.count' do
+    include described_class::Count::SpecHelper
+
     subject(:result) { described_class.count(params, rest) }
 
     let(:params) { {} }
@@ -726,13 +737,11 @@ RSpec.describe CaseCore::Actions::Cases do
                           wrong_structure: { filter: :wrong }
 
     describe 'result' do
-      include described_class::Count::SpecHelper
 
       subject { result }
 
       let(:params) { {} }
       let!(:cases) { create_cases }
-      let(:schema) { described_class::Count::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 

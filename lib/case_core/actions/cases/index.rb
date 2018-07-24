@@ -9,7 +9,6 @@ module CaseCore
       # который возвращает список ассоциативных массивов атрибутов заявок
       class Index < Base::ComplexIndex
         require_relative 'index/params_schema'
-        require_relative 'index/result_schema'
 
         private
 

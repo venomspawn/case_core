@@ -5,7 +5,8 @@
 RSpec.describe CaseCore::Actions::Requests do
   subject { described_class }
 
-  it { is_expected.to respond_to(:count) }
+  functions = %i[count create find index show update]
+  it { is_expected.to respond_to(*functions) }
 
   describe '.count' do
     include described_class::Count::SpecHelper
@@ -26,7 +27,6 @@ RSpec.describe CaseCore::Actions::Requests do
       let!(:c4s3) { create(:case) }
       let(:id) { c4s3.id }
       let!(:requests) { create_requests(c4s3) }
-      let(:schema) { described_class::Count::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -351,7 +351,6 @@ RSpec.describe CaseCore::Actions::Requests do
       let(:id3) { requests[2].id }
       let(:id4) { requests[3].id }
       let(:id5) { requests[4].id }
-      let(:schema) { described_class::Index::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -557,6 +556,8 @@ RSpec.describe CaseCore::Actions::Requests do
   it { is_expected.to respond_to(:show) }
 
   describe '.show' do
+    include described_class::Show::SpecHelper
+
     subject(:result) { described_class.show(params, rest) }
 
     let(:params) { { id: 1 } }
@@ -574,7 +575,6 @@ RSpec.describe CaseCore::Actions::Requests do
       let!(:request_attr) { create(:request_attribute, *traits) }
       let(:traits) { [request: request, name: 'name', value: 'value'] }
       let(:id) { request.id }
-      let(:schema) { described_class::Show::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
     end
