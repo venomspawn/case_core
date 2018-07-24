@@ -11,7 +11,7 @@ module CaseCore
             # Возвращает ассоциативный массив, в котором спискам из
             # идентификаторов записей заявителя и представителя соответствует
             # ассоциативный массив с информацией о последней доверенности
-            # @param [Sequel::Database] db
+            # @param [Sequel::Database] database
             #   объект, предоставляющий доступ к базе данных `cabinet`
             # @param [Hash] people
             #   ассоциативный массив, в котором идентификаторам записей
@@ -23,12 +23,12 @@ module CaseCore
             #   информацией о документах
             # @return [Hash]
             #   ассоциативный массив с информацией о доверенностях
-            def self.data(db, people, documents)
-              new(db, people, documents).data
+            def self.data(database, people, documents)
+              new(database, people, documents).data
             end
 
             # Инициализирует объект класса
-            # @param [Sequel::Database] db
+            # @param [Sequel::Database] database
             #   объект, предоставляющий доступ к базе данных `cabinet`
             # @param [Hash] people
             #   ассоциативный массив, в котором идентификаторам записей
@@ -38,8 +38,8 @@ module CaseCore
             #   ассоциативный массив, в котором идентификаторам папок
             #   заявителей сопоставлены списки ассоциативных массивов с
             #   информацией о документах
-            def initialize(db, people, documents)
-              @db        = db
+            def initialize(database, people, documents)
+              @database  = database
               @people    = people
               @documents = documents
             end
@@ -58,7 +58,7 @@ module CaseCore
             # Объект, предоставляющий доступ к базе данных `cabinet`
             # @return [Sequel::Database]
             #   объект, предоставляющий доступ к базе данных `cabinet`
-            attr_reader :db
+            attr_reader :database
 
             # Ассоциативный массив, в котором идентификаторам записей
             # заявителей сопоставлены ассоциативные массивы с информацией о
@@ -79,7 +79,7 @@ module CaseCore
             # @return [Sequel::Dataset]
             #   результирующий запрос Sequel
             def dataset
-              db[:ecm_person_spokesmen]
+              database[:ecm_person_spokesmen]
             end
 
             # Обрабатывает связь между заявителем и представителем и добавляет

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-
 module CaseCore
+  need 'helpers/log'
+
   # Пространство имён классов объектов, обслуживающих Rake-задачи
   module Tasks
     # Класс объектов, запускающих миграции базы данных
@@ -10,8 +10,6 @@ module CaseCore
       include Helpers::Log
 
       # Запускает миграцию
-      # @param [Sequel::Database] db
-      #   база данных
       # @param [Integer] to
       #   номер миграции, к которому необходимо привести базу данных. Если
       #   равен nil, то база данных приводится к последнему номеру.
@@ -19,16 +17,9 @@ module CaseCore
       #   номер миграции, от которого будут применяться миграции к базе данных.
       #   Если равен nil, то в качестве значения берётся текущий номер миграции
       #   базы данных.
-      # @param [String] dir
-      #   путь к директории, где будут искаться миграции
-      def self.launch!(db, to, from, dir)
-        new(db, to, from, dir).launch!
+      def self.launch!(to, from)
+        new(to, from).launch!
       end
-
-      # База данных
-      # @return [Sequel::Database]
-      #   база данных
-      attr_reader :db
 
       # Номер миграции, к которому необходимо привести базу данных. Если равен
       # nil, то база данных приводится к последнему номеру.
@@ -43,14 +34,7 @@ module CaseCore
       #   номер миграции
       attr_reader :from
 
-      # Путь к директории, где будут искаться миграции
-      # @return [String]
-      #   путь к директории
-      attr_reader :dir
-
       # Инициализирует объект
-      # @param [Sequel::Database] db
-      #   база данных
       # @param [Integer] to
       #   номер миграции, к которому необходимо привести базу данных. Если
       #   равен nil, то база данных приводится к последнему номеру.
@@ -58,13 +42,9 @@ module CaseCore
       #   номер миграции, от которого будут применяться миграции к базе данных.
       #   Если равен nil, то в качестве значения берётся текущий номер миграции
       #   базы данных.
-      # @param [String] dir
-      #   путь к директории, где будут искаться миграции
-      def initialize(db, to, from, dir)
-        @db = db
+      def initialize(to, from)
         @to = to
         @from = from
-        @dir = dir
       end
 
       # Запускает миграцию
@@ -73,32 +53,36 @@ module CaseCore
 
         log_start
 
+        database = Sequel::Model.db
+        dir = "#{CaseCore.root}/db/migrations"
         current = from.nil? ? nil : from.to_i
         target = to.nil? ? nil : to.to_i
-        Sequel::Migrator.run(db, dir, current: current, target: target)
+        Sequel::Migrator.run(database, dir, current: current, target: target)
 
         log_finish
+      end
+
+      private
+
+      # Возвращает название базы данных
+      # @return [#to_s]
+      #   название базы данных
+      def db_name
+        Sequel::Model.db.opts[:database]
       end
 
       # Создаёт записи в журнале событий о том, что начинается миграция базы
       # данных и какова эта миграция
       def log_start
-        log_info { <<~LOG }
-          Начинается миграция базы данных #{db.opts[:database]}
-        LOG
-
-        log_info { <<~LOG }
-          Исходная версия: #{from.nil? ? 'текущая' : from},
-          целевая версия: #{to.nil? ? 'максимальная' : to}
-        LOG
+        log_info { "Начинается миграция базы данных #{db_name}" }
+        log_info { "Исходная версия: #{from.nil? ? 'текущая' : from}" }
+        log_info { "Целевая версия: #{to.nil? ? 'максимальная' : to}" }
       end
 
       # Создаёт запись в журнале событий о том, что миграция базы данных
       # завершена
       def log_finish
-        log_info { <<~LOG }
-          Миграция базы данных #{db.opts[:database]} завершена
-        LOG
+        log_info { "Миграция базы данных #{db_name} завершена" }
       end
     end
   end

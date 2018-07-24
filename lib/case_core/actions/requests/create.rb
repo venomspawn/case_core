@@ -2,10 +2,10 @@
 
 require 'securerandom'
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/actions/base/mixins/transactional"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'actions/base/mixins/transactional'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющих

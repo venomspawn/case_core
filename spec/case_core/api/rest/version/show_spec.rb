@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
-# Файл тестирования метода REST API, возвращающего информацию о версии
+# Тестирование метода REST API, возвращающего информацию о версии
 # приложения
 
-RSpec.describe CaseCore::API::REST::Controller do
+RSpec.describe CaseCore::API::REST::Version::Show do
+  include described_class::SpecHelper
+
   describe 'GET /version' do
-    include CaseCore::Actions::Version::Show::SpecHelper
+    subject(:response) { get '/version' }
 
-    subject { get '/version' }
+    describe 'response' do
+      subject { response }
 
-    it { is_expected.to be_ok }
-    it { is_expected.to have_proper_body(schema) }
+      it { is_expected.to be_ok }
+
+      it { is_expected.to have_proper_body(schema) }
+    end
   end
 end

@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Cases
       # Класс действий над записями заявок, предоставляющих метод `show`,
       # который возвращает информацию о заявке
       class Show < Base::Action
         require_relative 'show/params_schema'
-        require_relative 'show/result_schema'
 
         # Возвращает ассоциативный массив со всеми атрибутами заявки
         # @return [Hash]

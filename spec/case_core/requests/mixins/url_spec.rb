@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Файл тестирования подключаемого модуля `CaseCore::Requests::Mixins::URL`
+# Тестирование подключаемого модуля `CaseCore::Requests::Mixins::URL`
 
-require "#{$lib}/requests/get"
-require "#{$lib}/requests/mixins/url"
+CaseCore.need 'requests/get'
+CaseCore.need 'requests/mixins/url'
 
 RSpec.describe CaseCore::Requests::Mixins::URL do
   before do

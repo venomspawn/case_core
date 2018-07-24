@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Файл тестирования функции `service` модуля `CaseCore::Consul`, возвращающей
+# Тестирование функции `service` модуля `CaseCore::Consul`, возвращающей
 # информацию о сервисе с заданным именем
 
-require "#{$lib}/consul/service"
+CaseCore.need 'consule/service'
 
 RSpec.describe CaseCore::Consul do
   describe 'the module' do

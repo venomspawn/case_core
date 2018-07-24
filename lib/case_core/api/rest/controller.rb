@@ -2,8 +2,6 @@
 
 require 'sinatra/base'
 
-require_relative 'helpers'
-
 module CaseCore
   # Пространство имён для API
   module API
@@ -11,11 +9,10 @@ module CaseCore
     module REST
       # Класс контроллера REST API, основанный на Sinatra
       class Controller < Sinatra::Base
-        helpers Helpers
+        # Тип содержимого, возвращаемого REST API методами
+        CONTENT_TYPE = 'application/json; charset=utf-8'
 
-        before do
-          content_type 'application/json; charset=utf-8'
-        end
+        before { content_type CONTENT_TYPE }
       end
     end
   end

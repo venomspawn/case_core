@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/search/query"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'search/query'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющий
@@ -11,7 +11,6 @@ module CaseCore
       # межведомственных запросов, созданных в рамках заявки
       class Count < Base::Action
         require_relative 'count/params_schema'
-        require_relative 'count/result_schema'
 
         # Возвращает ассоциативный массив с информацией о количестве
         # межведомственных запросов, созданных в рамках заявки

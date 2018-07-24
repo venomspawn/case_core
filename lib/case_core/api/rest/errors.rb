@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require 'json'
 require 'json-schema'
 require 'rest-client'
-require 'sequel'
-
-require "#{$lib}/helpers/log"
 
 module CaseCore
+  need 'helpers/log'
+
   module API
     module REST
       # Обработка ошибок
@@ -16,12 +14,15 @@ module CaseCore
         module Helpers
           include CaseCore::Helpers::Log
 
+          # Название сервиса в верхнем регистре без знаков подчёркивания
+          APP_NAME_UPCASE = CaseCore.name.upcase.tr('_', '')
+
           # Возвращает название сервиса в верхнем регистре без знаков
-          # подчёркивания и дефисов. Необходимо для журнала событий.
+          # подчёркивания для журнала событий
           # @return [String]
           #   преобразованное название сервиса
           def app_name_upcase
-            $app_name.upcase.tr('-', '_')
+            APP_NAME_UPCASE
           end
 
           # Возвращает объект, связанный с ошибкой
@@ -48,17 +49,36 @@ module CaseCore
           # @return [NilClass]
           #   если невозможно декодировать сообщение
           def error_json_message(source)
-            JSON.parse(source)
-          rescue JSON::ParserError
+            Oj.load(source)
+          rescue Oj::ParseError
             nil
+          end
+
+          # Создаёт запись в журнале событий о том, что произошла ошибка во
+          # время обработки запроса
+          def log_unprocessable_error
+            log_error { <<~LOG }
+              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
+              #{error_message}
+            LOG
+          end
+
+          # Создаёт запись в журнале событий о том, что произошла ошибка
+          # сервера
+          def log_internal_server_error
+            log_error { <<~LOG }
+              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
+              #{error.message} AT #{error.backtrace.first(3)}
+            LOG
           end
         end
 
         # Отображение классов ошибок в коды ошибок
         ERRORS_MAP = {
           ArgumentError                     => 422,
-          JSON::ParserError                 => 422,
+          EncodingError                     => 422,
           JSON::Schema::ValidationError     => 422,
+          Oj::ParseError                    => 422,
           RuntimeError                      => 422,
           Sequel::DatabaseError             => 422,
           Sequel::NoMatchingRow             => 404,
@@ -75,14 +95,10 @@ module CaseCore
         #   код ошибки
         def self.define_error_handler(controller, error_class, error_code)
           controller.error error_class do
-            message = error_message
-            log_error { <<~LOG }
-              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE #{message}
-            LOG
-
+            log_unprocessable_error if error_code == 422
             status error_code
-            content = { message: message, error: error.class }
-            body content.to_json
+            content = { message: error_message, error: error.class }
+            body Oj.dump(content)
           end
         end
 
@@ -102,14 +118,10 @@ module CaseCore
         #   контроллер
         def self.define_500_handler(controller)
           controller.error 500 do
-            log_error { <<~LOG }
-              #{app_name_upcase} ERROR #{error.class} WITH MESSAGE
-              #{error.message} AT #{error.backtrace.first(3)}
-            LOG
-
+            log_internal_server_error
             status 500
             content = { message: error.message, error: error.class }
-            body content.to_json
+            body Oj.dump(content)
           end
         end
 

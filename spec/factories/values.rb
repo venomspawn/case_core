@@ -2,7 +2,7 @@
 
 # Фабрика значений
 
-FactoryGirl.define do
+FactoryBot.define do
   sequence(:uniq)
 
   # Целые числа в заданном диапазоне или без него
@@ -126,5 +126,14 @@ FactoryGirl.define do
   factory :base64, class: String do
     skip_create
     initialize_with { Base64.encode64(create(:string)) }
+  end
+
+  # UUID
+  factory :uuid, class: String do
+    skip_create
+    initialize_with do
+      s = create(:hex, length: 32)
+      "#{s[0..7]}-#{s[8..11]}-#{s[12..15]}-#{s[16..19]}-#{s[20..31]}"
+    end
   end
 end

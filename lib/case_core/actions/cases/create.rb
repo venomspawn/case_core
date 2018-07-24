@@ -2,14 +2,14 @@
 
 require 'securerandom'
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/actions/base/mixins/transactional"
-require "#{$lib}/helpers/log"
-require "#{$lib}/helpers/safe_call"
-
 require_relative 'mixins/logic'
 
 module CaseCore
+  need 'actions/base/action'
+  need 'actions/base/mixins/transactional'
+  need 'helpers/log'
+  need 'helpers/safe_call'
+
   module Actions
     module Cases
       # Класс действий над записями заявок, предоставляющих метод `create`,
@@ -25,6 +25,9 @@ module CaseCore
         include Helpers::SafeCall
 
         # Создаёт новую запись заявки вместе с записями приложенных документов
+        # и возвращает созданную записб
+        # @return [CaseCore::Models::Case]
+        #   созданная запись заявки
         # @raise [RuntimeError]
         #   если не найдена бизнес-логика, обрабатывающая создание заявки
         # @raise [RuntimeError]
@@ -40,7 +43,7 @@ module CaseCore
               check_case_logic!(c4s3)
               create_attributes(c4s3)
               create_documents(c4s3)
-              c4s3.tap(&method(:do_case_creation))
+              do_case_creation(c4s3)
             end
           end
         end
@@ -86,10 +89,10 @@ module CaseCore
         #   аргумента
         def check_case_logic!(c4s3)
           logic(c4s3).tap do |obj|
-            raise Errors::Logic::NotFound.new(c4s3) if obj.nil?
+            raise Errors::Logic::NotFound, c4s3 if obj.nil?
 
             found = obj.respond_to?(:on_case_creation)
-            raise Errors::OnCaseCreation::NotFound.new(c4s3) unless found
+            raise Errors::OnCaseCreation::NotFound, c4s3 unless found
           end
         end
 

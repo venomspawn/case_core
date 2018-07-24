@@ -2,14 +2,14 @@
 
 require 'singleton'
 
-require "#{$lib}/settings/configurable"
-
 require_relative 'loader/helpers'
 require_relative 'loader/module_info'
 require_relative 'loader/scanner'
 require_relative 'loader/settings'
 
 module CaseCore
+  need 'settings/configurable'
+
   # Пространство имён для классов, отвечающих за загрузку и поддержку
   # бизнес-логики из внешних библиотек
   module Logic
@@ -189,27 +189,9 @@ module CaseCore
         module_info = modules_info.delete(name)
         call_logic_func(module_info, :on_unload)
         return if module_name.empty? || !Object.const_defined?(module_name)
-        Object.send(:remove_const, module_name)
-      end
-
-      # Ищет модуль среди констант пространства имён `Object` по
-      # предоставленному названию модуля в змеином_регистре. При поиске из
-      # названия модуля исключаются все символы `_`. Для ускорения работы
-      # использует два списка, первый из которых интерпретируется как список
-      # названий констант пространства имён `Object` до загрузки модуля из
-      # внешнего файла, а второй список — список названий констант после
-      # загрузки. Возвращает найденный модуль или `nil`, если невозможно найти
-      # модуль.
-      # @param [String] name
-      #   название модуля в змеином_регистре
-      # @return [Module]
-      #   найденный модуль
-      # @return [NilClass]
-      #   если модуль невозможно найти
-      def find_module(name)
-        regexp = /^#{name.tr('_', '')}$/i
-        module_name = Object.constants.find(&regexp.method(:match))
-        module_name && Object.const_get(module_name)
+        Object.send(:remove_const, module_name).tap do
+          log_unload_module(module_info, binding)
+        end
       end
 
       # Возвращает полный путь к файлу с модулем для библиотеки бизнес-логики с
@@ -245,34 +227,45 @@ module CaseCore
       # @return [NilClass]
       #   если во время загрузки произошла ошибка
       def load_module(name)
-        filename = module_filename(name)
-        load filename
-        logic_module = find_module(name)
-        check_if_logic_module_is_found!(name, filename, logic_module)
-        version = last_module_version(name)
-        module_info = ModuleInfo.new(version, logic_module)
-        modules_info[name] = module_info
-        call_logic_func(module_info, :on_load)
+        load_file(name).tap do |logic_module|
+          module_info = insert_module_info(name, logic_module)
+          log_load_module(module_info, binding)
+          call_logic_func(module_info, :on_load)
+        end
         # rubocop: disable Lint/RescueException
       rescue Exception => e
         # rubocop: enable Lint/RescueException
         log_load_module_error(name, e, binding)
       end
 
-      # Вызывает функцию, если это возможно, у модуля бизнес-логики,
-      # информация о котором предоставлена в качестве аргумента
-      # @param [NilClass, CaseCore::Logic::Loader::ModuleInfo] module_info
-      #   информация о модуле или `nil`
-      # @param [Symbol] func_name
-      #   название функции
-      def call_logic_func(module_info, func_name)
-        logic = module_info&.logic_module || return
-        if logic.respond_to?(func_name)
-          _result, e = safe_call(logic, func_name)
-          log_func_error(e, logic, func_name, binding) unless e.nil?
-        else
-          log_no_func(logic, func_name, binding)
+      # Загружает файл с модулем бизнес-логики, проверяет корректность
+      # загрузки и возвращает загруженный модуль
+      # @param [String] name
+      #   название модуля в змеином_регистре
+      # @return [Module]
+      #   загруженный модуль
+      # @raise [CaseCore::Logic::Loader::Errors::LogicModule::NotFound]
+      #   если модуль не найден после загрузки
+      def load_file(name)
+        filename = module_filename(name)
+        load filename
+        find_module(name).tap do |logic_module|
+          check_if_logic_module_is_found!(name, filename, logic_module)
         end
+      end
+
+      # Создаёт объект с информацией о модуле бизнес-логики, добавляет его в
+      # ассоциативный массив {modules_info} и возвращает его
+      # @param [String] name
+      #   название модуля в змеином_регистре
+      # @param [Module] logic_module
+      #   модуль бизнес-логики
+      # @return [CaseCore::Logic::Loader::ModuleInfo]
+      #   результирующий объект
+      def insert_module_info(name, logic_module)
+        version = last_module_version(name)
+        module_info = ModuleInfo.new(version, logic_module)
+        modules_info[name] = module_info
       end
     end
   end

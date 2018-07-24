@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющих
       # метод `show`, который возвращает информацию о межведомственном запросе
       class Show < Base::Action
         require_relative 'show/params_schema'
-        require_relative 'show/result_schema'
 
         # Возвращает ассоциативный массив со всеми атрибутами межведомственного
         # запроса

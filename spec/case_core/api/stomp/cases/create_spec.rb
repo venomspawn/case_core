@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования создания записи заявки с помощью обработчика сообщений
+# Тестирование создания записи заявки с помощью обработчика сообщений
 # STOMP в контроллере класса `CaseCore::API::STOMP::Controller`
 
 RSpec.describe CaseCore::API::STOMP::Controller do
@@ -21,7 +21,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
 
     subject(:run!) { described_class.run! }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:message) { create(:stomp_message, headers: headers, body: body) }
     let(:headers) { create_incoming_headers(message_id, entities, action) }
     let(:message_id) { 'id' }

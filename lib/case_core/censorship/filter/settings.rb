@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/settings/mixin"
-
 module CaseCore
+  need 'settings/mixin'
+
   module Censorship
     class Filter
       # Класс настроек фильтрации ключей ассоциативных массивов и строк

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "#{$lib}/consul/service"
-
 require_relative 'url'
 
 module CaseCore
+  need 'consul/service'
+
   module Requests
     module Mixins
       # Модуль, предназначенный для подключения к классам, к которым уже

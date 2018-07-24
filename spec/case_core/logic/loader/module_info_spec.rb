@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Loader::ModuleInfo` объектов,
+# Тестирование класса `CaseCore::Logic::Loader::ModuleInfo` объектов,
 # содержащих информацию о загруженных модулях бизнес-логики
 
 RSpec.describe CaseCore::Logic::Loader::ModuleInfo do

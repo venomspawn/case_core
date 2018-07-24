@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Search::Query`
+# Тестирование класса `CaseCore::Search::Query`
 
-require "#{$lib}/search/query"
+CaseCore.need 'search/query'
 
 RSpec.describe CaseCore::Search::Query do
   describe 'the class' do
@@ -75,6 +75,26 @@ RSpec.describe CaseCore::Search::Query do
 
                 it 'should be all records selected by all filters together' do
                   expect(ids).to match_array %w[2]
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be all records with the attribute present' do
+                    expect(ids).to match_array %w[1 2 3 4 5]
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be all records with the attribute absent' do
+                    expect(ids).to match_array %w[]
+                  end
                 end
               end
 

@@ -17,5 +17,11 @@ puma_threads_max = ENV['CC_PUMA_THREADS_MAX']
 puma_threads_max = 8 if puma_threads_max.blank?
 threads puma_threads_min, puma_threads_max
 
+# Отключение, необходимое для использования Puma. Без отключения процессы Puma
+# используют одно и то же подключение, определённое в родительском процессе,
+# что приводит к странным ошибкам. После отключения Sequel автоматически
+# подключается к базе данных индивидуально для каждого дочернего процесса.
+before_fork { Sequel::Model.db.disconnect }
+
 # Загрузка приложения до создания дочерних процессов
 preload_app!

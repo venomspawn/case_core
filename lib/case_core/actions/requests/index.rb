@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/complex_index"
-
 module CaseCore
+  need 'actions/base/complex_index'
+
   module Actions
     module Requests
       # Класс действий над записями межведомственных запросов, предоставляющий
@@ -10,7 +10,6 @@ module CaseCore
       # атрибутов межведомственных запросов, созданных в рамках заявки
       class Index < Base::ComplexIndex
         require_relative 'index/params_schema'
-        require_relative 'index/result_schema'
 
         private
 

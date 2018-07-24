@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/requests/count/result_schema'
+
   module Actions
     module Requests
       class Count
         # Вспомогательный модуль, предназначенный для включения в тесты
         # содержащего класса
         module SpecHelper
+          # Возвращает JSON-схему результата действия
+          # @return [Object]
+          #   JSON-схема результата действия
+          def schema
+            RESULT_SCHEMA
+          end
+
           # Ассоциативный массив, в котором моделям соответствуют списки
           # импортируемых значений
           DATA = [
@@ -47,10 +56,10 @@ module CaseCore
           #   список созданных записей заявок
           def create_requests(c4s3)
             DATA.map do |attrs|
-              FactoryGirl.create(:request, case_id: c4s3.id).tap do |request|
+              FactoryBot.create(:request, case_id: c4s3.id).tap do |request|
                 attrs.each do |name, value|
                   args = { request_id: request.id, name: name, value: value }
-                  FactoryGirl.create(:request_attribute, args)
+                  FactoryBot.create(:request_attribute, args)
                 end
               end
             end

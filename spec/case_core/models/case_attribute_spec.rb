@@ -1,12 +1,40 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели атрибутов заявок `CaseCore::Models::CaseAttribute`
+# Тестирование модели атрибутов заявок `CaseCore::Models::CaseAttribute`
 
 RSpec.describe CaseCore::Models::CaseAttribute do
   describe 'the model' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:new, :create) }
+  end
+
+  describe '.new' do
+    subject(:result) { described_class.new(params) }
+
+    describe 'result' do
+      subject { result }
+
+      let(:params) { {} }
+
+      it { is_expected.to be_an_instance_of(described_class) }
+    end
+
+    context 'when case id is specified' do
+      let(:params) { { case_id: :case_id } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
+
+    context 'when name is specified' do
+      let(:params) { { name: :name } }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
   end
 
   describe '.create' do
@@ -53,6 +81,14 @@ RSpec.describe CaseCore::Models::CaseAttribute do
       end
     end
 
+    context 'when name is equal to `id`' do
+      let(:params) { { case_id: case_id, name: :id, value: :value } }
+
+      it 'should raise Sequel::CheckConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::CheckConstraintViolation)
+      end
+    end
+
     context 'when name is equal to `type`' do
       let(:params) { { case_id: case_id, name: :type, value: :value } }
 
@@ -63,6 +99,14 @@ RSpec.describe CaseCore::Models::CaseAttribute do
 
     context 'when name is equal to `created_at`' do
       let(:params) { { case_id: case_id, name: :created_at, value: :value } }
+
+      it 'should raise Sequel::CheckConstraintViolation' do
+        expect { subject }.to raise_error(Sequel::CheckConstraintViolation)
+      end
+    end
+
+    context 'when name is equal to `documents`' do
+      let(:params) { { case_id: case_id, name: :documents, value: :value } }
 
       it 'should raise Sequel::CheckConstraintViolation' do
         expect { subject }.to raise_error(Sequel::CheckConstraintViolation)

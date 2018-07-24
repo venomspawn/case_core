@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 require_relative 'mixins/logic'
 
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Cases
       # Класс действий над записями заявок, предоставляющих метод `call`,
@@ -23,7 +23,7 @@ module CaseCore
         # @raise [RuntimeError]
         #   если модуль бизнес-логики не найден по типу заявки
         def call
-          obj = logic(c4s3) || (raise Errors::Logic::Absent.new(c4s3))
+          obj = logic(c4s3) || (raise Errors::Logic::Absent, c4s3)
           obj.send(method_name, c4s3, *arguments)
         end
 

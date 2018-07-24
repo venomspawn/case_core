@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/search/query"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'search/query'
+
   module Actions
     module Cases
       # Класс действия подсчёта количества записей заявок
       class Count < Base::Action
         require_relative 'count/params_schema'
-        require_relative 'count/result_schema'
 
         # Возвращает ассоциативный массив с количеством записей заявок
         # @return [Hash]

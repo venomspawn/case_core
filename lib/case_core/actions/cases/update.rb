@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-require "#{$lib}/actions/base/mixins/transactional"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'actions/base/mixins/transactional'
+
   module Actions
     module Cases
       # Класс действий над записями заявок, предоставляющих метод `update`,

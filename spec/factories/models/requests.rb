@@ -2,7 +2,7 @@
 
 # Фабрика записей межведомственных запросов
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :request, class: CaseCore::Models::Request do
     created_at { Time.now }
 

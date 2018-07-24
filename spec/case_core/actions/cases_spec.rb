@@ -1,21 +1,28 @@
 # frozen_string_literal: true
 
-# Файл тестирования функций модуля `CaseCore::Actions::Cases`
+# Тестирование функций модуля `CaseCore::Actions::Cases`
 
 RSpec.describe CaseCore::Actions::Cases do
   subject { described_class }
 
-  it { is_expected.to respond_to(:index) }
+  functions = %i[index count show show_attributes create call update]
+  it { is_expected.to respond_to(*functions) }
 
   describe '.index' do
     include described_class::Index::SpecHelper
 
-    subject(:result) { described_class.index(params) }
+    subject(:result) { described_class.index(params, rest) }
+
+    let(:params) { {} }
+    let(:rest) { nil }
+    let!(:cases) { create_cases }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          {},
+                          wrong_structure: { filter: :wrong }
 
     describe 'result' do
       subject { result }
-
-      let(:schema) { described_class::Index::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -68,6 +75,26 @@ RSpec.describe CaseCore::Actions::Cases do
 
                 it 'should be all infos selected by all filters together' do
                   expect(ids).to match_array %w[2]
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be all infos with the attribute present' do
+                    expect(ids).to match_array %w[1 2 3 4 5]
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be all infos with the attribute absent' do
+                    expect(ids).to match_array %w[]
+                  end
                 end
               end
             end
@@ -175,33 +202,22 @@ RSpec.describe CaseCore::Actions::Cases do
         end
       end
     end
-
-    let(:params) { {} }
-    let!(:cases) { create_cases }
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type but of wrong structure' do
-      let(:params) { { filter: :wrong } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
   end
 
   it { is_expected.to respond_to(:show) }
 
   describe '.show' do
-    subject(:result) { described_class.show(params) }
+    include described_class::Show::SpecHelper
 
-    let(:params) { { id: id } }
+    subject(:result) { described_class.show(params, rest) }
+
+    let!(:c4s3) { create(:case, id: 'id') }
+    let(:params) { { id: c4s3.id } }
+    let(:rest) { nil }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id' },
+                          wrong_structure: {}
 
     describe 'result' do
       subject { result }
@@ -210,7 +226,6 @@ RSpec.describe CaseCore::Actions::Cases do
       let!(:case_attribute) { create(:case_attribute, *args) }
       let(:args) { [case_id: c4s3.id, name: 'attr', value: 'value'] }
       let(:id) { c4s3.id }
-      let(:schema) { described_class::Show::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -256,39 +271,22 @@ RSpec.describe CaseCore::Actions::Cases do
         end
       end
     end
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type but doesn\'t have `id` attribute' do
-      let(:params) { { doesnt: :have_id_attribute } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when case record can\'t be found by provided id' do
-      let(:id) { 'won\'t be found' }
-
-      it 'should raise Sequel::NoMatchingRow' do
-        expect { subject }.to raise_error(Sequel::NoMatchingRow)
-      end
-    end
   end
 
   it { is_expected.to respond_to(:show_attributes) }
 
   describe '.show_attributes' do
-    subject(:result) { described_class.show_attributes(params) }
+    include described_class::ShowAttributes::SpecHelper
+
+    subject(:result) { described_class.show_attributes(params, rest) }
 
     let(:params) { { id: id } }
     let(:id) { 'id' }
+    let(:rest) { nil }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id' },
+                          wrong_structure: {}
 
     describe 'result' do
       subject { result }
@@ -301,7 +299,6 @@ RSpec.describe CaseCore::Actions::Cases do
       let(:name2) { attribute2.name.to_sym }
       let(:value1) { attribute1.value }
       let(:value2) { attribute2.value }
-      let(:schema) { described_class::ShowAttributes::RESULT_SCHEMA }
 
       it { is_expected.to be_a(Hash) }
       it { is_expected.to match_json_schema(schema) }
@@ -352,70 +349,6 @@ RSpec.describe CaseCore::Actions::Cases do
         it { is_expected.to be_empty }
       end
     end
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` parameter is absent' do
-      let(:params) { {} }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter is not `nil` nor a list' do
-      let(:params) { { id: 'id', names: 'not `nil` nor a list' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains an element of wrong type' do
-      let(:params) { { id: 'id', names: [wrong: :type] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `id` string' do
-      let(:params) { { id: 'id', names: %w[attr id] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `type` string' do
-      let(:params) { { id: 'id', names: %w[attr type] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `names` parameter contains `created_at` string' do
-      let(:params) { { id: 'id', names: %w[attr created_at] } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when a parameter beside `id` or `name` is present' do
-      let(:params) { { id: 'id', names: [], a: :parameter } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
   end
 
   it { is_expected.to respond_to(:create) }
@@ -423,27 +356,24 @@ RSpec.describe CaseCore::Actions::Cases do
   describe '.create' do
     before { CaseCore::Logic::Loader.settings.dir = dir }
 
-    subject { described_class.create(params) }
+    subject(:result) { described_class.create(params, rest) }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:params) { { type: type, **attrs, **documents } }
     let(:attrs) { {} }
     let(:documents) { {} }
+    let(:rest) { nil }
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { type: :mixed_case },
+                          wrong_structure: { type: { wrong: :structure } }
 
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    describe 'result' do
+      subject { result }
 
-    context 'when argument is of Hash type but is of wrong structure' do
-      let(:params) { { type: { wrong: :structure } } }
+      let(:type) { 'mixed_case' }
 
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
+      it { is_expected.to be_a(CaseCore::Models::Case) }
     end
 
     context 'when there is no module of business logic for the case' do
@@ -682,29 +612,18 @@ RSpec.describe CaseCore::Actions::Cases do
   it { is_expected.to respond_to(:call) }
 
   describe '.call' do
-    subject { described_class.call(params) }
+    subject { described_class.call(params, rest) }
 
     let(:params) { { id: id, method: method_name } }
     let(:id) { c4s3.id }
-    let(:c4s3) { create(:case, type: type) }
-    let(:type) { 'test_case' }
+    let!(:c4s3) { create(:case, type: type, id: 'id') }
+    let(:type) { 'mixed_case' }
     let(:method_name) { 'a_method' }
+    let(:rest) { nil }
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type but is of wrong structure' do
-      let(:params) { { wrong: :structure } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id', method: :a_method },
+                          wrong_structure: { wrong: :structure }
 
     context 'when case record can\'t be found' do
       let(:id) { 'won\'t be found' }
@@ -725,7 +644,8 @@ RSpec.describe CaseCore::Actions::Cases do
     context 'when method is absent' do
       before { CaseCore::Logic::Loader.settings.dir = dir }
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:type) { 'test_case' }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
 
       it 'should raise NoMethodError' do
         expect { subject }.to raise_error(NoMethodError)
@@ -738,7 +658,8 @@ RSpec.describe CaseCore::Actions::Cases do
         allow(logic).to receive(method_name).and_raise('')
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
+      let(:type) { 'test_case' }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 
       it 'should raise the error' do
@@ -752,7 +673,8 @@ RSpec.describe CaseCore::Actions::Cases do
         allow(logic).to receive(method_name)
       end
 
-      let(:dir) { "#{$root}/spec/fixtures/logic" }
+      let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
+      let(:type) { 'test_case' }
       let(:logic) { CaseCore::Logic::Loader.logic(type) }
 
       it 'should call the method' do
@@ -767,16 +689,21 @@ RSpec.describe CaseCore::Actions::Cases do
   it { is_expected.to respond_to(:update) }
 
   describe '.update' do
-    subject { described_class.update(params) }
+    subject { described_class.update(params, rest) }
 
-    let(:params) { { id: id, name => new_value } }
-    let(:c4s3) { create(:case) }
+    let(:params) { { id: id, name.to_sym => new_value } }
+    let(:c4s3) { create(:case, id: 'id') }
     let(:id) { c4s3.id }
     let!(:attr) { create(:case_attribute, *attr_traits) }
     let(:attr_traits) { [case: c4s3, name: name, value: value] }
     let(:name) { 'attr' }
     let(:value) { 'value' }
     let(:new_value) { 'new_value' }
+    let(:rest) { nil }
+
+    it_should_behave_like 'an action parameters receiver',
+                          params:          { id: 'id', attr: 'attr' },
+                          wrong_structure: {}
 
     it 'should update attributes of the case' do
       expect { subject }
@@ -793,77 +720,27 @@ RSpec.describe CaseCore::Actions::Cases do
           .to raise_error(Sequel::ForeignKeyConstraintViolation)
       end
     end
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `id` attribute is absent' do
-      let(:params) { { attr: 'attr' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when only `id` attribute is present' do
-      let(:params) { { id: 'id' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `type` attribute is present' do
-      let(:params) { { id: 'id', type: 'type' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when `created_at` attribute is present' do
-      let(:params) { { id: 'id', created_at: 'created_at' } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
   end
 
   it { is_expected.to respond_to(:count) }
 
   describe '.count' do
-    subject(:result) { described_class.count(params) }
+    include described_class::Count::SpecHelper
 
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
+    subject(:result) { described_class.count(params, rest) }
 
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    let(:params) { {} }
+    let(:rest) { nil }
 
-    context 'when argument is of Hash type but of wrong structure' do
-      let(:params) { { filter: :wrong } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
+    it_should_behave_like 'an action parameters receiver',
+                          params:          {},
+                          wrong_structure: { filter: :wrong }
 
     describe 'result' do
-      include described_class::Count::SpecHelper
-
       subject { result }
 
       let(:params) { {} }
       let!(:cases) { create_cases }
-      let(:schema) { described_class::Count::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
 
@@ -916,6 +793,26 @@ RSpec.describe CaseCore::Actions::Cases do
 
                 it 'should be count of cases filtered by filters together' do
                   expect(subject).to be == 1
+                end
+              end
+
+              context 'when there is only `present` key' do
+                let(:filter) { { state: { present: present } } }
+
+                context 'when value of the key is boolean true' do
+                  let(:present) { true }
+
+                  it 'should be count of cases with the attribute present' do
+                    expect(subject).to be == 5
+                  end
+                end
+
+                context 'when value if the key is boolean false' do
+                  let(:present) { false }
+
+                  it 'should be count of cases with the attribute absent' do
+                    expect(subject).to be == 0
+                  end
                 end
               end
             end
@@ -981,22 +878,6 @@ RSpec.describe CaseCore::Actions::Cases do
             expect(subject).to be == 2
           end
         end
-      end
-    end
-
-    context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
-      end
-    end
-
-    context 'when argument is of Hash type but of wrong structure' do
-      let(:params) { { filter: :wrong } }
-
-      it 'should raise JSON::Schema::ValidationError' do
-        expect { subject }.to raise_error(JSON::Schema::ValidationError)
       end
     end
   end

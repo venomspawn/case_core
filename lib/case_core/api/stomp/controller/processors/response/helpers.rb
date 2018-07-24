@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-require "#{$lib}/helpers/safe_call"
-
 module CaseCore
+  need 'helpers/log'
+  need 'helpers/safecall'
+
   module API
     module STOMP
       class Controller

@@ -14,7 +14,7 @@ module CaseCore
       # @return [Logger]
       #   журнал событий
       def logger
-        $logger
+        CaseCore.logger
       end
 
       # Создаёт запись в журнале событий с данным уровнем значимости

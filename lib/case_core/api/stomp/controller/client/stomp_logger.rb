@@ -2,9 +2,9 @@
 
 require 'stomp/null_logger'
 
-require "#{$lib}/helpers/log"
-
 module CaseCore
+  need 'helpers/log'
+
   module API
     module STOMP
       class Controller

@@ -56,7 +56,7 @@ module CaseCore
         # @return [Array<CaseCore::Models::Case>]
         #   список созданных записей заявок
         def create_cases
-          FactoryGirl.create(:imported_cases, data: DATA)
+          FactoryBot.create(:imported_cases, data: DATA)
         end
       end
     end

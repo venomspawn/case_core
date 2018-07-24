@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Loader::Settings` настроек класса
+# Тестирование класса `CaseCore::Logic::Loader::Settings` настроек класса
 # `CaseCore::Logic::Loader::Settings`
 
 RSpec.describe CaseCore::Logic::Loader::Settings do
@@ -12,7 +12,7 @@ RSpec.describe CaseCore::Logic::Loader::Settings do
   describe '#dir=' do
     subject { settings.dir = dir }
 
-    let(:dir) { "#{$root}/spec/fixtures/logic" }
+    let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:loader) { CaseCore::Logic::Loader.instance }
     let(:scanner) { loader.send(:scanner) }
 

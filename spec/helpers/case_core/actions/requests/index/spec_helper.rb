@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/requests/index/result_schema'
+
   module Actions
     module Requests
       class Index
         # Вспомогательный модуль, предназначенный для включения в тесты
         # содержащего класса
         module SpecHelper
+          # Возвращает JSON-схему результата действия
+          # @return [Object]
+          #   JSON-схема результата действия
+          def schema
+            RESULT_SCHEMA
+          end
+
           # Ассоциативный массив, в котором моделям соответствуют списки
           # импортируемых значений
           DATA = [
@@ -50,7 +59,7 @@ module CaseCore
           #   список созданных записей межведомственных запросов
           def create_requests(c4s3)
             args = [DATA.size, case_id: c4s3.id]
-            FactoryGirl.create_list(:request, *args).tap do |requests|
+            FactoryBot.create_list(:request, *args).tap do |requests|
               values = DATA.size.times.each_with_object([]) do |i, memo|
                 id = requests[i].id
                 DATA[i].each { |name, value| memo << [id, name.to_s, value] }

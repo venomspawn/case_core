@@ -2,7 +2,7 @@
 
 # Фабрика записей атрибутов межведомственных запросов
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :request_attribute, class: CaseCore::Models::RequestAttribute do
     name       { create(:string) }
     value      { create(:string) }

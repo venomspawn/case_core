@@ -3,14 +3,14 @@
 require 'singleton'
 require 'stomp'
 
-require "#{$lib}/settings/configurable"
-
 require_relative 'controller/processors/incoming'
 require_relative 'controller/processors/response'
 require_relative 'controller/publishers'
 require_relative 'controller/subscriber'
 
 module CaseCore
+  need 'settings/configurable'
+
   module API
     # Пространство имён для STOMP API
     module STOMP

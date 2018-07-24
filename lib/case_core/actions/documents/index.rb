@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+
   module Actions
     module Documents
       # Класс действий над записями документов, предоставляющий метод `index`,
@@ -10,7 +10,6 @@ module CaseCore
       # прикреплённых к заявке
       class Index < Base::Action
         require_relative 'index/params_schema'
-        require_relative 'index/result_schema'
 
         # Возвращает список ассоциативных массивов атрибутов документов,
         # прикреплённых к заявке

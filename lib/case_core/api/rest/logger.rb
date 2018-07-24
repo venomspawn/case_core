@@ -12,7 +12,7 @@ module CaseCore
         # @param [#call] app
         #   приложение Rack
         def initialize(app)
-          super(app, $logger)
+          super(app, CaseCore.logger)
         end
 
         # Множество путей, запросы на которые не журналируются

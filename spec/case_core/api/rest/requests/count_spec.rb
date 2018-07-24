@@ -1,62 +1,68 @@
 # frozen_string_literal: true
 
-# Файл тестирования метода REST API, который возвращает информацию о количестве
+# Тестирование метода REST API, который возвращает информацию о количестве
 # межведомственных запросов, созданных в рамках заявки
 
-RSpec.describe CaseCore::API::REST::Controller do
+RSpec.describe CaseCore::API::REST::Requests::Count do
   describe 'POST /cases/:id/requests_count' do
-    subject { post "/cases/#{id}/requests_count", params.to_json }
+    include described_class::SpecHelper
 
-    let(:params) { {} }
-    let!(:c4s3) { create(:case) }
-    let!(:requests) { create_list(:request, 2, case: c4s3) }
-    let(:id) { c4s3.id }
-    let(:schema) { CaseCore::Actions::Requests::Count::RESULT_SCHEMA }
+    subject(:response) { post "/cases/#{id}/requests_count", params.to_json }
 
-    it { is_expected.to be_ok }
-    it { is_expected.to have_proper_body(schema) }
+    describe 'response' do
+      subject { response }
 
-    context 'when case record can\'t be found by provided id' do
-      let(:id) { 'id' }
+      let(:params) { {} }
+      let(:c4s3) { create(:case) }
+      let!(:requests) { create_list(:request, 2, case: c4s3) }
+      let(:id) { c4s3.id }
 
-      it { is_expected.to be_not_found }
-    end
+      it { is_expected.to be_ok }
 
-    context 'when params are of wrong structure' do
-      let(:params) { { filter: { is: { of: { wrong: :structure } } } } }
+      it { is_expected.to have_proper_body(schema) }
 
-      it { is_expected.to be_unprocessable }
-    end
+      context 'when case record can\'t be found by provided id' do
+        let(:id) { 'id' }
 
-    context 'when limit parameter is present' do
-      let(:params) { { limit: limit } }
-
-      context 'when value of the parameter is convertable to integer' do
-        let(:limit) { 10 }
-
-        it { is_expected.to be_ok }
+        it { is_expected.to be_not_found }
       end
 
-      context 'when value of the parameter isn\'t convertable to integer' do
-        let(:limit) { 'abc' }
+      context 'when params are of wrong structure' do
+        let(:params) { { filter: { is: { of: { wrong: :structure } } } } }
 
         it { is_expected.to be_unprocessable }
       end
-    end
 
-    context 'when offset parameter is present' do
-      let(:params) { { offset: offset } }
+      context 'when limit parameter is present' do
+        let(:params) { { limit: limit } }
 
-      context 'when value of the parameter is convertable to integer' do
-        let(:offset) { 10 }
+        context 'when value of the parameter is convertable to integer' do
+          let(:limit) { 10 }
 
-        it { is_expected.to be_ok }
+          it { is_expected.to be_ok }
+        end
+
+        context 'when value of the parameter isn\'t convertable to integer' do
+          let(:limit) { 'abc' }
+
+          it { is_expected.to be_unprocessable }
+        end
       end
 
-      context 'when value of the parameter isn\'t convertable to integer' do
-        let(:offset) { 'abc' }
+      context 'when offset parameter is present' do
+        let(:params) { { offset: offset } }
 
-        it { is_expected.to be_unprocessable }
+        context 'when value of the parameter is convertable to integer' do
+          let(:offset) { 10 }
+
+          it { is_expected.to be_ok }
+        end
+
+        context 'when value of the parameter isn\'t convertable to integer' do
+          let(:offset) { 'abc' }
+
+          it { is_expected.to be_unprocessable }
+        end
       end
     end
   end

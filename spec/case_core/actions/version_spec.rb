@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования функций модуля `CaseCore::Actions::Version`
+# Тестирование функций модуля `CaseCore::Actions::Version`
 
 RSpec.describe CaseCore::Actions::Version do
   describe 'the module' do
@@ -31,7 +31,7 @@ RSpec.describe CaseCore::Actions::Version do
     end
 
     context 'when argument is not of Hash type' do
-      let(:params) { 'not of Hash type' }
+      let(:params) { %w[not of Hash type] }
 
       it 'should raise JSON::Schema::ValidationError' do
         expect { subject }.to raise_error(JSON::Schema::ValidationError)

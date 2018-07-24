@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::Logic::Fetcher::GemRequest` запросов к
+# Тестирование класса `CaseCore::Logic::Fetcher::GemRequest` запросов к
 # серверу библиотек на получение тела файла библиотеки с заданными названием и
 # версией
 

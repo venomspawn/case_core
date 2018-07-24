@@ -21,7 +21,7 @@ module CaseCore
             #   ассоциативный массив, структура которого описана схемой
             #   {CaseCore::Actions::Cases::Count::RESULT_SCHEMA}
             controller.post '/cases_count' do
-              content = cases.count(post_params)
+              content = Actions::Cases.count(request.body)
               status :ok
               body Oj.dump(content)
             end

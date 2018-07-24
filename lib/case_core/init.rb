@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
 require 'singleton'
 
 require_relative 'settings/configurable'
@@ -49,7 +48,7 @@ module CaseCore
     extend  Settings::Configurable
     include Singleton
 
-    settings_names :initializers
+    settings_names :initializers, :root, :logger
 
     # Инициализирует экземпляр класса
     def initialize
@@ -58,16 +57,18 @@ module CaseCore
 
     # Запускает инициализацию приложения, если инициализация ещё не была
     # запущена
-    # @param [Hash{:only, :except => Array}] params
-    #   ассоциативный массив параметров инициализации
-    def self.run!(params = {})
+    # @param [NilClass, Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации или `nil`, если параметры
+    #   инициализации отсутствуют
+    def self.run!(params = nil)
       instance.run!(params)
     end
 
     # Запускает инициализацию приложения, если инициализация ещё не была
     # запущена
-    # @param [Hash{:only, :except => Array}] params
-    #   ассоциативный массив параметров инициализации
+    # @param [NilClass, Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации или `nil`, если параметры
+    #   инициализации отсутствуют
     def run!(params)
       return if initialized?
       mutex.synchronize do
@@ -97,32 +98,35 @@ module CaseCore
       @initialized = true
     end
 
+    # Возвращает список полных путей к файлам инициализации
+    # @return [Array<String>]
+    #   список полных путей
+    def paths
+      Dir["#{Init.settings.initializers}/*.rb"]
+    end
+
+    # Регулярное выражение, позволяющее извлечь название файла инициализации
+    NAME_REGEXP = %r{\/.{2}_([^\/]*)\.rb\z}
+
+    # Возвращает список полных путей к файлам инициализации
+    # @param [Hash{:only, :except => Array}] params
+    #   ассоциативный массив параметров инициализации
+    # @return [Hash]
+    #   результирующий ассоциативный массив
+    def filtered_paths(params)
+      only, except = params&.values_at(:only, :except)
+      paths.each_with_object([]) do |path, memo|
+        name = NAME_REGEXP.match(path)&.[](1)
+        next if name.nil? || except&.include?(name)
+        memo << path if only.nil? || only.include?(name)
+      end
+    end
+
     # Запускает инициализацию приложения
     # @param [Hash{:only, :except => Array}] params
     #   ассоциативный массив параметров инициализации
     def load_initializers(params)
-      paths = Dir["#{Init.settings.initializers}/*.rb"]
-      names = initializer_names(paths)
-      only = Set.new(params[:only] || names.values)
-      except = Set.new(params[:except])
-      names.keep_if { |_, name| only.include?(name) && !except.include?(name) }
-      names.keys.sort.each(&method(:require))
-    end
-
-    # Регулярное выражение, позволяющее извлечь название файла инициализации
-    NAME_REGEXP = %r{\/.{2}_([^\/]*)\.rb$}
-
-    # Возвращает ассоциативный массив, в котором полным путям файлов
-    # инициализации сопоставляются их названия
-    # @param [Array<String>] paths
-    #   список полных путей файлов инициализации
-    # @return [Hash]
-    #   результирующий ассоциативный массив
-    def initializer_names(paths)
-      paths.each_with_object({}) do |path, memo|
-        name = NAME_REGEXP.match(path)&.[](1)
-        memo[path] = name unless name.nil?
-      end
+      filtered_paths(params).sort.each(&method(:require))
     end
   end
 end

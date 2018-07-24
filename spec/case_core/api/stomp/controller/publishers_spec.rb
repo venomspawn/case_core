@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Файл тестирования класса `CaseCore::API::STOMP::Controller::Publishers`
+# Тестирование класса `CaseCore::API::STOMP::Controller::Publishers`
 # объектов, отображающих произвольные объекты в объекты, публикующие сообщения
 # STOMP
 

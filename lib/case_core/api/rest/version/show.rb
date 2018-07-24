@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "#{$lib}/version"
-
 module CaseCore
   module API
     module REST
@@ -22,7 +20,7 @@ module CaseCore
             #   ассоциативный массив с единственным полем `version`, хранящим
             #   строку с версией приложения в качестве значения
             controller.get '/version' do
-              content = version.show(params)
+              content = Actions::Version.show(params)
               status :ok
               body Oj.dump(content)
             end

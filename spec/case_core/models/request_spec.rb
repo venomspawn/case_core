@@ -1,13 +1,33 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели межведомственного запроса
+# Тестирование модели межведомственного запроса
 # `CaseCore::Models::Request`
 
 RSpec.describe CaseCore::Models::Request do
   describe 'the model' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:new, :create) }
+  end
+
+  describe '.new' do
+    subject(:result) { described_class.new(params) }
+
+    describe 'result' do
+      subject { result }
+
+      let(:params) { attributes_for(:request) }
+
+      it { is_expected.to be_an_instance_of(described_class) }
+    end
+
+    context 'when id is specified' do
+      let(:params) { attributes_for(:request).merge(id: 100_500) }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
   end
 
   describe '.create' do
@@ -59,6 +79,17 @@ RSpec.describe CaseCore::Models::Request do
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { case_id: c4s3.id, created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end
@@ -188,6 +219,17 @@ RSpec.describe CaseCore::Models::Request do
 
       it 'should raise Sequel::InvalidValue' do
         expect { subject }.to raise_error(Sequel::InvalidValue)
+      end
+    end
+
+    context 'when time of creation is of String' do
+      context 'when the value is not a time\'s representation' do
+        let(:params) { { created_at: value } }
+        let(:value) { 'not a time\'s representation' }
+
+        it 'should raise Sequel::InvalidValue' do
+          expect { subject }.to raise_error(Sequel::InvalidValue)
+        end
       end
     end
   end

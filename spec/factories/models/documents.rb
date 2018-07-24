@@ -2,7 +2,7 @@
 
 # Фабрика записей документов, прикреплённых к заявкам
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :document, class: CaseCore::Models::Document do
     id             { create(:string) }
     title          { create(:string) }
@@ -16,7 +16,7 @@ FactoryGirl.define do
     filename       { create(:string) }
     provided       { create(:boolean) }
     in_document_id { create(:string) }
-    fs_id          { create(:string) }
+    fs_id          { create(:file).id }
     created_at     { Time.now }
 
     association :case

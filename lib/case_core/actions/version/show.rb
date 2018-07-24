@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
-require "#{$lib}/actions/base/action"
-
 module CaseCore
+  need 'actions/base/action'
+  need 'version'
+
   module Actions
     module Version
+      # Класс действий, извлекающих информацию о версии приложения и модулей
+      # бизнес-логики
       class Show < Base::Action
         require_relative 'show/params_schema'
 
@@ -29,14 +32,14 @@ module CaseCore
 
         # Регулярное выражение для извлечения информации о названиях библиотек
         # модулей бизнес-логики и их версиях
-        NAME_REGEXP = /^([a-z][a-z0-9_]*)-([0-9.]*)$/
+        NAME_REGEXP = /\A([a-z][a-z0-9_]*)-([0-9.]*)\z/
 
         # Возвращает ассоциативный массив с информацией о версиях модулей
         # бизнес-логики
         # @return [Hash]
         #   результирующий ассоциативный массив
         def modules
-          dirs = Dir["#{$root}/#{ENV['CC_LOGIC_DIR']}/*"]
+          dirs = Dir["#{CaseCore.root}/#{ENV['CC_LOGIC_DIR']}/*"]
           dirs.each_with_object({}, &method(:process_dir))
         end
 
@@ -45,7 +48,7 @@ module CaseCore
         # бизнес-логики
         # @param [String] path
         #   путь к директории с библиотекой бизнес-логики
-        # @param [Hash]
+        # @param [Hash] memo
         #   ассоциативный массив с информацией о версиях модулей бизнес-логики
         def process_dir(path, memo)
           dirname = File.basename(path)

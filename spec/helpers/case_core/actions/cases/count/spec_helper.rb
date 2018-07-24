@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/cases/count/result_schema'
+
   module Actions
     module Cases
       class Count
         # Вспомогательный модуль, предназначенный для включения в тесты
         # содержащего класса
         module SpecHelper
+          # Возвращает JSON-схему результата действия
+          # @return [Object]
+          #   JSON-схема результата действия
+          def schema
+            RESULT_SCHEMA
+          end
+
           # Ассоциативный массив, в котором моделям соответствуют списки
           # импортируемых значений
           DATA = [
@@ -57,7 +66,7 @@ module CaseCore
           # @return [Array<CaseCore::Models::Case>]
           #   список созданных записей заявок
           def create_cases
-            FactoryGirl.create(:imported_cases, data: DATA)
+            FactoryBot.create(:imported_cases, data: DATA)
           end
         end
       end

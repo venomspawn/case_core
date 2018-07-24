@@ -11,19 +11,19 @@ module CaseCore
             # Возвращает ассоциативный массив, в котором идентификаторам папок
             # заявителей сопоставлены списки ассоциативных массивов с
             # информацией о документах заявителей
-            # @param [Sequel::Database] db
+            # @param [Sequel::Database] database
             #   объект, предоставляющий доступ к базе данных `cabinet`
             # @return [Hash]
             #   результирующий ассоциативный массив
-            def self.data(db)
-              new(db).data
+            def self.data(database)
+              new(database).data
             end
 
             # Инициализирует объект класса
-            # @param [Sequel::Database] db
+            # @param [Sequel::Database] database
             #   объект, предоставляющий доступ к базе данных `cabinet`
-            def initialize(db)
-              @db = db
+            def initialize(database)
+              @database = database
             end
 
             # Возвращает ассоциативный массив, в котором идентификаторам папок
@@ -45,22 +45,17 @@ module CaseCore
             # Объект, предоставляющий доступ к базе данных `cabinet`
             # @return [Sequel::Database]
             #   объект, предоставляющий доступ к базе данных `cabinet`
-            attr_reader :db
+            attr_reader :database
 
             # Список названий столбцов, извлекаемых из таблицы `ecm_documents`
-            ECM_DOCUMENTS_COLUMNS = %i[
-              id
-              content
-              created_at
-              folder_id
-              schema_urn
-            ].freeze
+            ECM_DOCUMENTS_COLUMNS =
+              %i[id attachments content created_at folder_id schema_urn].freeze
 
             # Возвращает запрос Sequel на получение записей документов
             # @return [Sequel::Dataset]
             #   результирующий запрос Sequel
             def dataset
-              db[:ecm_documents]
+              database[:ecm_documents]
                 .where(folder_id: folder_ids_dataset)
                 .select(*ECM_DOCUMENTS_COLUMNS)
             end
@@ -70,7 +65,7 @@ module CaseCore
             # @return [Sequel::Dataset]
             #   результирующий запрос Sequel
             def folder_ids_dataset
-              db[:ecm_people].select(:private_folder_id)
+              database[:ecm_people].select(:private_folder_id)
             end
 
             # Возвращает ассоциативный массив, восстановлённый из содержимого
@@ -80,7 +75,7 @@ module CaseCore
             # @return [Hash]
             #   результирующий ассоциативный массив
             def unpack_content(document)
-              content = JSON.parse(document[:content])
+              content = Oj.load(document[:content])
               content = [content] if content.is_a?(Hash)
               content = unpack(content)
               content = content.each_value.first

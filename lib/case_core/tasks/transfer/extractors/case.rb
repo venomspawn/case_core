@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require "#{$lib}/helpers/log"
-
 module CaseCore
+  need 'helpers/log'
+
   module Tasks
     class Transfer
       module Extractors
         # Класс объектов, предоставляющих возможность извлечения информации о
         # заявке для импорта
         class Case
-          include Helpers::Log
+          include CaseCore::Helpers::Log
 
           # Возвращает ассоциативный массив атрибутов записи заявки, если
           # запись заявки возможно импортировать, или `nil` в противном

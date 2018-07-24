@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-require 'json'
-
-require "#{$lib}/settings/configurable"
-
 require_relative 'filter/settings'
 
 module CaseCore
+  need 'settings/configurable'
+
   # Пространство имён для классов, предоставляющих функции фильтрации значений
   # ключей ассоциативных массивов
   module Censorship
@@ -105,8 +103,10 @@ module CaseCore
       # @return [String]
       #   результирующая строка
       def process_string(string)
-        process(JSON.parse(string, symbolize_names: true)).to_json
-      rescue JSON::ParserError
+        content = Oj.load(string)
+        result = process(content)
+        Oj.dump(result)
+      rescue Oj::ParseError, EncodingError
         too_long?(string) ? too_long_message : string
       end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "#{$lib}/settings/mixin"
-
 module CaseCore
+  need 'settings/mixin'
+
   module Logic
     class Loader
       # Класс настроек содержащего класса

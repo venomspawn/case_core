@@ -1,16 +1,36 @@
 # frozen_string_literal: true
 
-# Файл тестирования модели `CaseCore::Models::ProcessingStatus` статусов
+# Тестирование модели `CaseCore::Models::ProcessingStatus` статусов
 # обработки сообщений STOMP
 
 RSpec.describe CaseCore::Models::ProcessingStatus do
   describe 'the model' do
     subject { described_class }
 
-    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:new, :create) }
   end
 
-  describe 'create' do
+  describe '.new' do
+    subject(:result) { described_class.new(params) }
+
+    describe 'result' do
+      subject { result }
+
+      let(:params) { attributes_for(:processing_status) }
+
+      it { is_expected.to be_an_instance_of(described_class) }
+    end
+
+    context 'when id is specified' do
+      let(:params) { attributes_for(:processing_status).merge(id: 100_500) }
+
+      it 'should raise Sequel::MassAssignmentRestriction' do
+        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      end
+    end
+  end
+
+  describe '.create' do
     subject(:result) { described_class.create(params) }
 
     let(:params) { attributes_for(:processing_status) }
