@@ -14,7 +14,7 @@ module CaseCore
       end
 
       # Конфигурирует настройки, общие для всех экземпляров сервиса
-      # @yieldparam [Settings]
+      # @yieldparam [Settings] settings
       #   настройки, общие для всех экземпляров сервиса
       def configure
         yield settings

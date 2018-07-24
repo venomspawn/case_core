@@ -737,7 +737,6 @@ RSpec.describe CaseCore::Actions::Cases do
                           wrong_structure: { filter: :wrong }
 
     describe 'result' do
-
       subject { result }
 
       let(:params) { {} }
