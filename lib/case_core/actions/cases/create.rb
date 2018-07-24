@@ -25,6 +25,9 @@ module CaseCore
         include Helpers::SafeCall
 
         # Создаёт новую запись заявки вместе с записями приложенных документов
+        # и возвращает созданную записб
+        # @return [CaseCore::Models::Case]
+        #   созданная запись заявки
         # @raise [RuntimeError]
         #   если не найдена бизнес-логика, обрабатывающая создание заявки
         # @raise [RuntimeError]
@@ -40,7 +43,7 @@ module CaseCore
               check_case_logic!(c4s3)
               create_attributes(c4s3)
               create_documents(c4s3)
-              c4s3.tap(&method(:do_case_creation))
+              do_case_creation(c4s3)
             end
           end
         end

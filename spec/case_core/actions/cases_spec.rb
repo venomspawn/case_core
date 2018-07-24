@@ -356,7 +356,7 @@ RSpec.describe CaseCore::Actions::Cases do
   describe '.create' do
     before { CaseCore::Logic::Loader.settings.dir = dir }
 
-    subject { described_class.create(params, rest) }
+    subject(:result) { described_class.create(params, rest) }
 
     let(:dir) { "#{CaseCore.root}/spec/fixtures/logic" }
     let(:params) { { type: type, **attrs, **documents } }
@@ -367,6 +367,14 @@ RSpec.describe CaseCore::Actions::Cases do
     it_should_behave_like 'an action parameters receiver',
                           params:          { type: :mixed_case },
                           wrong_structure: { type: { wrong: :structure } }
+
+    describe 'result' do
+      subject { result }
+
+      let(:type) { 'mixed_case' }
+
+      it { is_expected.to be_a(CaseCore::Models::Case) }
+    end
 
     context 'when there is no module of business logic for the case' do
       let(:type) { 'no module for the case' }
