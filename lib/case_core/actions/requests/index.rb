@@ -10,7 +10,6 @@ module CaseCore
       # атрибутов межведомственных запросов, созданных в рамках заявки
       class Index < Base::ComplexIndex
         require_relative 'index/params_schema'
-        require_relative 'index/result_schema'
 
         private
 

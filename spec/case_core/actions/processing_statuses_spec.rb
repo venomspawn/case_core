@@ -8,6 +8,8 @@ RSpec.describe CaseCore::Actions::ProcessingStatuses do
   it { is_expected.to respond_to(:show) }
 
   describe '.show' do
+    include described_class::Show::SpecHelper
+
     subject(:result) { described_class.show(params, rest) }
 
     let(:params) { { message_id: message_id } }

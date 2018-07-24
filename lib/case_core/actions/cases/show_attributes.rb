@@ -10,7 +10,6 @@ module CaseCore
       # кроме тех, что присутствуют непосредственно в записи заявки
       class ShowAttributes < Base::Action
         require_relative 'show_attributes/params_schema'
-        require_relative 'show_attributes/result_schema'
 
         # Возвращает ассоциативный массив со всеми атрибутами заявки, кроме
         # тех, что присутствуют непосредственно в записи заявки

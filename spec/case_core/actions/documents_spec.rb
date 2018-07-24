@@ -5,9 +5,11 @@
 RSpec.describe CaseCore::Actions::Documents do
   subject { described_class }
 
-  it { is_expected.to respond_to(:index) }
+  it { is_expected.to respond_to(:index, :create, :update) }
 
   describe '.index' do
+    include described_class::Index::SpecHelper
+
     subject(:result) { described_class.index(params, rest) }
 
     let(:params) { { id: id } }
@@ -23,7 +25,6 @@ RSpec.describe CaseCore::Actions::Documents do
 
       let!(:documents) { create_list(:document, 2, case: c4s3) }
       let(:id) { c4s3.id }
-      let(:schema) { described_class::Index::RESULT_SCHEMA }
 
       it { is_expected.to match_json_schema(schema) }
     end

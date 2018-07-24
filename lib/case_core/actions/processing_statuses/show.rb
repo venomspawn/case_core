@@ -11,7 +11,6 @@ module CaseCore
       class Show < Base::Action
         require_relative 'show/errors'
         require_relative 'show/params_schema'
-        require_relative 'show/result_schema'
 
         # Статус успешной обработки
         OK = 'ok'

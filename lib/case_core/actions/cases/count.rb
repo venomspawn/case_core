@@ -9,7 +9,6 @@ module CaseCore
       # Класс действия подсчёта количества записей заявок
       class Count < Base::Action
         require_relative 'count/params_schema'
-        require_relative 'count/result_schema'
 
         # Возвращает ассоциативный массив с количеством записей заявок
         # @return [Hash]
