@@ -11,11 +11,26 @@ module CaseCore
     Init.settings.root
   end
 
-  # Возвращает журнал событий
+  # Возвращает журнал событий или `nil`, если журнал событий не выставлен
   # @return [Logger]
   #   журнал событий
+  # @return [NilClass]
+  #   если журнал событий не выставлен
   def self.logger
     Init.settings.logger
+  end
+
+  # Отключает журналирование, вызывает предоставленный блок и восстанавливает
+  # журналирование
+  def self.loglessly
+    return yield unless logger.is_a?(Logger)
+    begin
+      level = logger.level
+      logger.level = Logger::UNKNOWN + 1
+      yield
+    ensure
+      logger.level = level
+    end
   end
 
   # Возвращает полный путь к директории исходных файлов сервиса
