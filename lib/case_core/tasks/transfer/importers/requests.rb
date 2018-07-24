@@ -27,16 +27,11 @@ module CaseCore
           end
 
           # Список полей записей атрибутов межведомственных запросов
-          ATTR_COLUMNS = %i[request_id name value]
+          ATTR_COLUMNS = %i[request_id name value].freeze
 
           # Импортирует записи межведомственных запросов
           def import
-            requests = Extractors::Requests.extract(hub)
-            requests = requests.each_with_object({}) do |request, memo|
-              params = request.slice(:case_id, :created_at)
-              record = Models::Request.create(params)
-              memo[record.id] = request
-            end
+            requests = import_requests
             log_imported_requests(requests.size, binding)
             attr_values = request_attr_values(requests)
             Models::RequestAttribute.import(ATTR_COLUMNS, attr_values)
@@ -49,6 +44,21 @@ module CaseCore
           # @return [CaseCore::Tasks::Transfer::DataHub]
           #   объект, предоставляющий доступ к данным
           attr_reader :hub
+
+          # Импортирует записи межведомственных запросов и возвращает
+          # ассоциативный массив, в котором идентификаторам импортированных
+          # записей соответствуют ассоциативные массивы с исходной информацией
+          # о запросах
+          # @return [Hash]
+          #   результирующий ассоциативный массив
+          def import_requests
+            requests = Extractors::Requests.extract(hub)
+            requests.each_with_object({}) do |request, memo|
+              params = request.slice(:case_id, :created_at)
+              record = Models::Request.create(params)
+              memo[record.id] = request
+            end
+          end
 
           # Возвращает ассоциативный массив, в котором идентификаторам записей
           # заявок соответствует их тип

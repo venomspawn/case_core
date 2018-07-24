@@ -32,7 +32,7 @@ module CaseCore
           CASE_COLUMNS = Models::Case.columns
 
           # Список полей записей атрибутов заявок
-          ATTR_COLUMNS = %i[case_id name value]
+          ATTR_COLUMNS = %i[case_id name value].freeze
 
           # Импортирует записи заявок
           def import
@@ -59,7 +59,7 @@ module CaseCore
             @cases ||= Extractors::Cases.extract(hub)
           end
 
-          # Возвращает список списков значений записей заявок
+          # Возвращает список списков значений полей записей заявок
           # @return [Array<Array>]
           #   результирующий список
           def case_values

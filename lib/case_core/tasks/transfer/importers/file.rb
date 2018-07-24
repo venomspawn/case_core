@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'rest-client'
+
 module CaseCore
-  need 'actions/files'
+  need 'actions/files/create'
   need 'helpers/log'
 
   module Tasks
@@ -30,7 +32,7 @@ module CaseCore
             return if fs_id.nil?
             log_file_content(fs_id, content)
             return if content.nil?
-
+            doc[:fs_id] = Actions::Files::Create.new(content).create[:id]
           end
 
           private
@@ -44,36 +46,7 @@ module CaseCore
           # @return [String]
           #   идентификатор файла в файловом хранилище
           def fs_id
-            @fs_id ||= doc[:fs_id]
-          end
-
-          # Регулярное выражение для отбрасывания символов, не являющихся
-          # шестнадцатеричными символами
-          NOT_HEX = /[^a-fA-F0-9]/
-
-          # Длина строки с шестнадцатеричным представлением UUID
-          UUID_SIZE = 32
-
-          # Диапазон для отсекания лишних символов
-          TAIL = (UUID_SIZE..-1).freeze
-
-          # Диапазоны для выделения частей текстового представления UUID
-          RANGES = [0..7, 8..11, 12..15, 16..19, 20..31].freeze
-
-          # Разделителей частей в текстовом представлении UUID
-          DELIMITER = '-'
-
-          # Возвращает текстовое представление UUID, созданное на основе
-          # предоставленной строки
-          # @return [String]
-          #   результирующее текстовое представление UUID
-          def id
-            return @id unless @id.nil?
-            @id = fs_id.dup
-            @id.gsub!(NOT_HEX, '')
-            @id << SecureRandom.hex(UUID_SIZE)
-            @id.slice!(TAIL)
-            @id = RANGES.map(@id.method(:[])).join(DELIMITER)
+            @fs_id ||= doc.delete(:fs_id)
           end
 
           # Адрес сервера файлового хранилища
@@ -83,12 +56,20 @@ module CaseCore
           PORT = ENV['CC_FS_PORT']
 
           # URL метода извлечения тела файла
-          URL = "http://#{HOST}:#{PORT}/file-storage/api/files"
+          URL_TEMPLATE = "http://#{HOST}:#{PORT}/file-storage/api/files/%s"
+
+          # Возвращает URL содержимого файла
+          # @return [String]
+          #   URL содержимого файла
+          def url
+            format(URL_TEMPLATE, fs_id)
+          end
 
           # Параметры метода извлечения тела файла
           PARAMS = {
-            method:  :get,
-            headers: { params: { directory: 'mfc' } }
+            method:       :get,
+            headers:      { params: { directory: 'mfc' } },
+            raw_response: true
           }.freeze
 
           # Загружает тело файла с предоставленным идентификатором и возвращает
@@ -99,12 +80,12 @@ module CaseCore
           # @return [NilClass]
           #   если тело файла пусто или во время загрузки произошла ошибка
           def content
-            response =
-              RestClient::Request.execute(url: "#{URL}/#{id}", **PARAMS)
+            return @content if defined?(@content)
+            response = RestClient::Request.execute(url: url, **PARAMS)
             response.file.open
-            response.file unless response.file.size.zero?
+            @content = response.file.size.zero? ? nil : response.file
           rescue StandardError
-            nil
+            @content = nil
           end
 
           # Создаёт запись в журнале событий о результате извлечения тела файла
