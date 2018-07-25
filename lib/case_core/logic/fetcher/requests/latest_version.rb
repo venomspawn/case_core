@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base/request'
+require_relative 'base/specs'
 
 module CaseCore
   need 'helpers/log'
@@ -11,7 +11,7 @@ module CaseCore
         # Класс запросов к серверу библиотек, который предоставляет функцию
         # `latest_version`, возвращающую информацию о новейшей версии
         # библиотеки с заданным названием на сервере библиотек
-        class LatestVersion < Base::Request
+        class LatestVersion < Base::Specs
           include CaseCore::Helpers::Log
 
           # Возвращает строку с информацией о новейшей версии библиотеки с
@@ -46,12 +46,11 @@ module CaseCore
           #   если библиотека отсутствует на сервере библиотек или во время
           #   загрузки информации произошла ошибка
           def latest_version
-            result = specs.reduce(nil) do |memo, spec|
-              next memo unless spec.first == name
-              version = spec[1]
+            result = specs.reduce(nil) do |memo, (spec_name, version)|
+              next memo unless spec_name == name
               memo.nil? || memo < version ? version : memo
             end
-            result.to_s if result.is_a?(::Gem::Version)
+            result&.to_s
           rescue StandardError => err
             log_latest_version_error(err, binding)
           end
@@ -62,35 +61,6 @@ module CaseCore
           # @return [String]
           #   строка с названием библиотеки
           attr_reader :name
-
-          # Версия библиотеки `marshal`
-          MARSHAL_VERSION =
-            "#{Marshal::MAJOR_VERSION}.#{Marshal::MINOR_VERSION}"
-
-          # Путь к файлу с информацией о всех библиотеках, хранящихся на
-          # сервере библиотек
-          PATH = "latest_specs.#{MARSHAL_VERSION}.gz"
-
-          # Возвращает путь к файлу с информацией о всех библиотеках,
-          # хранящихся на сервере библиотек
-          # @return [String]
-          #   путь к файлу с информацией о всех библиотеках, хранящихся на
-          #   сервере библиотек
-          def path
-            "#{super}/#{PATH}"
-          end
-
-          # Возвращает структуру данных, извлечённую из файла с информацией о
-          # всех библиотеках, хранящихся на сервере библиотек
-          # @return [Object]
-          #   структура данных, извлечённую из файла с информацией о всех
-          #   библиотеках, хранящихся на сервере библиотек
-          def specs
-            specs_serialized = Zlib.gunzip(get.body)
-            # rubocop: disable Security/MarshalLoad
-            Marshal.load(specs_serialized)
-            # rubocop: enable Security/MarshalLoad
-          end
 
           # Создаёт запись в журнале событий о том, что во время загрузки или
           # извлечения информации о последней версии библиотеки произошла

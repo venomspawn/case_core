@@ -35,8 +35,8 @@ RSpec.describe CaseCore::Logic::Fetcher do
   end
 
   describe '.fetch' do
-    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
-    include CaseCore::Logic::FetcherSpecHelper
+    include described_class::Requests::LatestVersion::SpecHelper
+    include described_class::SpecHelper
 
     before do
       described_class.configure do |settings|
@@ -288,8 +288,8 @@ RSpec.describe CaseCore::Logic::Fetcher do
   end
 
   describe '#fetch' do
-    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
-    include CaseCore::Logic::FetcherSpecHelper
+    include described_class::Requests::LatestVersion::SpecHelper
+    include described_class::SpecHelper
 
     before do
       described_class.configure do |settings|

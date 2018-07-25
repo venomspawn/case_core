@@ -12,7 +12,7 @@ RSpec.describe CaseCore::Logic::Fetcher::Requests::LatestVersion do
   end
 
   describe '.latest_version' do
-    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
+    include described_class::SpecHelper
 
     before { stub_request(:get, /spec/).to_return(body: spec_body) }
 
@@ -23,6 +23,8 @@ RSpec.describe CaseCore::Logic::Fetcher::Requests::LatestVersion do
     let(:version) { '0.0.1' }
 
     describe 'result' do
+      subject { result }
+
       context 'when the library is found' do
         context 'when no errors appear' do
           it { is_expected.to be == version }
@@ -58,7 +60,7 @@ RSpec.describe CaseCore::Logic::Fetcher::Requests::LatestVersion do
   end
 
   describe '#latest_version' do
-    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
+    include described_class::SpecHelper
 
     before { stub_request(:get, /spec/).to_return(body: spec_body) }
 
@@ -70,6 +72,8 @@ RSpec.describe CaseCore::Logic::Fetcher::Requests::LatestVersion do
     let(:version) { '0.0.1' }
 
     describe 'result' do
+      subject { result }
+
       context 'when the library is found' do
         context 'when no errors appear' do
           it { is_expected.to be == version }

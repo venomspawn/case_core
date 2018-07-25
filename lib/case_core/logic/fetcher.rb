@@ -6,6 +6,7 @@ require 'rubygems/package'
 require_relative 'fetcher/helpers'
 require_relative 'fetcher/requests/gem'
 require_relative 'fetcher/requests/latest_version'
+require_relative 'fetcher/requests/latest_versions'
 
 module CaseCore
   need 'settings/configurable'
