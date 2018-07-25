@@ -4,9 +4,8 @@ require 'fileutils'
 require 'rubygems/package'
 
 require_relative 'fetcher/helpers'
-require_relative 'fetcher/gem_request'
-require_relative 'fetcher/latest_version_request'
-require_relative 'loader'
+require_relative 'fetcher/requests/gem'
+require_relative 'fetcher/requests/latest_version'
 
 module CaseCore
   need 'settings/configurable'
@@ -77,7 +76,7 @@ module CaseCore
       #   если во время получения последней версии библиотеки произошла ошибка
       def version
         return @version unless @version.empty?
-        @version = LatestVersionRequest
+        @version = Requests::LatestVersion
                    .latest_version(name)
                    .tap(&method(:check_version!))
                    .tap { |result| log_last_version(name, result, binding) }
@@ -104,7 +103,7 @@ module CaseCore
       # @raise [RuntimeError]
       #   если во время загрузки файла произошла ошибка
       def gem
-        GemRequest.gem(name, version).tap(&method(:check_gem!))
+        Requests::Gem.gem(name, version).tap(&method(:check_gem!))
       end
 
       # Название архива, хранящего файлы библиотеки

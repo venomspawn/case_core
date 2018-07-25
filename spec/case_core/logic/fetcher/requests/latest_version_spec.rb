@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# Тестирование класса `CaseCore::Logic::Fetcher::LatestVersionRequest`
+# Тестирование класса `CaseCore::Logic::Fetcher::Requests::LatestVersion`
 # запросов к серверу библиотек на получение информации о последней версии
 # библиотеки с заданным названием
 
-RSpec.describe CaseCore::Logic::Fetcher::LatestVersionRequest do
+RSpec.describe CaseCore::Logic::Fetcher::Requests::LatestVersion do
   describe 'the class' do
     subject { described_class }
 
@@ -12,7 +12,7 @@ RSpec.describe CaseCore::Logic::Fetcher::LatestVersionRequest do
   end
 
   describe '.latest_version' do
-    include CaseCore::Logic::Fetcher::LatestVersionRequestSpecHelper
+    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
 
     before { stub_request(:get, /spec/).to_return(body: spec_body) }
 
@@ -58,7 +58,7 @@ RSpec.describe CaseCore::Logic::Fetcher::LatestVersionRequest do
   end
 
   describe '#latest_version' do
-    include CaseCore::Logic::Fetcher::LatestVersionRequestSpecHelper
+    include CaseCore::Logic::Fetcher::Requests::LatestVersionSpecHelper
 
     before { stub_request(:get, /spec/).to_return(body: spec_body) }
 
