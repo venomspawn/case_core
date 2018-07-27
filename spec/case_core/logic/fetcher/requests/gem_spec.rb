@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# Тестирование класса `CaseCore::Logic::Fetcher::GemRequest` запросов к
+# Тестирование класса `CaseCore::Logic::Fetcher::Requests::Gem` запросов к
 # серверу библиотек на получение тела файла библиотеки с заданными названием и
 # версией
 
-RSpec.describe CaseCore::Logic::Fetcher::GemRequest do
+RSpec.describe CaseCore::Logic::Fetcher::Requests::Gem do
   describe 'the class' do
     subject { described_class }
 

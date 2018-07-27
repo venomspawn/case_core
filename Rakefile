@@ -44,6 +44,36 @@ namespace :case_core do
     CaseCore::API::STOMP::Controller.run!
   end
 
+  desc 'Запускает автоматическое обновление библиотек'
+  task :run_fetcher do
+    require_relative 'config/app_init'
+
+    CaseCore::Init.run!(only: %w[oj censorship class_ext logger logic_fetcher])
+
+    require 'rufus-scheduler'
+
+    cron_line = ENV['CC_FETCHER_CRON']
+    cron = Fugit::Cron.parse(cron_line) unless cron_line.to_s.empty?
+
+    %w[INT TERM].each do |signal|
+      previous_handler = trap(signal) do
+        Thread.exit
+        previous_handler.call
+      end
+    end
+
+    # Загрузка всех обновлений
+    CaseCore::Logic::Fetcher.fetch
+
+    # Усыпление процесса в случае, если значение переменной окружения не
+    # является корректной cron-строкой
+    sleep if cron.nil?
+
+    scheduler = Rufus::Scheduler.new
+    scheduler.cron(cron, &CaseCore::Logic::Fetcher.method(:fetch))
+    scheduler.join
+  end
+
   desc 'Запускает миграцию данных из `case_manager`'
   task :transfer do
     require_relative 'config/app_init'
