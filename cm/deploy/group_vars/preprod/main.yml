@@ -41,6 +41,9 @@ docker_run_variables:
   # Директория с модулями бизнес-логики
   CC_LOGIC_DIR: logic
 
+  # Как часто опрашивать сервер библиотек
+  CC_FETCHER_CRON: '*/5 * * * *'
+
   SERVICE_CHECK_HTTP: '/version'
 
   BUILD_ENV: '{{ app_env }}'
