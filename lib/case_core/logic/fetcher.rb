@@ -113,9 +113,9 @@ module CaseCore
       def current_gems
         @current_gems ||=
           Dir["#{gems_dir}/*"].each_with_object({}) do |path, memo|
-            name, version = NAME_REGEXP.match(File.basename(path))&.to_a
-            current = memo[name] || next
-            memo[name] = version if current.nil? || current < version
+            _, name, version = NAME_REGEXP.match(File.basename(path))&.to_a
+            next if name.nil?
+            memo[name] = version if memo[name].nil? || memo[name] < version
           end
       end
 

@@ -62,10 +62,12 @@ namespace :case_core do
       end
     end
 
-    sleep if cron.nil?
-
     # Загрузка всех обновлений
     CaseCore::Logic::Fetcher.fetch
+
+    # Усыпление процесса в случае, если значение переменной окружения не
+    # является корректной cron-строкой
+    sleep if cron.nil?
 
     scheduler = Rufus::Scheduler.new
     scheduler.cron(cron, &CaseCore::Logic::Fetcher.method(:fetch))
