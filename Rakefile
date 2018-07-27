@@ -74,6 +74,37 @@ namespace :case_core do
     scheduler.join
   end
 
+  desc 'Запускает автоматическое удаление неприкреплённых записей файлов'
+  task :run_dfc do
+    require_relative 'config/app_init'
+
+    CaseCore::Init.run!(only: %w[class_ext logger sequel])
+
+    require 'rufus-scheduler'
+
+    cron_line = ENV['CC_DFC_CRON']
+    cron = Fugit::Cron.parse(cron_line) unless cron_line.to_s.empty?
+
+    death_age = ENV['CC_DFC_AGE'].to_i
+
+    %w[INT TERM].each do |signal|
+      previous_handler = trap(signal) do
+        Thread.exit
+        previous_handler.call
+      end
+    end
+
+    # Усыпление процесса в случае, если значения требуемых переменных окружения
+    # не являются корректными
+    sleep if cron.nil? || death_age.zero? || death_age.negative?
+
+    CaseCore.need 'dfc/sweep'
+
+    scheduler = Rufus::Scheduler.new
+    scheduler.cron(cron) { CaseCore::DFC::Sweep.invoke(death_age) }
+    scheduler.join
+  end
+
   desc 'Запускает миграцию данных из `case_manager`'
   task :transfer do
     require_relative 'config/app_init'
