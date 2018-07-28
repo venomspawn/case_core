@@ -13,14 +13,27 @@
         - { var: "PGDATABASE", value: "case_core"}
         - { var: "RACK_ENV", value: "development" }
 
-    - name: "Autofollow to project on logon"
-      lineinfile:
-        dest: "/home/vagrant/.bashrc"
-        regexp: "^cd /vagrant"
-        line: "cd /vagrant"
+  tasks:
+    - name: "Create database"
+      postgresql_db:
+        name: case_core
+        encoding: UTF-8
 
-  roles:
-    - role: ruby-brightbox
-    - role: apt
-    - role: ntp
-    - role: postgresql
+    - name: "Create user for database"
+      postgresql_user:
+        db: case_core
+        name: user_case_core
+        encrypted: no
+        password: 123456
+        priv: "ALL"
+        role_attr_flags: "SUPERUSER"
+
+    - name: "Create hstore for database"
+      postgresql_ext:
+        db: case_core
+        name: hstore
+          
+    - name: "Create pg_trgm for database"
+      postgresql_ext:
+        db: case_core
+        name: pg_trgm
