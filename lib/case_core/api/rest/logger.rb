@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rack/common_logger'
-require 'set'
 
 module CaseCore
   module API
@@ -15,9 +14,6 @@ module CaseCore
           super(app, CaseCore.logger)
         end
 
-        # Множество путей, запросы на которые не журналируются
-        BLACK_LIST = %w[/version].to_set.freeze
-
         # Вызывается `Rack`
         # @param [Hash] env
         #   ассоциативный массив параметров `Rack`
@@ -25,13 +21,16 @@ module CaseCore
           black_listed?(env) ? @app.call(env) : super
         end
 
+        # Множество путей, запросы на которые не журналируются
+        BLACK_LIST = %w[/version /processing_statuses].freeze
+
         # Возвращает, пропустить ли журналирование запроса на путь
         # @param [Hash] env
         #   ассоциативный массив параметров `Rack`
         # @return [Boolean]
         #   пропустить ли журналирование запроса на путь
         def black_listed?(env)
-          BLACK_LIST.include?(env['PATH_INFO'])
+          BLACK_LIST.any?(&env['PATH_INFO'].method(:start_with?))
         end
       end
     end
