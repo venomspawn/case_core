@@ -379,7 +379,7 @@ RSpec.describe CaseCore::Actions::Cases do
     context 'when there is no module of business logic for the case' do
       let(:type) { 'no module for the case' }
       let(:attrs) { { attr1: :value1, attr2: :value2 } }
-      let(:documents) { { documents: [{ id: 'id' }, { id: 'id2' }] } }
+      let(:documents) { { documents: [fs_id: create(:file).id] } }
 
       it 'should raise `RuntimeError`' do
         expect { subject }.to raise_error(RuntimeError)
@@ -409,7 +409,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
       context 'when the module doesn\'t provide `on_case_creation` function' do
         let(:attrs) { { attr1: :value1, attr2: :value2 } }
-        let(:documents) { { documents: [{ id: 'id' }, { id: 'id2' }] } }
+        let(:documents) { { documents: [fs_id: create(:file).id] } }
 
         it 'should raise `RuntimeError`' do
           expect { subject }.to raise_error(RuntimeError)
@@ -453,7 +453,7 @@ RSpec.describe CaseCore::Actions::Cases do
 
           let(:error) { ArgumentError.new }
           let(:attrs) { { attr1: :value1, attr2: :value2 } }
-          let(:documents) { { documents: [{ id: 'id' }, { id: 'id2' }] } }
+          let(:documents) { { documents: [fs_id: create(:file).id] } }
 
           it 'should raise the error' do
             expect { subject }.to raise_error(error)
@@ -529,12 +529,12 @@ RSpec.describe CaseCore::Actions::Cases do
           end
 
           context 'when there are documents linked to the case' do
-            let(:documents) { { documents: [{ id: 'id' }, { id: 'id2' }] } }
+            let(:documents) { { documents: [fs_id: create(:file).id] } }
 
             it 'should create records of documents' do
               expect { subject }
                 .to change { CaseCore::Models::Document.count }
-                .by(2)
+                .by(1)
             end
           end
         end
@@ -586,16 +586,16 @@ RSpec.describe CaseCore::Actions::Cases do
           end
 
           context 'when there are documents linked to the case' do
-            let(:documents) { { documents: [{ id: 'id' }, { id: 'id2' }] } }
+            let(:documents) { { documents: [fs_id: create(:file).id] } }
 
             it 'should create records of documents' do
               expect { subject }
                 .to change { CaseCore::Models::Document.count }
-                .by(2)
+                .by(1)
             end
 
             context 'when the documents lack id value' do
-              let(:documents) { { documents: [{}] } }
+              let(:documents) { { documents: [fs_id: create(:file).id] } }
 
               it 'should create id' do
                 expect { subject }

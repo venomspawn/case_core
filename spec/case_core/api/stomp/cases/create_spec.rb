@@ -5,7 +5,7 @@
 
 RSpec.describe CaseCore::API::STOMP::Controller do
   describe 'creation of case record' do
-    include CaseCore::API::STOMP::Controller::Processors::IncomingSpecHelper
+    include described_class::Processors::IncomingSpecHelper
 
     before do
       client = double('stomp-client')
@@ -226,12 +226,12 @@ RSpec.describe CaseCore::API::STOMP::Controller do
           end
 
           context 'when there are documents linked to the case' do
-            let(:documents) { { documents: [{ id: :id }, { id: :id2 }] } }
+            let(:documents) { { documents: [fs_id: create(:file).id] } }
 
             it 'should create records of documents' do
               expect { subject }
                 .to change { CaseCore::Models::Document.count }
-                .by(2)
+                .by(1)
             end
           end
         end
@@ -293,12 +293,12 @@ RSpec.describe CaseCore::API::STOMP::Controller do
           end
 
           context 'when there are documents linked to the case' do
-            let(:documents) { { documents: [{ id: :id }, { id: :id2 }] } }
+            let(:documents) { { documents: [fs_id: create(:file).id] } }
 
             it 'should create records of documents' do
               expect { subject }
                 .to change { CaseCore::Models::Document.count }
-                .by(2)
+                .by(1)
             end
           end
         end

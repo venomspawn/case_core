@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/uuid_format'
+
   module Actions
     module Documents
       class Index
@@ -50,7 +52,8 @@ module CaseCore
                 type: %i[string number boolean null]
               },
               fs_id: {
-                type: %i[string number boolean null]
+                type: :string,
+                pattern: UUID_FORMAT
               },
               created_at: {
                 type: :any
