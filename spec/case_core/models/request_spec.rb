@@ -20,14 +20,6 @@ RSpec.describe CaseCore::Models::Request do
 
       it { is_expected.to be_an_instance_of(described_class) }
     end
-
-    context 'when id is specified' do
-      let(:params) { attributes_for(:request).merge(id: 100_500) }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
   end
 
   describe '.create' do
@@ -40,14 +32,6 @@ RSpec.describe CaseCore::Models::Request do
       subject { result }
 
       it { is_expected.to be_a(described_class) }
-    end
-
-    context 'when id is specified' do
-      let(:params) { { id: nil, case_id: c4s3.id, created_at: Time.now } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
     end
 
     context 'when case id is not specified' do
@@ -197,14 +181,6 @@ RSpec.describe CaseCore::Models::Request do
     subject(:result) { instance.update(params) }
 
     let(:instance) { create(:request) }
-
-    context 'when id is specified' do
-      let(:params) { { id: 1 } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
 
     context 'when case id is nil' do
       let(:params) { { case_id: nil } }

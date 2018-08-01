@@ -28,19 +28,11 @@ module CaseCore
     #   @return [CaseCore::Models::Case]
     #     запись заявки, в рамках которой создан запрос
     class Request < Sequel::Model
+      unrestrict_primary_key
+
       # Отношения
       one_to_many :attributes, class: 'CaseCore::Models::RequestAttribute'
       many_to_one :case
-
-      # Обновляет запись модели
-      # @param [Hash] values
-      #   новые атрибуты записи
-      # @return [Boolean]
-      #   удалось или нет сохранить запись
-      def update(values)
-        model.restrict_primary_key unless model.restrict_primary_key?
-        super
-      end
     end
   end
 end
