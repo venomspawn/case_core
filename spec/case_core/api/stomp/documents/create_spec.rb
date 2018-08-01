@@ -25,7 +25,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     let(:entities) { 'documents' }
     let(:action) { 'create' }
     let(:body) { document_attrs.to_json }
-    let(:document_attrs) { { case_id: case_id } }
+    let(:document_attrs) { { case_id: case_id, fs_id: create(:file).id } }
     let(:case_id) { c4s3.id }
     let(:c4s3) { create(:case) }
     let(:status_records) { CaseCore::Models::ProcessingStatus }
@@ -92,7 +92,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     end
 
     context 'when `id` attribute is specified' do
-      let(:document_attrs) { { id: id, case_id: case_id } }
+      let(:document_attrs) { { id: id, case_id: case_id, fs_id: fs_id } }
+      let(:fs_id) { create(:file).id }
       let(:id) { 'id' }
 
       context 'when a record with the value exists' do

@@ -43,14 +43,20 @@ RSpec.describe CaseCore::Actions::Documents do
   describe '.create' do
     subject { described_class.create(params, rest) }
 
-    let(:params) { { case_id: case_id } }
+    let(:params) { { case_id: case_id, fs_id: create(:file).id } }
     let(:case_id) { c4s3.id }
     let!(:c4s3) { create(:case, id: 'case_id') }
     let(:rest) { nil }
 
     it_should_behave_like 'an action parameters receiver',
-                          params:          { id: 'id', case_id: 'case_id' },
-                          wrong_structure: { wrong: :structure }
+                          -> (selector) do
+                            if selector == :wrong_structure
+                              { wrong: :structure }
+                            else
+                              fs_id = FactoryBot.create(:file).id
+                              { id: 'id', case_id: 'case_id', fs_id: fs_id }
+                            end
+                          end
 
     it 'should create record of `CaseCore::Models::Document` model' do
       expect { subject }.to change { CaseCore::Models::Document.count }.by(1)
@@ -63,7 +69,7 @@ RSpec.describe CaseCore::Actions::Documents do
     end
 
     context 'when `id` attribute is specified' do
-      let(:params) { { id: id, case_id: case_id } }
+      let(:params) { { id: id, case_id: case_id, fs_id: create(:file).id } }
       let(:id) { 'id' }
 
       context 'when a record with the value exists' do
