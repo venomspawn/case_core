@@ -19,14 +19,6 @@ RSpec.describe CaseCore::Models::Case do
 
       it { is_expected.to be_an_instance_of(described_class) }
     end
-
-    context 'when case id is specified' do
-      let(:params) { { id: :id, type: :type, created_at: Time.now } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
   end
 
   describe '.create' do
@@ -285,11 +277,11 @@ RSpec.describe CaseCore::Models::Case do
 
     let(:instance) { create(:case) }
 
-    context 'when id is specified' do
-      let(:params) { { id: 1 } }
+    context 'when id is nil' do
+      let(:params) { { id: nil } }
 
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
+      it 'should raise Sequel::InvalidValue' do
+        expect { subject }.to raise_error(Sequel::InvalidValue)
       end
     end
 

@@ -19,14 +19,6 @@ RSpec.describe CaseCore::Models::Document do
 
       it { is_expected.to be_an_instance_of(described_class) }
     end
-
-    context 'when id is specified' do
-      let(:params) { { id: :id } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
   end
 
   describe '.create' do
@@ -485,14 +477,6 @@ RSpec.describe CaseCore::Models::Document do
     subject { instance.update(params) }
 
     let(:instance) { create(:document) }
-
-    context 'when id is specified' do
-      let(:params) { { id: create(:string) } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
 
     context 'when case is specified and `nil`' do
       let(:params) { { case: nil } }

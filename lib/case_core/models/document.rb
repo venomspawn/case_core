@@ -109,30 +109,10 @@ module CaseCore
     #   @return [CaseCore::Models::Case]
     #     запись заявки, к которой прикреплён документ
     class Document < Sequel::Model
+      unrestrict_primary_key
+
       # Отношения
       many_to_one :case
-
-      # Создаёт запись модели
-      # @param [Hash] values
-      #   атрибуты записи
-      # @return [CaseCore::Model::Document]
-      #   созданная запись модели
-      def self.create(values)
-        unrestrict_primary_key
-        super
-      ensure
-        restrict_primary_key
-      end
-
-      # Обновляет запись модели
-      # @param [Hash] values
-      #   новые атрибуты записи
-      # @return [Boolean]
-      #   удалось или нет сохранить запись
-      def update(values)
-        model.restrict_primary_key unless model.restrict_primary_key?
-        super
-      end
     end
   end
 end
