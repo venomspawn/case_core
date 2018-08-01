@@ -12,6 +12,8 @@ docker_run_variables:
   CC_DB_PASS: 123456
   CC_DB_HOST: pgsql.dev.it.vm
   CC_DB_NAME: case_core
+  CC_DB_POOL: 40
+  CC_DB_WAIT: 10
 
   # Настройки REST-контроллера
   CC_BIND: 0.0.0.0
