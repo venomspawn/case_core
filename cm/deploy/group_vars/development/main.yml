@@ -18,13 +18,16 @@ docker_run_variables:
   # Настройки REST-контроллера
   CC_BIND: 0.0.0.0
   CC_PORT: 8081
+  CC_PUMA_WORKERS: 3
+  CC_PUMA_THREADS_MAX: 24
 
   # Настройки подключения к ActiveMQ
   CC_STOMP_HOST: smev.dev.it.vm
   CC_STOMP_PORT: 61613
   CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
-
+  CC_STOMP_INCOMING_LISTENERS: 30
   CC_STOMP_RESPONSE_QUEUE: esia_client.queue,certificate_case_smev3.response.queue
+  CC_STOMP_RESPONSE_LISTENERS: 10
 
   # Настройки подключения к серверу библиотек
   CC_GEM_SERVER_HOST: repo.it2.vm
