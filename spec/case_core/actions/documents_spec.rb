@@ -48,15 +48,11 @@ RSpec.describe CaseCore::Actions::Documents do
     let!(:c4s3) { create(:case, id: 'case_id') }
     let(:rest) { nil }
 
-    it_should_behave_like 'an action parameters receiver',
-                          -> (selector) do
-                            if selector == :wrong_structure
-                              { wrong: :structure }
-                            else
-                              fs_id = FactoryBot.create(:file).id
-                              { id: 'id', case_id: 'case_id', fs_id: fs_id }
-                            end
-                          end
+    params_selector = proc do |selector|
+      next { wrong: :structure } if selector == :wrong_structure
+      { id: 'id', case_id: 'case_id', fs_id: FactoryBot.create(:file).id }
+    end
+    it_should_behave_like 'an action parameters receiver', params_selector
 
     it 'should create record of `CaseCore::Models::Document` model' do
       expect { subject }.to change { CaseCore::Models::Document.count }.by(1)
