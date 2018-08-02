@@ -1,5 +1,9 @@
 # Журнал изменений
 
+## [2.2.1] — 02.08.2018
+
+-   Исправлены замечания `rubocop` (#136)
+
 ## [2.2.0] — 02.08.2018
 
 -   Убрано ограничение на выставление первичного ключа моделей (#128)
@@ -108,6 +112,7 @@
 
 -   Создана базовая инфраструктура сервиса (#1)
 
+[2.2.1]: http://gitlab.it.vm/microservices/case_core/compare/2.2.0...2.2.1
 [2.2.0]: http://gitlab.it.vm/microservices/case_core/compare/2.1.0...2.2.0
 [2.1.0]: http://gitlab.it.vm/microservices/case_core/compare/2.0.1...2.1.0
 [2.0.1]: http://gitlab.it.vm/microservices/case_core/compare/2.0.0...2.0.1
