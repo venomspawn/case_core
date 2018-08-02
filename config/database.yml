@@ -5,6 +5,8 @@ default: &default
   password: "<%= ENV['CC_DB_PASS'] %>"
   host: <%= ENV['CC_DB_HOST'] %>
   database: <%= ENV['CC_DB_NAME'] %>
+  max_connections: <%= ENV['CC_DB_POOL'] && Integer(ENV['CC_DB_POOL']) %>
+  pool_timeout: <%= ENV['CC_DB_WAIT'] && Float(ENV['CC_DB_WAIT']) %>
 
 development:
   <<: *default

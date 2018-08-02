@@ -19,22 +19,6 @@ RSpec.describe CaseCore::Models::RequestAttribute do
 
       it { is_expected.to be_an_instance_of(described_class) }
     end
-
-    context 'when request id is specified' do
-      let(:params) { { request_id: 100_500 } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
-
-    context 'when name is specified' do
-      let(:params) { { name: :name } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
   end
 
   describe '.create' do
@@ -204,22 +188,6 @@ RSpec.describe CaseCore::Models::RequestAttribute do
     subject(:result) { instance.update(params) }
 
     let(:instance) { create(:request_attribute) }
-
-    context 'when request id is specified' do
-      let(:params) { { request_id: :request_id } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
-
-    context 'when name is specified' do
-      let(:params) { { name: :name } }
-
-      it 'should raise Sequel::MassAssignmentRestriction' do
-        expect { subject }.to raise_error(Sequel::MassAssignmentRestriction)
-      end
-    end
 
     context 'when value is nil' do
       let(:params) { { value: nil } }

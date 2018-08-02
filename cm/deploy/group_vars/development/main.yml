@@ -12,17 +12,22 @@ docker_run_variables:
   CC_DB_PASS: 123456
   CC_DB_HOST: pgsql.dev.it.vm
   CC_DB_NAME: case_core
+  CC_DB_POOL: 15
+  CC_DB_WAIT: 10
 
   # Настройки REST-контроллера
   CC_BIND: 0.0.0.0
   CC_PORT: 8081
+  CC_PUMA_WORKERS: 3
+  CC_PUMA_THREADS_MAX: 24
 
   # Настройки подключения к ActiveMQ
   CC_STOMP_HOST: smev.dev.it.vm
   CC_STOMP_PORT: 61613
   CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
-
+  CC_STOMP_INCOMING_LISTENERS: 30
   CC_STOMP_RESPONSE_QUEUE: esia_client.queue,certificate_case_smev3.response.queue
+  CC_STOMP_RESPONSE_LISTENERS: 10
 
   # Настройки подключения к серверу библиотек
   CC_GEM_SERVER_HOST: repo.it2.vm
@@ -54,8 +59,7 @@ docker_run_variables:
   BUILD_ENV: '{{ app_env }}'
 
   # Настройки для автоматической генерации DNS
-  VIRTUAL_HOST: case-core.dev.it2.vm
-  VIRTUAL_PORT: 8081
+  VIRTUAL_HOST: case-core.dev.it2.vm:8081,case-core.dev.it.vm:8081
 
 docker_run_labels:
   app_name: '{{ app_name }}'

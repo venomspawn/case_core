@@ -41,32 +41,12 @@ module CaseCore
     #   @return [Sequel::Dataset]
     #     запрос на получение записей запросов, созданных в рамках заявки
     class Case < Sequel::Model
+      unrestrict_primary_key
+
       # Отношения
       one_to_many :attributes, class: 'CaseCore::Models::CaseAttribute'
       one_to_many :documents
       one_to_many :requests
-
-      # Создаёт запись модели
-      # @param [Hash] values
-      #   атрибуты записи
-      # @return [CaseCore::Model::Case]
-      #   созданная запись модели
-      def self.create(values)
-        unrestrict_primary_key
-        super
-      ensure
-        restrict_primary_key
-      end
-
-      # Обновляет запись модели
-      # @param [Hash] values
-      #   новые атрибуты записи
-      # @return [Boolean]
-      #   удалось или нет сохранить запись
-      def update(values)
-        model.restrict_primary_key unless model.restrict_primary_key?
-        super
-      end
     end
   end
 end
