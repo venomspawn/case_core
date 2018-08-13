@@ -29,7 +29,6 @@ Vagrant.configure(2) do |config|
     dev.vm.provision :shell, keep_color: true, inline: <<-INSTALL
       echo 'StrictHostKeyChecking no' > ~/.ssh/config
       echo 'UserKnownHostsFile=/dev/null no' >> ~/.ssh/config
-      sudo apt-get install libmysqlclient-dev -y
     INSTALL
 
     dev.vm.provision :ansible_local do |ansible|
