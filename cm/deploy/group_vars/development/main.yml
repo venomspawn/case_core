@@ -1,4 +1,3 @@
----
 app_env: development
 
 docker_run_variables:
@@ -26,7 +25,7 @@ docker_run_variables:
   CC_STOMP_PORT: 61613
   CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
   CC_STOMP_INCOMING_LISTENERS: 30
-  CC_STOMP_RESPONSE_QUEUE: esia_client.queue,certificate_case_smev3.response.queue
+  CC_STOMP_RESPONSE_QUEUE: esia_client.queue,certificate_case_smev3.response.queue,smev3.response.queue
   CC_STOMP_RESPONSE_LISTENERS: 10
 
   # Настройки подключения к серверу библиотек
@@ -48,21 +47,21 @@ docker_run_variables:
 
   # Периодичность проверки на записи файлов, на которые не ссылается ни одна
   # запись документа
-  CC_DFC_CRON: '0 0 * * *'
+  CC_DFC_CRON: "0 0 * * *"
 
   # Минимальное время жизни записи файла, на который не ссылается ни одна
   # запись документа, чтобы он подлежал удалению
   CC_DFC_AGE: 86400
 
-  SERVICE_CHECK_HTTP: '/version'
+  SERVICE_CHECK_HTTP: "/version"
 
-  BUILD_ENV: '{{ app_env }}'
+  BUILD_ENV: "{{ app_env }}"
 
   # Настройки для автоматической генерации DNS
   VIRTUAL_HOST: case-core.dev.it2.vm:8081,case-core.dev.it.vm:8081
 
 docker_run_labels:
-  app_name: '{{ app_name }}'
-  app_env: '{{ app_env }}'
-  SERVICE_TAGS: '{{ app_env }}'
-  SERVICE_NAME: 'case-core'
+  app_name: "{{ app_name }}"
+  app_env: "{{ app_env }}"
+  SERVICE_TAGS: "{{ app_env }}"
+  SERVICE_NAME: "case-core"
