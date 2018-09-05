@@ -24,8 +24,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     let(:message_id) { 'id' }
     let(:entities) { 'documents' }
     let(:action) { 'create' }
-    let(:body) { document_attrs.to_json }
-    let(:document_attrs) { { case_id: case_id, fs_id: create(:file).id } }
+    let(:body) { doc_attrs.to_json }
+    let(:doc_attrs) { { case_id: case_id } }
     let(:case_id) { c4s3.id }
     let(:c4s3) { create(:case) }
     let(:status_records) { CaseCore::Models::ProcessingStatus }
@@ -55,7 +55,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     end
 
     context 'when body is a JSON-string but not of Hash' do
-      let(:document_attrs) { 'not of Hash' }
+      let(:doc_attrs) { 'not of Hash' }
 
       it 'should not create any record of `CaseCore::Models::Document`' do
         expect { subject }.not_to change { CaseCore::Models::Document.count }
@@ -68,7 +68,7 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     end
 
     context 'when body is a JSON-string of Hash of wrong structure' do
-      let(:document_attrs) { { type: { wrong: :structure } } }
+      let(:doc_attrs) { { type: { wrong: :structure } } }
 
       it 'should not create any record of `CaseCore::Models::Document`' do
         expect { subject }.not_to change { CaseCore::Models::Document.count }
@@ -91,8 +91,77 @@ RSpec.describe CaseCore::API::STOMP::Controller do
       end
     end
 
+    context 'when `provided` is `true` and `fs_id` is proper' do
+      let(:doc_attrs) { { case_id: case_id, provided: true, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'should create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(1)
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
+    context 'when `provided` is `false`' do
+      let(:doc_attrs) { { case_id: case_id, provided: false, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
+    context 'when `provided` is `nil`' do
+      let(:doc_attrs) { { case_id: case_id, provided: nil, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
+    context 'when `provided` is absent' do
+      let(:doc_attrs) { { case_id: case_id, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
+    context 'when `fs_id` is absent' do
+      let(:doc_attrs) { { case_id: case_id, provided: true } }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+
+      it 'should have `ok` status' do
+        subject
+        expect(status).to be == 'ok'
+      end
+    end
+
     context 'when `id` attribute is specified' do
-      let(:document_attrs) { { id: id, case_id: case_id, fs_id: fs_id } }
+      let(:doc_attrs) { { id: id, case_id: case_id, fs_id: fs_id } }
       let(:fs_id) { create(:file).id }
       let(:id) { 'id' }
 

@@ -24,23 +24,26 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     let(:message_id) { 'id' }
     let(:entities) { 'documents' }
     let(:action) { 'update' }
-    let(:body) { document_attrs.to_json }
-    let(:document_attrs) { { id: id, case_id: case_id, title: new_title } }
+    let(:body) { doc_attrs.to_json }
+    let(:doc_attrs) { { id: id, case_id: case_id, size: new_size } }
     let(:case_id) { c4s3.id }
     let(:c4s3) { create(:case) }
     let(:id) { document.id }
-    let(:document) { create(:document, case: c4s3, title: old_title) }
-    let(:old_title) { 'old_title' }
-    let(:new_title) { 'new_title' }
+    let(:document) { create(:document, traits) }
+    let(:traits) { { case: c4s3, scan_id: scan_id, id: 'id' } }
+    let(:scan_id) { scan.id }
+    let(:scan) { create(:scan, size: old_size) }
+    let(:old_size) { 'old_size' }
+    let(:new_size) { 'new_size' }
     let(:status_records) { CaseCore::Models::ProcessingStatus }
     let(:status_record) { status_records.where(message_id: message_id).last }
     let(:status) { status_record&.status }
 
-    it 'should update attributes of the document record with provided id' do
+    it 'should update attributes of the scan of the document' do
       expect { subject }
-        .to change { document.reload.title }
-        .from(old_title)
-        .to(new_title)
+        .to change { scan.reload.size }
+        .from(old_size)
+        .to(new_size)
     end
 
     it 'should have `ok` status' do
@@ -51,8 +54,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     context 'when body is not a JSON-string' do
       let(:body) { 'not a JSON-string' }
 
-      it 'shouldn\'t update attributes of the document record' do
-        expect { subject }.not_to change { document.reload.title }
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
       end
 
       it 'should have `error` status' do
@@ -62,10 +65,10 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     end
 
     context 'when body is a JSON-string but not of Hash' do
-      let(:document_attrs) { 'not of Hash' }
+      let(:doc_attrs) { 'not of Hash' }
 
-      it 'shouldn\'t update attributes of the document record' do
-        expect { subject }.not_to change { document.reload.title }
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
       end
 
       it 'should have `error` status' do
@@ -75,10 +78,10 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     end
 
     context 'when body is a JSON-string of Hash of wrong structure' do
-      let(:document_attrs) { { type: { wrong: :structure } } }
+      let(:doc_attrs) { { type: { wrong: :structure } } }
 
-      it 'shouldn\'t update attributes of the document record' do
-        expect { subject }.not_to change { document.reload.title }
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
       end
 
       it 'should have `error` status' do
@@ -90,8 +93,8 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     context 'when case record can\'t be found' do
       let(:case_id) { 'won\'t be found' }
 
-      it 'shouldn\'t update attributes of the document record' do
-        expect { subject }.not_to change { document.reload.title }
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
       end
 
       it 'should have `error` status' do
@@ -103,8 +106,21 @@ RSpec.describe CaseCore::API::STOMP::Controller do
     context 'when document record can\'t be found' do
       let(:id) { 'won\'t be found' }
 
-      it 'shouldn\'t update attributes of the document record' do
-        expect { subject }.not_to change { document.reload.title }
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
+      end
+
+      it 'should have `error` status' do
+        subject
+        expect(status).to be == 'error'
+      end
+    end
+
+    context 'when document doesn\'t have a scan' do
+      let(:scan_id) { nil }
+
+      it 'shouldn\'t update attributes of the scan record' do
+        expect { subject }.not_to change { scan.reload.size }
       end
 
       it 'should have `error` status' do
