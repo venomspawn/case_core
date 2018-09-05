@@ -253,9 +253,9 @@ RSpec.describe CaseCore::Models::File do
       expect(CaseCore::Models::File[instance.id]).to be_nil
     end
 
-    context 'when the file is a document\'s file' do
-      let(:document) { create(:document) }
-      let(:instance) { CaseCore::Models::File[document.fs_id] }
+    context 'when the file is a scan\'s file' do
+      let(:scan) { create(:scan) }
+      let(:instance) { CaseCore::Models::File[scan.fs_id] }
 
       it 'should raise Sequel::ForeignKeyConstraintViolation' do
         expect { subject }
