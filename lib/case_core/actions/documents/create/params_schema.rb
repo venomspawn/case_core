@@ -66,7 +66,7 @@ module CaseCore
               type: %i[string number boolean null]
             },
             fs_id: {
-              type: :string,
+              type: %i[string null],
               pattern: UUID_FORMAT
             },
             created_at: {
@@ -75,7 +75,6 @@ module CaseCore
           },
           required: %i[
             case_id
-            fs_id
           ],
           additionalProperties: false
         }.freeze

@@ -43,7 +43,7 @@ RSpec.describe CaseCore::Actions::Documents do
   describe '.create' do
     subject { described_class.create(params, rest) }
 
-    let(:params) { { case_id: case_id, fs_id: create(:file).id } }
+    let(:params) { { case_id: case_id } }
     let(:case_id) { c4s3.id }
     let!(:c4s3) { create(:case, id: 'case_id') }
     let(:rest) { nil }
@@ -61,6 +61,50 @@ RSpec.describe CaseCore::Actions::Documents do
     context 'when `id` attribute is not specified' do
       it 'should create value of the attribute' do
         expect { subject }.to change { CaseCore::Models::Document.count }.by(1)
+      end
+    end
+
+    context 'when `provided` is `true` and `fs_id` is proper' do
+      let(:params) { { case_id: case_id, provided: true, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'should create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(1)
+      end
+    end
+
+    context 'when `provided` is `false`' do
+      let(:params) { { case_id: case_id, provided: false, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+    end
+
+    context 'when `provided` is `nil`' do
+      let(:params) { { case_id: case_id, provided: nil, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+    end
+
+    context 'when `provided` is absent' do
+      let(:params) { { case_id: case_id, fs_id: file.id } }
+      let(:file) { create(:file) }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
+      end
+    end
+
+    context 'when `fs_id` is absent' do
+      let(:params) { { case_id: case_id, provided: true } }
+
+      it 'shouldn\'t create record of `CaseCore::Models::Scan` model' do
+        expect { subject }.to change { CaseCore::Models::Scan.count }.by(0)
       end
     end
 
