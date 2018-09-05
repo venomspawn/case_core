@@ -23,7 +23,8 @@ RSpec.describe CaseCore::Actions::Documents do
     describe 'result' do
       subject { result }
 
-      let!(:documents) { create_list(:document, 2, case: c4s3) }
+      let!(:absent) { create_list(:document, 2, case: c4s3) }
+      let!(:provided) { create_list(:document, 2, :with_scan, case: c4s3) }
       let(:id) { c4s3.id }
 
       it { is_expected.to match_json_schema(schema) }
