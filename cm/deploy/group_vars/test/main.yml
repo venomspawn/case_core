@@ -25,7 +25,7 @@ docker_run_variables:
   CC_STOMP_PORT: 61613
   CC_STOMP_INCOMING_QUEUE: case_core.incoming.queue
   CC_STOMP_INCOMING_LISTENERS: 30
-  CC_STOMP_RESPONSE_QUEUE: esia_client.queue,case_core_smev3.response.queue
+  CC_STOMP_RESPONSE_QUEUE: esia_client.queue,case_core_smev3.response.queue,smev2.response.queue
   CC_STOMP_RESPONSE_LISTENERS: 10
 
   # Настройки подключения к серверу библиотек
