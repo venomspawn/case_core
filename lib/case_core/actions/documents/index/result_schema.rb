@@ -52,7 +52,7 @@ module CaseCore
                 type: %i[string number boolean null]
               },
               fs_id: {
-                type: :string,
+                type: %i[string null],
                 pattern: UUID_FORMAT
               },
               created_at: {
