@@ -113,15 +113,9 @@ module CaseCore
         # @param [CaseCore::Models::Case] c4s3
         #   запись заявки
         def create_documents(c4s3)
-          return if documents_attrs.empty?
-          import_fields = Models::Document.columns - %i[case_id id]
-          import_values = documents_attrs.map do |document_attrs|
-            document_attrs
-              .values_at(*import_fields)
-              .push(c4s3.id, document_attrs[:id] || SecureRandom.uuid)
+          documents_attrs.each do |document_attrs|
+            Documents.create(case_id: c4s3.id, **document_attrs)
           end
-          import_fields.push(:case_id, :id)
-          Models::Document.import(import_fields, import_values)
         end
 
         # Находит модуль бизнес-логики по значению поля `type` записи заявки

@@ -81,9 +81,6 @@ module CaseCore
                     type: %i[string number boolean null]
                   }
                 },
-                required: %i[
-                  fs_id
-                ],
                 additionalProperties: false
               }
             }
