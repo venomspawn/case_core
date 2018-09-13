@@ -43,6 +43,7 @@ module CaseCore
       def invoke
         log_start(binding)
         log_files(files, binding)
+        # nodoc
         Sequel::Model.db[:files].where(id: file_ids).delete unless files.empty?
         log_finish(binding)
       end
