@@ -98,10 +98,12 @@ namespace :case_core do
     # не являются корректными
     sleep if cron.nil? || death_age.zero? || death_age.negative?
 
-    CaseCore.need 'dfc/sweep'
+    CaseCore.need 'collectors/files/sweep'
 
     scheduler = Rufus::Scheduler.new
-    scheduler.cron(cron) { CaseCore::DFC::Sweep.invoke(death_age) }
+    scheduler.cron(cron) do
+      CaseCore::Collectors::Files::Sweep.invoke(death_age)
+    end
     scheduler.join
   end
 
