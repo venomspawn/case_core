@@ -3,9 +3,9 @@
 # Тестирование класса объектов, удаляющих записи файлов, на которые не
 # ссылается ни один документ
 
-CaseCore.need 'dfc/sweep'
+CaseCore.need 'collectors/files/sweep'
 
-RSpec.describe CaseCore::DFC::Sweep do
+RSpec.describe CaseCore::Collectors::Files::Sweep do
   describe 'the class' do
     subject { described_class }
 
