@@ -107,6 +107,39 @@ namespace :case_core do
     scheduler.join
   end
 
+  desc 'Запускает автоматическое удаление записей атрибутов со значением `nil`'
+  task :run_eac do
+    require_relative 'config/app_init'
+
+    CaseCore::Init.run!(only: %w[class_ext logger sequel])
+
+    require 'rufus-scheduler'
+
+    cron_line = ENV['CC_EAC_CRON']
+    cron = Fugit::Cron.parse(cron_line) unless cron_line.to_s.empty?
+
+    %w[INT TERM].each do |signal|
+      previous_handler = trap(signal) do
+        Thread.exit
+        previous_handler.call
+      end
+    end
+
+    # Усыпление процесса в случае, если значения требуемых переменных окружения
+    # не являются корректными
+    sleep if cron.nil?
+
+    CaseCore.need 'collectors/case_attributes/sweep'
+    CaseCore.need 'collectors/request_attributes/sweep'
+
+    scheduler = Rufus::Scheduler.new
+    scheduler.cron(cron) do
+      CaseCore::Collectors::CaseAttributes::Sweep.invoke
+      CaseCore::Collectors::RequestAttributes::Sweep.invoke
+    end
+    scheduler.join
+  end
+
   desc 'Запускает миграцию данных из `case_manager`'
   task :transfer do
     require_relative 'config/app_init'
