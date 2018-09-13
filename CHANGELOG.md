@@ -1,5 +1,14 @@
 # Журнал изменений
 
+## [2.3.0] — 13.09.2018
+
+-   Реализован механизм автоматического удаления атрибутов со значением `nil`
+    (#135)
+-   Изменён Vagrantfile для локального развёртывания (#137)
+-   Добавлены подписки на очередь ответных сообщений
+    `case_core_smev3.response.queue` и `smev2.response.queue` (#138, #142)
+-   Модифицирована модель документа (#140, #141)
+
 ## [2.2.1] — 02.08.2018
 
 -   Исправлены замечания `rubocop` (#136)
@@ -112,6 +121,7 @@
 
 -   Создана базовая инфраструктура сервиса (#1)
 
+[2.3.0]: http://gitlab.it.vm/microservices/case_core/compare/2.2.1...2.3.0
 [2.2.1]: http://gitlab.it.vm/microservices/case_core/compare/2.2.0...2.2.1
 [2.2.0]: http://gitlab.it.vm/microservices/case_core/compare/2.1.0...2.2.0
 [2.1.0]: http://gitlab.it.vm/microservices/case_core/compare/2.0.1...2.1.0
