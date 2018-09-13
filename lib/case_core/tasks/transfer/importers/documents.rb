@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module CaseCore
+  need 'actions/documents/create'
   need 'helpers/log'
   need 'tasks/transfer/extractors/documents'
   need 'tasks/transfer/importers/file'
@@ -27,13 +28,19 @@ module CaseCore
             @hub = hub
           end
 
-          # Список полей записей документов
-          DOCUMENT_COLUMNS = Models::Document.columns
+          # Список названий полей, извлекаемых из ассоциативного массива с
+          # информацией о документах
+          FIELDS =
+            Actions::Documents::Create::PARAMS_SCHEMA[:properties].keys.freeze
 
           # Импортирует записи документов заявок и содержимое их файлов
           def import
-            documents.each(&File.method(:import))
-            Models::Document.import(DOCUMENT_COLUMNS, document_values)
+            documents.each do |document|
+              document.slice!(*FIELDS)
+              File.import(document)
+              document[:created_at] = document[:created_at]&.strftime('%FT%T')
+              Actions::Documents::Create.new(document).create
+            end
             log_imported_documents(binding)
           end
 
@@ -51,24 +58,13 @@ module CaseCore
             @documents ||= Extractors::Documents.extract(hub)
           end
 
-          # Возвращает список списков значений полей записей документов
-          # @return [Array<Array>]
-          #   результирующий список
-          def document_values
-            @document_values ||=
-              documents
-              .select { |h| h[:fs_id].present? }
-              .map { |h| h.values_at(*DOCUMENT_COLUMNS) }
-          end
-
           # Создаёт запись в журнале событий о том, что импортированы записи
           # документов
           # @param [Binding] context
           #   контекст
           def log_imported_documents(context)
             log_info(context) { <<-MESSAGE }
-              Импортированы записи документов в количестве
-              #{document_values.size} из #{documents.size}
+              Импортированы записи документов в количестве #{documents.size}
             MESSAGE
           end
         end

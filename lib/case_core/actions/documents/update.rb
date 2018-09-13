@@ -17,17 +17,33 @@ module CaseCore
 
         # Обновляет запись документа
         def update
-          transaction { record.update(attrs) }
+          transaction { scan.update(attrs) }
         end
 
         private
+
+        # Список названий параметров, значения которых извлекается для
+        # обновления полей записи
+        PARAMS = %i[
+          direction
+          correct
+          provided_as
+          size
+          last_modified
+          quantity
+          mime_type
+          filename
+          in_document_id
+          fs_id
+          created_at
+        ].freeze
 
         # Создаёт ассоциативный массив атрибутов записи документа на основе
         # параметров действия и возвращает его
         # @return [Hash]
         #   результирующий ассоциативный массив атрибутов записи документа
         def attrs
-          params.except(:id, :case_id)
+          params.slice(*PARAMS)
         end
 
         # Возвращает значение атрибута `:id` параметров действия
@@ -44,13 +60,21 @@ module CaseCore
           params[:case_id]
         end
 
-        # Возвращает запись документа
-        # @return [CaseCore::Models::Document]
-        #   запись документа
+        # Возвращает запрос Sequel на извлечение идентификатора записи
+        # электронной копии документа
+        # @return [Sequel::Dataset]
+        #   результирующий запрос Sequel
+        def id_dataset
+          Models::Document.select(:scan_id).where(id: id, case_id: case_id)
+        end
+
+        # Возвращает запись электронной копии документа
+        # @return [CaseCore::Models::Scan]
+        #   запись электронной копии документа
         # @raise [Sequel::NoMatchingRow]
         #   если не найдена запись заявки или запись документа
-        def record
-          Models::Document.where(id: id, case_id: case_id).first!
+        def scan
+          Models::Scan.select(:id).where(id: id_dataset).first!
         end
       end
     end
